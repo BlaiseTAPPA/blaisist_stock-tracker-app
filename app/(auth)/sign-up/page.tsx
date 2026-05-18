@@ -21,7 +21,7 @@ const SignUp = () => {
       email: "",
       password: "",
       country: "DE",
-      preferredIndustry: "Growth",
+      investmentGoals: "Growth",
       riskTolerance: "Medium",
       preferredIndustry: "Technology",
     },
@@ -49,6 +49,7 @@ const SignUp = () => {
         <InputField
           name="email"
           label="Email"
+          type="email"
           placeholder="donniedarko@example.com"
           register={register}
           error={errors.email}

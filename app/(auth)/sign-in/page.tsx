@@ -41,7 +41,7 @@ const SignIn = () => {
           error={errors.email}
           validation={{
             required: "Email is required",
-            minlLength: 2,
+            minLength: 2,
             pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" },
           }}
         />
@@ -52,7 +52,7 @@ const SignIn = () => {
           type="password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minlLength: 8 }}
+          validation={{ required: "Password is required", minLength: 8 }}
         />
 
         <Button
