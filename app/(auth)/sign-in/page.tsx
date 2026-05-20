@@ -6,10 +6,16 @@ import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
 import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
+import { signInEmail } from "better-auth/api";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
 
 const SignIn = () => {
+  const router = useRouter (); 
   const {
     register,
     handleSubmit,
@@ -22,13 +28,21 @@ const SignIn = () => {
     },
     mode: "onBlur",
   });
+
+
   const onSubmit = async (data: SignInFormData) => {
     try {
-      console.log(data);
+      const result = await signInWithEmail(data);
+      if (result.success) router.push("/");
     } catch (e) {
       console.error(e);
+      toast.error("Sign in failed", {
+        description:
+          e instanceof Error ? e.message : "Failed to sign in",
+      });
     }
   };
+
   return (
     <>
       <h1 className="form-title">Log In Your Account</h1>

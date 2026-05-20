@@ -6,10 +6,19 @@ import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
+import {
+  INVESTMENT_GOALS,
+  RISK_TOLERANCE_OPTIONS,
+  PREFERRED_INDUSTRIES,
+} from "@/lib/constants";
+import { error } from "console";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const SignUp = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -27,13 +36,20 @@ const SignUp = () => {
     },
     mode: "onBlur",
   });
+
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
+      const result = await signUpWithEmail(data);
+      if (result.success) router.push("/");
     } catch (e) {
       console.error(e);
+      toast.error("Sign up failed", {
+        description:
+          e instanceof Error ? e.message : "Failed to create an account",
+      });
     }
   };
+
   return (
     <>
       <h1 className="form-title">Sign Up and Personalize</h1>
@@ -44,7 +60,7 @@ const SignUp = () => {
           placeholder="John Doe"
           register={register}
           error={errors.fullName}
-          validation={{ required: "Full name is required", minlLength: 2 }}
+          validation={{ required: "Full name is required", minLength: 2 }}
         />
         <InputField
           name="email"
@@ -55,7 +71,7 @@ const SignUp = () => {
           error={errors.email}
           validation={{
             required: "Email is required",
-            minlLength: 2,
+            minLength: 2,
             pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" },
           }}
         />
@@ -66,16 +82,16 @@ const SignUp = () => {
           type="password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minlLength: 8 }}
+          validation={{ required: "Password is required", minLength: 8 }}
         />
 
-                <CountrySelectField
-                    name="country"
-                    label="Country"
-                    control={control as any}
-                    error={errors.country}
-                    required
-                />
+        <CountrySelectField
+          name="country"
+          label="Country"
+          control={control as any}
+          error={errors.country}
+          required
+        />
 
         <SelectField
           name="investmentGoals"
@@ -112,7 +128,11 @@ const SignUp = () => {
         >
           {isSubmitting ? "Creating account" : "Start Your Investing Journey"}
         </Button>
-        <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
+        <FooterLink
+          text="Already have an account?"
+          linkText="Sign in"
+          href="/sign-in"
+        />
       </form>
     </>
   );

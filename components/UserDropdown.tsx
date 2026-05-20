@@ -14,18 +14,20 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import NavItems from "./NavItems";
+import { SignOut } from "@/lib/actions/auth.actions";
 
-const UserDropdown = () => {
+const UserDropdown = ({ user }: { user: User }) => {
   const router = useRouter();
 
   const handleSignout = async () => {
+    await SignOut();
     router.push("/sign-in");
   };
 
-  const user = {
+/*   const user = {
     name: "Blaise ",
     email: "blaise@example.com",
-  };
+  }; */
 
   return (
     <DropdownMenu>
@@ -47,7 +49,7 @@ const UserDropdown = () => {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="text-gray-400">
+      <DropdownMenuContent className=" w-64 text-gray-400 ">
         <DropdownMenuLabel>
           <div className="flex relative items-center gap-3 py-2">
             <Avatar className="h-10 w-10">
@@ -60,7 +62,7 @@ const UserDropdown = () => {
               <span className="text-base font-medium text-gray-400">
                 {user.name}
               </span>
-              <span className="text-sm text-gray-500">{user.email}</span>
+              <span className="text-sm text-gray-500 break-all">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -74,7 +76,7 @@ const UserDropdown = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator className=" hidden sm:block bg-gray-600" />
         <nav className="sm:hidden">
-            <NavItems   />
+          <NavItems />
         </nav>
       </DropdownMenuContent>
     </DropdownMenu>
