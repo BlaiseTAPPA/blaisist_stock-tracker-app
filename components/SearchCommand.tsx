@@ -111,17 +111,20 @@ export default function SearchCommand({
                 {displayStocks?.map((stock) => (
                   <li key={stock.symbol} className="search-item">
                     <Link
-                      href={`/stocks/${stock.symbol}`}
-                      onClick={handleSelectStock}
-                      className="search-item-link"
+                        href={`/stocks/${stock.symbol}`}
+                        onClick={handleSelectStock}
+                        className="search-item-link"
                     >
                       <TrendingUp className="h-4 w-4 text-gray-500" />
-                      <div className="flex-1">
-                        <div className="search-item-name">{stock.name}</div>
+                      <div  className="flex-1">
+                        <div className="search-item-name">
+                          {stock.name}
+                        </div>
                         <div className="text-sm text-gray-500">
-                          {stock.symbol} | {stock.exchange} | {stock.type}
+                          {stock.symbol} | {stock.exchange } | {stock.type}
                         </div>
                       </div>
+                    {/*<Star />*/}
                     </Link>
                   </li>
                 ))}

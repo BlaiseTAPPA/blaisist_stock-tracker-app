@@ -1,7 +1,7 @@
 export const NAV_ITEMS = [
     { href: '/', label: 'Dashboard' },
     { href: '/search', label: 'Search' },
-    { href: '/watchlist', label: 'Watchlist' },
+    //{ href: '/watchlist', label: 'Watchlist' },
 ];
 
 // Sign-up form select options
@@ -257,7 +257,7 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
     isTransparent: 'true',
     locale: 'en',
     width: '100%',
-    height: 464,
+    height: 905,
     displayMode: 'regular',
     largeChartUrl: '',
 });
