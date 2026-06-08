@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 import { getWatchlist } from "@/lib/actions/watchlist.actions";
 import TradingViewWidget from "@/components/TradingViewWidget";
-import WatchlistButton from "@/components/WatchlistButton";
 import { SYMBOL_INFO_WIDGET_CONFIG } from "@/lib/constants";
 import Link from "next/link";
 
@@ -10,38 +11,39 @@ export default async function WatchlistPage() {
   const items = await getWatchlist();
 
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold mb-6">My Watchlist</h1>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-100">My Watchlist</h1>
+        {/* <span className="text-sm text-gray-500">{items.length} stock{items.length !== 1 ? 's' : ''}</span> */}
+      </div>
 
       {items.length === 0 ? (
-        <p className="text-gray-400">Your watchlist is empty. Browse stocks and add some!</p>
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/30 p-20 text-center">
+          <p className="text-gray-500 text-sm mb-2">Your watchlist is empty.</p>
+          <Link href="/search" className="text-sm text-yellow-500 hover:underline">
+            Browse stocks →
+          </Link>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {items.map((item) => (
-            <div key={item.symbol} className="flex flex-col gap-2">
-{/*               <div className="flex items-center justify-between px-1">
-                <Link
-                  href={`/stocks/${item.symbol}`}
-                  className="text-yellow-500 hover:underline font-medium text-sm"
-                >
-                  View {item.symbol}
-                </Link>
-                <WatchlistButton
-                  symbol={item.symbol}
-                  company={item.company}
-                  isInWatchlist={true}
-                  showTrashIcon={false}
-                />
-              </div> */}
+            <Link
+              key={item.symbol}
+              href={`/stocks/${item.symbol}`}
+              className="rounded-lg border border-gray-600 bg-gray-800 overflow-hidden hover:border-yellow-500/40 transition-colors"
+            >
               <TradingViewWidget
                 scriptUrl={`${scriptUrl}symbol-info.js`}
-                config={SYMBOL_INFO_WIDGET_CONFIG(item.symbol)}
+                config={{
+                  ...SYMBOL_INFO_WIDGET_CONFIG(item.symbol),
+                  height: 170,
+                }}
                 height={170}
               />
-            </div>
+            </Link>
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }

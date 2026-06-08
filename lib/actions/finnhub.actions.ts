@@ -22,6 +22,74 @@ async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T>
 
 export { fetchJSON };
 
+export async function getStockQuote(symbol: string): Promise<QuoteData> {
+  const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+  const url = `${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(symbol)}&token=${token}`;
+  return fetchJSON<QuoteData>(url, 60);
+}
+
+export async function getStockProfile(symbol: string): Promise<ProfileData> {
+  const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+  const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(symbol)}&token=${token}`;
+  return fetchJSON<ProfileData>(url, 3600);
+}
+
+export async function getStockFinancials(symbol: string): Promise<FinancialsData> {
+  const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+  const url = `${FINNHUB_BASE_URL}/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all&token=${token}`;
+  return fetchJSON<FinancialsData>(url, 3600);
+}
+
+export async function getTopStocksData(symbols: string[]): Promise<StockWithData[]> {
+  const results = await Promise.all(
+    symbols.map(async (symbol) => {
+      try {
+        const [quote, profile, financials] = await Promise.all([
+          getStockQuote(symbol),
+          getStockProfile(symbol),
+          getStockFinancials(symbol),
+        ]);
+
+        const price = quote.c ?? 0;
+        const change = quote.dp ?? 0;
+        const cap = profile.marketCapitalization ?? 0;
+        const pe = financials.metric?.['peBasicExclExtraTTM'] ?? 0;
+
+        const formatCap = (v: number) => {
+          if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
+          if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
+          return `$${v.toFixed(0)}M`;
+        };
+
+        return {
+          userId: '',
+          symbol,
+          company: profile.name ?? symbol,
+          addedAt: new Date(),
+          currentPrice: price,
+          changePercent: change,
+          priceFormatted: `$${price.toFixed(2)}`,
+          changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+          marketCap: cap ? formatCap(cap) : '—',
+          peRatio: pe ? pe.toFixed(1) : '—',
+        } satisfies StockWithData;
+      } catch {
+        return {
+          userId: '',
+          symbol,
+          company: symbol,
+          addedAt: new Date(),
+          priceFormatted: '—',
+          changeFormatted: '—',
+          marketCap: '—',
+          peRatio: '—',
+        } satisfies StockWithData;
+      }
+    })
+  );
+  return results;
+}
+
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5);

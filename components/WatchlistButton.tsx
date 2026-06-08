@@ -3,6 +3,8 @@
 import React, { useMemo, useState, useTransition } from "react";
 import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
 import { toast } from "sonner";
+import { useWatchlistStore } from "@/store/watchlistStore";
+import type { StockWithData } from "@/store/watchlistStore";
 
 const WatchlistButton = ({
   symbol,
@@ -11,27 +13,46 @@ const WatchlistButton = ({
   showTrashIcon = false,
   type = "button",
   onWatchlistChange,
-}: WatchlistButtonProps) => {
+  stockData,
+}: WatchlistButtonProps & { stockData?: StockWithData }) => {
   const [added, setAdded] = useState<boolean>(!!isInWatchlist);
   const [isPending, startTransition] = useTransition();
+
+  const { addToWatchlist, removeFromWatchlist } = useWatchlistStore();
 
   const label = useMemo(() => {
     if (type === "icon") return "";
     return added ? "Remove from Watchlist" : "Add to Watchlist";
   }, [added, type]);
 
-  const handleClick = () => {
-    startTransition(async () => {
-      try {
-        const { added: newState } = await toggleWatchlist(symbol, company);
-        setAdded(newState);
-        onWatchlistChange?.(symbol, newState);
-        toast.success(newState ? `${symbol} added to watchlist` : `${symbol} removed from watchlist`);
-      } catch {
-        toast.error("You must be logged in to manage your watchlist");
+const handleClick = () => {
+  startTransition(async () => {
+    try {
+      const { added: newState } = await toggleWatchlist(symbol, company);
+
+      setAdded(newState);
+
+      if (newState && stockData) {
+        // Solution propre avec spread
+        const stockToAdd: StockWithData = {
+          ...stockData,
+          priceFormatted: stockData.priceFormatted ?? "—",
+          changeFormatted: stockData.changeFormatted ?? "0.00",
+          changePercent: stockData.changePercent ?? 0,
+          addedAt: stockData.addedAt ?? new Date().toISOString(),
+        };
+
+        addToWatchlist(stockToAdd);
+        toast.success(`${symbol} added to your watchlist`);
+      } else {
+        removeFromWatchlist(symbol);
+        toast.success(`${symbol} removed to your watchlist`);
       }
-    });
-  };
+    } catch {
+      toast.error("Logginf you in to manage your watchlist");
+    }
+  });
+};
 
   if (type === "icon") {
     return (
