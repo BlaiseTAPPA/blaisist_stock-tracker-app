@@ -1,7 +1,8 @@
 export const NAV_ITEMS = [
     { href: '/', label: 'Dashboard' },
     { href: '/search', label: 'Search' },
-    //{ href: '/watchlist', label: 'Watchlist' },
+    { href: '/news', label: 'News' },
+    { href: '/watchlist', label: 'Watchlist' },
 ];
 
 // Sign-up form select options
@@ -124,6 +125,27 @@ export const TOP_STORIES_WIDGET_CONFIG = {
     width: '100%',
     height: '600',
 };
+
+export const NEWS_INDUSTRIES = [
+  { label: 'All Markets', symbol: null, market: 'stock' },
+  { label: 'Technology', symbol: 'NASDAQ:AAPL' },
+  { label: 'Finance', symbol: 'NYSE:JPM' },
+  { label: 'Healthcare', symbol: 'NYSE:JNJ' },
+  { label: 'Energy', symbol: 'NYSE:XOM' },
+  { label: 'Consumer', symbol: 'NYSE:WMT' },
+];
+
+export const getNewsWidgetConfig = (symbol?: string) => ({
+  displayMode: 'regular',
+  feedMode: symbol ? 'symbol' : 'market',
+  colorTheme: 'dark',
+  isTransparent: true,
+  locale: 'en',
+  market: 'stock',
+  ...(symbol && { symbol }),
+  width: '100%',
+  height: '600',
+});
 
 export const MARKET_DATA_WIDGET_CONFIG = {
     title: 'Stocks',
