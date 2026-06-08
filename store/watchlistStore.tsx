@@ -3,8 +3,8 @@ import { create } from 'zustand';
 export type StockWithData = {
   symbol: string;
   company: string;
-  priceFormatted: string;
-  changeFormatted: string;
+  priceFormatted?: string;
+  changeFormatted?: string;
   changePercent?: number;
   
   // Rends les champs venant de la base de données optionnels

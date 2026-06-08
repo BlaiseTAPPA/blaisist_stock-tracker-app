@@ -6,7 +6,9 @@ import { getTopStocksData, getNews } from "@/lib/actions/finnhub.actions";
 import { getWatchlist } from "@/lib/actions/watchlist.actions";
 import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
 import StockLogo from "@/components/StockLogo";
+import type { StockWithData } from "@/store/watchlistStore";
 import WatchlistGrid from "@/components/WatchlistGrid";
+
 
 
 const TOP_STOCKS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX", "ORCL", "CRM"];

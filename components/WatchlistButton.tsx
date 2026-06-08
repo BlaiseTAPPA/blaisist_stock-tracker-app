@@ -33,7 +33,6 @@ const handleClick = () => {
       setAdded(newState);
 
       if (newState && stockData) {
-        // Solution propre avec spread
         const stockToAdd: StockWithData = {
           ...stockData,
           priceFormatted: stockData.priceFormatted ?? "—",
@@ -43,6 +42,7 @@ const handleClick = () => {
         };
 
         addToWatchlist(stockToAdd);
+
         toast.success(`${symbol} added to your watchlist`);
       } else {
         removeFromWatchlist(symbol);
