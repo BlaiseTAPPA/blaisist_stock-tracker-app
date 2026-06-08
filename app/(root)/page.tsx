@@ -14,16 +14,8 @@ import WatchlistGrid from "@/components/WatchlistGrid";
 const TOP_STOCKS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX", "ORCL", "CRM"];
 const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
-const [topStocks, watchlist, news] = await Promise.all([
-  getTopStocksData(TOP_STOCKS),
-  getWatchlist(),
-  getNews(),
-]);
 
-const watchlistSymbols = watchlist.map((item) => item.symbol);
-const watchlistData = watchlistSymbols.length > 0
-  ? await getTopStocksData(watchlistSymbols)
-  : [];
+
 
 export default async function Home() {
   const [topStocks, watchlist, news] = await Promise.all([
@@ -31,6 +23,10 @@ export default async function Home() {
     getWatchlist(),
     getNews(),
   ]);
+  const watchlistSymbols = watchlist.map((item) => item.symbol);
+const watchlistData = watchlistSymbols.length > 0
+  ? await getTopStocksData(watchlistSymbols)
+  : [];
 
   return (
     <div className="flex flex-col gap-10 min-h-screen">
