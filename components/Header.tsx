@@ -17,7 +17,7 @@ const Header = async ({ user }: { user: User }) => {
             width={140}
             height={32}
             className="h-8 w-auto cursor-pointer"
-          />
+          />   
         </Link>
         <nav className="hidden sm:block">
           <NavItems initialStocks={initialStocks} />

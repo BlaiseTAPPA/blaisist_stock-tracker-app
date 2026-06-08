@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Signalist",
+  title: "FinGenius - Your Stock Market Companion",
   description:
-    "Track real-time stock prices, get personalized alerts and explore detailed company insights with Blaisist, your ultimate stock market companion.",
+    "Track real-time stock prices, get personalized alerts and explore detailed company insights with FinGenius, your ultimate stock market companion.",
 };
 
 export default function RootLayout({

@@ -19,7 +19,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
             alt="Signalist Logo"
             width={140}
             height={32}
-            className="h-8 w-auto"
+            className="h-auto w-auto"
           />
         </Link>
         <div className="pb-6 lg:pb-8 flex-1">{children}</div>
