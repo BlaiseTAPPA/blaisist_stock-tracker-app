@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/actions/finnhub.actions";
-import { getWatchlist } from "@/lib/actions/watchlist.actions";
+import { getWatchlistForUser } from "@/lib/data/watchlist";
+import { getSessionUser } from "@/lib/auth/session";
 import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
@@ -16,9 +17,10 @@ const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 
 export default async function Home() {
+  const user = await getSessionUser();
   const [topStocks, watchlist, news] = await Promise.all([
     getTopStocksData(TOP_STOCKS),
-    getWatchlist(),
+    user ? getWatchlistForUser(user.id) : Promise.resolve([]),
     getNews(),
   ]);
   const watchlistSymbols = watchlist.map((item) => item.symbol);

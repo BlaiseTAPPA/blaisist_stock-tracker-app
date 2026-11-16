@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
-import { getWatchlist } from "@/lib/actions/watchlist.actions";
+import { getWatchlistForUser } from "@/lib/data/watchlist";
+import { getSessionUser } from "@/lib/auth/session";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { SYMBOL_INFO_WIDGET_CONFIG } from "@/lib/constants";
 import Link from "next/link";
@@ -8,7 +9,8 @@ import Link from "next/link";
 const scriptUrl = "https://s3.tradingview.com/external-embedding/embed-widget-";
 
 export default async function WatchlistPage() {
-  const items = await getWatchlist();
+  const user = await getSessionUser();
+  const items = user ? await getWatchlistForUser(user.id) : [];
 
   return (
     <div className="flex flex-col gap-6">
