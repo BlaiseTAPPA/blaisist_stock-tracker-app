@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from "next/link";
 import TradingViewWidget from "@/components/TradingViewWidget";
-import { getTopStocksData, getNews } from "@/lib/actions/finnhub.actions";
+import { getTopStocksData, getNews } from "@/lib/finnhub/client";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
