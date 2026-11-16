@@ -16,6 +16,12 @@ const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 
 
+const MarketDataUnavailable = () => (
+  <p role="status" className="text-xs text-gray-500">
+    Market data unavailable, please try again in a minute.
+  </p>
+);
+
 export default async function Home() {
   const user = await getSessionUser();
 
@@ -34,6 +40,10 @@ export default async function Home() {
     watchlistPromise,
     getNews(),
   ]);
+
+  const topStocksUnavailable = topStocks.every((s) => s.status === "unavailable");
+  const watchlistUnavailable =
+    watchlistData.length > 0 && watchlistData.every((s) => s.status === "unavailable");
 
   return (
     <div className="flex flex-col gap-10 min-h-screen">
@@ -68,7 +78,10 @@ export default async function Home() {
               <p className="text-gray-500 text-sm">No stocks in your watchlist yet.</p>
             </div>
           ) : (
-<WatchlistGrid initialData={watchlistData} />
+            <>
+              {watchlistUnavailable && <MarketDataUnavailable />}
+              <WatchlistGrid initialData={watchlistData} />
+            </>
           )}
         </div>
       </div>
@@ -118,6 +131,7 @@ export default async function Home() {
               </tbody>
             </table>
           </div>
+          {topStocksUnavailable && <MarketDataUnavailable />}
         </div>
 
         {/* Financial News */}
@@ -129,6 +143,11 @@ export default async function Home() {
             </Link>
           </div>
           <div className="flex flex-col divide-y divide-gray-700 rounded-lg border border-gray-600 bg-gray-800 overflow-hidden">
+            {news.length === 0 && (
+              <p role="status" className="p-10 text-center text-sm text-gray-500">
+                No news at the moment.
+              </p>
+            )}
             {news.slice(0, 5).map((article, index) => (
               <a
                 key={`${article.id}-${index}`}

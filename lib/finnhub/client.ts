@@ -135,6 +135,10 @@ const formatCap = (v: number) => {
 
 type StockInput = { symbol: string; company: string };
 
+/** `unavailable`: no usable quote (Finnhub error, timeout, 429 or unknown symbol). */
+export type StockDataStatus = 'ok' | 'unavailable';
+export type StockRow = StockWithData & { status: StockDataStatus };
+
 /**
  * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
  * P/E and market cap when `fundamentals` is true. Company names come from the
@@ -144,7 +148,7 @@ type StockInput = { symbol: string; company: string };
 export async function getTopStocksData(
   stocks: readonly StockInput[],
   { fundamentals = true }: { fundamentals?: boolean } = {},
-): Promise<StockWithData[]> {
+): Promise<StockRow[]> {
   return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company }) => {
     try {
       const [quote, financials] = await Promise.all([
@@ -153,7 +157,10 @@ export async function getTopStocksData(
         fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null),
       ]);
 
-      const price = quote.c ?? 0;
+      // Finnhub answers unknown symbols with an all-zero quote.
+      if (!quote.c) throw new Error('empty quote');
+
+      const price = quote.c;
       const change = quote.dp ?? 0;
       const cap = financials?.metric?.['marketCapitalization'] ?? 0;
       const pe = financials?.metric?.['peBasicExclExtraTTM'] ?? 0;
@@ -169,7 +176,8 @@ export async function getTopStocksData(
         changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
         marketCap: cap ? formatCap(cap) : '—',
         peRatio: pe ? pe.toFixed(1) : '—',
-      } satisfies StockWithData;
+        status: 'ok',
+      } satisfies StockRow;
     } catch {
       return {
         userId: '',
@@ -180,11 +188,13 @@ export async function getTopStocksData(
         changeFormatted: '—',
         marketCap: '—',
         peRatio: '—',
-      } satisfies StockWithData;
+        status: 'unavailable',
+      } satisfies StockRow;
     }
   });
 }
 
+/** Never throws: returns `[]` when Finnhub is unavailable. */
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5);
@@ -251,8 +261,8 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
     const formatted = unique.slice(0, maxArticles).map((a, idx) => formatArticle(a, false, undefined, idx));
     return formatted;
   } catch (err) {
-    console.error('getNews error:', err);
-    throw new Error('Failed to fetch news');
+    console.error('getNews error:', err instanceof Error ? err.message : err);
+    return [];
   }
 }
 
