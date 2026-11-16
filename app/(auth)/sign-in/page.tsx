@@ -27,7 +27,11 @@ const SignIn = () => {
   const onSubmit = async (data: SignInFormData) => {
     try {
       const result = await signInWithEmail(data);
-      if (result.success) router.push("/");
+      if (!result.success) {
+        toast.error(result.error);
+        return;
+      }
+      router.push("/");
     } catch (e) {
       console.error(e);
       toast.error("Sign in failed", {
@@ -39,7 +43,7 @@ const SignIn = () => {
 
   return (
     <>
-      <h1 className="form-title">Log In Your Account</h1>
+      <h1 className="form-title">Log in to your account</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="email"
@@ -68,7 +72,7 @@ const SignIn = () => {
           disabled={isSubmitting}
           className="yellow-btn w-full mt-5"
         >
-          {isSubmitting ? "Signing in " : "Log In"}
+          {isSubmitting ? "Signing in…" : "Log In"}
         </Button>
         <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />
       </form>

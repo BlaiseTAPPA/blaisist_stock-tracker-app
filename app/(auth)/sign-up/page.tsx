@@ -42,7 +42,11 @@ const SignUp = () => {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       const result = await signUpWithEmail(data);
-      if (result.success) router.push("/");
+      if (!result.success) {
+        toast.error(result.error);
+        return;
+      }
+      router.push("/");
     } catch (e) {
       console.error(e);
       toast.error("Sign up failed", {
@@ -128,7 +132,7 @@ const SignUp = () => {
           disabled={isSubmitting}
           className="yellow-btn w-full mt-5"
         >
-          {isSubmitting ? "Creating account" : "Start Your Investing Journey"}
+          {isSubmitting ? "Creating account…" : "Start Your Investing Journey"}
         </Button>
         <FooterLink
           text="Already have an account?"

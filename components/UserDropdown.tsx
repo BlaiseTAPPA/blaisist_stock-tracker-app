@@ -13,13 +13,13 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import NavItems from "./NavItems";
-import { SignOut } from "@/lib/actions/auth.actions";
+import { signOut } from "@/lib/actions/auth.actions";
 
 const UserDropdown = ({ user, initialStocks }: {user: User, initialStocks: StockWithWatchlistStatus[]}) => {
   const router = useRouter();
 
   const handleSignout = async () => {
-    await SignOut();
+    await signOut();
     router.push("/sign-in");
   };
 
