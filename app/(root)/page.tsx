@@ -5,8 +5,6 @@ import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/actions/finnhub.actions";
 import { getWatchlist } from "@/lib/actions/watchlist.actions";
 import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
-import StockLogo from "@/components/StockLogo";
-import type { StockWithData } from "@/store/watchlistStore";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
 
@@ -72,7 +70,7 @@ const watchlistData = watchlistSymbols.length > 0
         {/* Top Stocks Table */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-100">Today's Top Stocks</h2>
+            <h2 className="text-xl font-bold text-gray-100">Today&apos;s Top Stocks</h2>
             <Link href="/search" className="text-sm text-gray-500 hover:text-yellow-500 transition-colors">
               View all
             </Link>
@@ -116,7 +114,7 @@ const watchlistData = watchlistSymbols.length > 0
         {/* Financial News */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-100">Today's Financial News</h2>
+            <h2 className="text-xl font-bold text-gray-100">Today&apos;s Financial News</h2>
             <Link href="/news" className="text-sm text-gray-500 hover:text-yellow-500 transition-colors">
               View all
             </Link>

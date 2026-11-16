@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # TEMPORARY: `lib/better-auth/auth.ts` runs a top-level `await getAuth()`,
+    # which connects to MongoDB when the module is imported, so `next build`
+    # needs a reachable database (finding NEXT-05). This throwaway Mongo
+    # container covers that. Remove the service and MONGODB_URI once prompt 06
+    # makes the connection lazy.
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Dummy, non-secret values: they only let modules load during the build.
+    # Never put real credentials here.
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      MONGODB_URI: mongodb://localhost:27017/signalist-ci
+      BETTER_AUTH_SECRET: ci-only-not-a-secret-0123456789abcdef
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_BASE_URL: http://localhost:3000
+      NEXT_PUBLIC_FINNHUB_API_KEY: ci-dummy # renamed in prompt 03
+      GEMINI_API_KEY: ci-dummy
+      NODEMAILER_EMAIL: ci@example.com
+      NODEMAILER_PASSWORD: ci-dummy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build

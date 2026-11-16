@@ -1,16 +1,11 @@
 "use client";
 
-import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
-import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { signInWithEmail } from "@/lib/actions/auth.actions";
-import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
-import { signInEmail } from "better-auth/api";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 
@@ -19,7 +14,6 @@ const SignIn = () => {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<SignInFormData>({
     defaultValues: {

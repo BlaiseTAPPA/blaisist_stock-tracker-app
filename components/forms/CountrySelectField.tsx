@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Check, ChevronsUpDown, Flag } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import countryList from "react-select-country-list";
 
@@ -30,6 +30,19 @@ type CountrySelectProps = {
   required?: boolean;
 };
 
+// Country options are static: compute them once per module, not per render.
+const countries = countryList().getData();
+
+const FlagImage = ({ countryCode }: { countryCode: string }) => (
+  <img
+    src={`https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`}
+    alt={countryCode}
+    width={20}
+    height={15}
+    className="inline-block"
+  />
+);
+
 const CountrySelect = ({
   value,
   onChange,
@@ -38,20 +51,6 @@ const CountrySelect = ({
   onChange: (value: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
-
-  // Get country options with flags
-  const countries = countryList().getData();
-
-  // Helper function to get flag emoji
-  const FlagImage = ({ countryCode }: { countryCode: string }) => (
-    <img
-      src={`https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`}
-      alt={countryCode}
-      width={20}
-      height={15}
-      className="inline-block"
-    />
-  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
