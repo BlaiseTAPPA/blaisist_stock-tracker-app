@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:db": "node ./scripts/test-db-connection.js"
+    "test:db": "node ./scripts/test-db-connection.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.25",

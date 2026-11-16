@@ -1,5 +1,5 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
+import "dotenv/config";
+import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -10,7 +10,7 @@ if (!MONGODB_URI) {
 
 const testConnection = async () => {
     try {
-        const conn = await mongoose.connect(MONGODB_URI, { bufferCommands: false });
+        await mongoose.connect(MONGODB_URI, { bufferCommands: false });
         console.log("✅ MongoDB connection successful.");
         await mongoose.disconnect();
         process.exit(0);
