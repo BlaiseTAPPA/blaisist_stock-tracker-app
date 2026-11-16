@@ -5,12 +5,12 @@ import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/finnhub/client";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
-import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
+import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS } from "@/lib/constants";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
 
 
-const TOP_STOCKS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX", "ORCL", "CRM"];
+const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name }) => ({ symbol, company: name }));
 const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 
@@ -18,15 +18,22 @@ const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 export default async function Home() {
   const user = await getSessionUser();
-  const [topStocks, watchlist, news] = await Promise.all([
+
+  // The watchlist quotes chain off the DB read but run in parallel with the
+  // top-stocks and news calls, instead of waiting for them.
+  const watchlistPromise = (user ? getWatchlistForUser(user.id) : Promise.resolve([])).then(
+    async (items) => ({
+      items,
+      // The grid shows name, price and change only: no fundamentals needed.
+      data: items.length > 0 ? await getTopStocksData(items, { fundamentals: false }) : [],
+    }),
+  );
+
+  const [topStocks, { items: watchlist, data: watchlistData }, news] = await Promise.all([
     getTopStocksData(TOP_STOCKS),
-    user ? getWatchlistForUser(user.id) : Promise.resolve([]),
+    watchlistPromise,
     getNews(),
   ]);
-  const watchlistSymbols = watchlist.map((item) => item.symbol);
-const watchlistData = watchlistSymbols.length > 0
-  ? await getTopStocksData(watchlistSymbols)
-  : [];
 
   return (
     <div className="flex flex-col gap-10 min-h-screen">

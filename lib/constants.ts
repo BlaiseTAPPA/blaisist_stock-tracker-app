@@ -285,6 +285,22 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
     largeChartUrl: '',
 });
 
+// Static list for the dashboard "top stocks" table and the search dialog's
+// default results. Names and exchanges rarely change, so hard-coding them
+// saves 10 Finnhub /stock/profile2 calls per render (API-01).
+export const POPULAR_STOCKS: readonly { symbol: string; name: string; exchange: string }[] = [
+    { symbol: 'AAPL', name: 'Apple Inc', exchange: 'NASDAQ' },
+    { symbol: 'MSFT', name: 'Microsoft Corp', exchange: 'NASDAQ' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc', exchange: 'NASDAQ' },
+    { symbol: 'AMZN', name: 'Amazon.com Inc', exchange: 'NASDAQ' },
+    { symbol: 'TSLA', name: 'Tesla Inc', exchange: 'NASDAQ' },
+    { symbol: 'META', name: 'Meta Platforms Inc', exchange: 'NASDAQ' },
+    { symbol: 'NVDA', name: 'NVIDIA Corp', exchange: 'NASDAQ' },
+    { symbol: 'NFLX', name: 'Netflix Inc', exchange: 'NASDAQ' },
+    { symbol: 'ORCL', name: 'Oracle Corp', exchange: 'NYSE' },
+    { symbol: 'CRM', name: 'Salesforce Inc', exchange: 'NYSE' },
+];
+
 export const POPULAR_STOCK_SYMBOLS = [
     // Tech Giants (the big technology companies)
     'AAPL',

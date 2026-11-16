@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { getDateRange, validateArticle, formatArticle } from '@/lib/utils';
-import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants';
+import { mapWithConcurrency } from '@/lib/map-with-concurrency';
 import { FinnhubError, FinnhubRateLimitError } from '@/lib/finnhub/errors';
 import { enableFinnhubCallCounter } from '@/lib/finnhub/debug';
 
@@ -125,54 +125,64 @@ export async function getStockFinancials(symbol: string): Promise<FinancialsData
   return fetchJSON<FinancialsData>(`/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`, REVALIDATE.metric);
 }
 
-export async function getTopStocksData(symbols: string[]): Promise<StockWithData[]> {
-  const results = await Promise.all(
-    symbols.map(async (symbol) => {
-      try {
-        const [quote, profile, financials] = await Promise.all([
-          getStockQuote(symbol),
-          getStockProfile(symbol),
-          getStockFinancials(symbol),
-        ]);
+const MAX_CONCURRENT_SYMBOLS = 5;
 
-        const price = quote.c ?? 0;
-        const change = quote.dp ?? 0;
-        const cap = profile.marketCapitalization ?? 0;
-        const pe = financials.metric?.['peBasicExclExtraTTM'] ?? 0;
+const formatCap = (v: number) => {
+  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
+  if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
+  return `$${v.toFixed(0)}M`;
+};
 
-        const formatCap = (v: number) => {
-          if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
-          if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
-          return `$${v.toFixed(0)}M`;
-        };
+type StockInput = { symbol: string; company: string };
 
-        return {
-          userId: '',
-          symbol,
-          company: profile.name ?? symbol,
-          addedAt: new Date(),
-          currentPrice: price,
-          changePercent: change,
-          priceFormatted: `$${price.toFixed(2)}`,
-          changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
-          marketCap: cap ? formatCap(cap) : '—',
-          peRatio: pe ? pe.toFixed(1) : '—',
-        } satisfies StockWithData;
-      } catch {
-        return {
-          userId: '',
-          symbol,
-          company: symbol,
-          addedAt: new Date(),
-          priceFormatted: '—',
-          changeFormatted: '—',
-          marketCap: '—',
-          peRatio: '—',
-        } satisfies StockWithData;
-      }
-    })
-  );
-  return results;
+/**
+ * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
+ * P/E and market cap when `fundamentals` is true. Company names come from the
+ * caller (static list or watchlist document), so no `/stock/profile2` call.
+ * Cold cost: 1 call per symbol, 2 with fundamentals; at most 5 symbols in flight.
+ */
+export async function getTopStocksData(
+  stocks: readonly StockInput[],
+  { fundamentals = true }: { fundamentals?: boolean } = {},
+): Promise<StockWithData[]> {
+  return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company }) => {
+    try {
+      const [quote, financials] = await Promise.all([
+        getStockQuote(symbol),
+        // Fundamentals are optional: a failure there must not hide the price.
+        fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null),
+      ]);
+
+      const price = quote.c ?? 0;
+      const change = quote.dp ?? 0;
+      const cap = financials?.metric?.['marketCapitalization'] ?? 0;
+      const pe = financials?.metric?.['peBasicExclExtraTTM'] ?? 0;
+
+      return {
+        userId: '',
+        symbol,
+        company,
+        addedAt: new Date(),
+        currentPrice: price,
+        changePercent: change,
+        priceFormatted: `$${price.toFixed(2)}`,
+        changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+        marketCap: cap ? formatCap(cap) : '—',
+        peRatio: pe ? pe.toFixed(1) : '—',
+      } satisfies StockWithData;
+    } catch {
+      return {
+        userId: '',
+        symbol,
+        company,
+        addedAt: new Date(),
+        priceFormatted: '—',
+        changeFormatted: '—',
+        marketCap: '—',
+        peRatio: '—',
+      } satisfies StockWithData;
+    }
+  });
 }
 
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
@@ -246,66 +256,21 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
   }
 }
 
-// Subset of Finnhub /stock/profile2 fields read by searchStocks.
-type Profile2Data = ProfileData & { ticker?: string; exchange?: string };
-// Search result carrying the exchange read from profile2 (internal only).
-type SearchResultWithExchange = FinnhubSearchResult & { __exchange?: string };
-
-export async function searchStocks(query?: string): Promise<StockWithWatchlistStatus[]> {
+export async function searchStocks(query: string): Promise<StockWithWatchlistStatus[]> {
   try {
-    const trimmed = typeof query === 'string' ? query.trim() : '';
+    const trimmed = query.trim();
+    // Default results (empty query) come from the static POPULAR_STOCKS list,
+    // rendered by the Header without any Finnhub call.
+    if (!trimmed) return [];
 
-    let results: SearchResultWithExchange[] = [];
-
-    if (!trimmed) {
-      // Fetch top 10 popular symbols' profiles
-      const top = POPULAR_STOCK_SYMBOLS.slice(0, 10);
-      const profiles = await Promise.all(
-        top.map(async (sym) => {
-          try {
-            const profile = await fetchJSON<Profile2Data>(
-              `/stock/profile2?symbol=${encodeURIComponent(sym)}`,
-              REVALIDATE.profile,
-            );
-            return { sym, profile } as { sym: string; profile: Profile2Data | null };
-          } catch (e) {
-            console.error('Error fetching profile2 for', sym, e);
-            return { sym, profile: null } as { sym: string; profile: Profile2Data | null };
-          }
-        })
-      );
-
-      results = profiles
-        .map(({ sym, profile }) => {
-          const symbol = sym.toUpperCase();
-          const name: string | undefined = profile?.name || profile?.ticker || undefined;
-          const exchange: string | undefined = profile?.exchange || undefined;
-          if (!name) return undefined;
-          const r: SearchResultWithExchange = {
-            symbol,
-            description: name,
-            displaySymbol: symbol,
-            type: 'Common Stock',
-          };
-          // We don't include exchange in FinnhubSearchResult type, so carry via mapping later using profile
-          // To keep pipeline simple, attach exchange via closure map stage
-          // We'll reconstruct exchange when mapping to final type
-          r.__exchange = exchange; // internal only
-          return r;
-        })
-        .filter((x): x is SearchResultWithExchange => Boolean(x));
-    } else {
-      const data = await fetchJSON<FinnhubSearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
-      results = Array.isArray(data?.result) ? data.result : [];
-    }
+    const data = await fetchJSON<FinnhubSearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
+    const results: FinnhubSearchResult[] = Array.isArray(data?.result) ? data.result : [];
 
     const mapped: StockWithWatchlistStatus[] = results
       .map((r) => {
         const upper = (r.symbol || '').toUpperCase();
         const name = r.description || upper;
-        const exchangeFromDisplay = (r.displaySymbol as string | undefined) || undefined;
-        const exchangeFromProfile = r.__exchange;
-        const exchange = exchangeFromDisplay || exchangeFromProfile || 'US';
+        const exchange = r.displaySymbol || 'US';
         const type = r.type || 'Stock';
         const item: StockWithWatchlistStatus = {
           symbol: upper,
