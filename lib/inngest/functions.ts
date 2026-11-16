@@ -11,7 +11,7 @@ export const sendSignUpEmail = inngest.createFunction(
         id: 'sign-up-email',
         triggers: [{ event: 'app/user.created' }],
     },
-    async ({ event, step }: { event: any, step: any }) => {
+    async ({ event, step }) => {
         const userProfile = `
             - Country: ${event.data.country}
             - Investment goals: ${event.data.investmentGoals}
@@ -58,7 +58,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
             { cron: '0 12 * * *' }
         ],
     },
-    async ({ step }: { step: any }) => {
+    async ({ step }) => {
         // Step #1: Get all users for news delivery
         const users = await step.run('get-all-users', getAllUsersForNewsEmail)
 
@@ -103,7 +103,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
                 const newsContent = (part && 'text' in part ? part.text : null) || 'No market news.'
 
                 userNewsSummaries.push({ user, newsContent });
-            } catch (e) {
+            } catch {
                 console.error('Failed to summarize news for : ', user.email);
                 userNewsSummaries.push({ user, newsContent: null });
             }
