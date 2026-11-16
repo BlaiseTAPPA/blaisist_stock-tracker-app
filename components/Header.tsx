@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import NavItems from "./NavItems";
 import UserDropdown from "./UserDropdown";
-import { searchStocks } from "@/lib/actions/finnhub.actions";
+import { searchStocks } from "@/lib/finnhub/client";
 
 const Header = async ({ user }: { user: User }) => {
   const initialStocks = await searchStocks();

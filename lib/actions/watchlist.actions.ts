@@ -1,87 +1,45 @@
 "use server";
 
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/database/mongoose";
 import { Watchlist } from "@/database/models/watchlist.model";
-import { auth } from "@/lib/better-auth/auth";
-import { headers } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { requireUser } from "@/lib/auth/session";
 
-async function getCurrentUserId(): Promise<string | null> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  return session?.user?.id ?? null;
-}
+// Every export of a "use server" file is a public POST endpoint: keep this file
+// to authenticated, validated actions. Reads live in `lib/data/watchlist.ts`.
+
+const toggleWatchlistInput = z.object({
+  symbol: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9.\-]{1,12}$/),
+  company: z.string().trim().min(1).max(120),
+});
 
 export async function toggleWatchlist(
   symbol: string,
   company: string,
 ): Promise<{ added: boolean }> {
-  const userId = await getCurrentUserId();
-  if (!userId) throw new Error("Unauthenticated");
+  const { id: userId } = await requireUser();
+
+  const parsed = toggleWatchlistInput.safeParse({ symbol, company });
+  if (!parsed.success) throw new Error("Invalid watchlist input");
+  const input = parsed.data;
 
   await connectToDatabase();
 
-  const existing = await Watchlist.findOne({ userId, symbol });
+  const existing = await Watchlist.findOne({ userId, symbol: input.symbol });
   if (existing) {
-    await Watchlist.deleteOne({ userId, symbol });
+    await Watchlist.deleteOne({ userId, symbol: input.symbol });
     revalidatePath("/");
     revalidatePath("/watchlist");
     return { added: false };
   }
 
-  await Watchlist.create({ userId, symbol, company });
+  await Watchlist.create({ userId, symbol: input.symbol, company: input.company });
   revalidatePath("/");
   revalidatePath("/watchlist");
   return { added: true };
-}
-
-export async function isSymbolInWatchlist(symbol: string): Promise<boolean> {
-  const userId = await getCurrentUserId();
-  if (!userId) return false;
-
-  await connectToDatabase();
-  const exists = await Watchlist.exists({ userId, symbol });
-  return !!exists;
-}
-
-export async function getWatchlist(): Promise<
-  { symbol: string; company: string; addedAt: Date }[]
-> {
-  const userId = await getCurrentUserId();
-  if (!userId) return [];
-
-  await connectToDatabase();
-  const items = await Watchlist.find({ userId }).lean();
-  return items.map((i) => ({
-    symbol: String(i.symbol),
-    company: String(i.company),
-    addedAt: i.addedAt,
-  }));
-}
-
-export async function getWatchlistSymbolsByEmail(
-  email: string,
-): Promise<string[]> {
-  if (!email) return [];
-
-  try {
-    const mongoose = await connectToDatabase();
-    const db = mongoose.connection.db;
-    if (!db) throw new Error("MongoDB connection not found");
-
-    // Better Auth stores users in the "user" collection
-    const user = await db
-      .collection("user")
-      .findOne<{ _id?: unknown; id?: string; email?: string }>({ email });
-
-    if (!user) return [];
-
-    const userId = (user.id as string) || String(user._id || "");
-    if (!userId) return [];
-
-    const items = await Watchlist.find({ userId }, { symbol: 1 }).lean();
-    return items.map((i) => String(i.symbol));
-  } catch (err) {
-    console.error("getWatchlistSymbolsByEmail error:", err);
-    return [];
-  }
 }

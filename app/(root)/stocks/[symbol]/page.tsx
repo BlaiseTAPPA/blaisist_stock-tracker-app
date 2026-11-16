@@ -1,6 +1,7 @@
 import TradingViewWidget from "@/components/TradingViewWidget";
 import WatchlistButton from "@/components/WatchlistButton";
-import { isSymbolInWatchlist } from "@/lib/actions/watchlist.actions";
+import { isSymbolInWatchlist } from "@/lib/data/watchlist";
+import { getSessionUser } from "@/lib/auth/session";
 import {
   SYMBOL_INFO_WIDGET_CONFIG,
   CANDLE_CHART_WIDGET_CONFIG,
@@ -12,7 +13,8 @@ import {
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
   const { symbol } = await params;
-    const inWatchlist = await isSymbolInWatchlist(symbol.toUpperCase());
+  const user = await getSessionUser();
+  const inWatchlist = user ? await isSymbolInWatchlist(user.id, symbol.toUpperCase()) : false;
   const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
   return (
