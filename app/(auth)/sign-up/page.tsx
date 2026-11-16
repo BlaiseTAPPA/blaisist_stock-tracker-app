@@ -5,16 +5,14 @@ import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import {
   INVESTMENT_GOALS,
   RISK_TOLERANCE_OPTIONS,
   PREFERRED_INDUSTRIES,
 } from "@/lib/constants";
-import { error } from "console";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type Control, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const SignUp = () => {
@@ -36,6 +34,10 @@ const SignUp = () => {
     },
     mode: "onBlur",
   });
+
+  // Field components take an untyped `Control`; prompt 13 (TS-02) makes them
+  // generic over the form values and removes this cast.
+  const fieldControl = control as unknown as Control;
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
@@ -88,7 +90,7 @@ const SignUp = () => {
         <CountrySelectField
           name="country"
           label="Country"
-          control={control as any}
+          control={fieldControl}
           error={errors.country}
           required
         />
@@ -98,7 +100,7 @@ const SignUp = () => {
           label="Investment Goals"
           placeholder="Select your investment goal"
           options={INVESTMENT_GOALS}
-          control={control as any}
+          control={fieldControl}
           error={errors.preferredIndustry}
           required
         />
@@ -107,7 +109,7 @@ const SignUp = () => {
           label="Risk Tolerance"
           placeholder="Select your risk level"
           options={RISK_TOLERANCE_OPTIONS}
-          control={control as any}
+          control={fieldControl}
           error={errors.riskTolerance}
           required
         />
@@ -116,7 +118,7 @@ const SignUp = () => {
           label="Preferred Industry"
           placeholder="Select your preferred industry"
           options={PREFERRED_INDUSTRIES}
-          control={control as any}
+          control={fieldControl}
           error={errors.preferredIndustry}
           required
         />
