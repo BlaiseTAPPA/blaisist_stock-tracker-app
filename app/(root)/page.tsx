@@ -1,32 +1,47 @@
-export const dynamic = 'force-dynamic';
-
 import Link from "next/link";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/finnhub/client";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
-import { MARKET_OVERVIEW_WIDGET_CONFIG } from "@/lib/constants";
+import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS } from "@/lib/constants";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
 
 
-const TOP_STOCKS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX", "ORCL", "CRM"];
+const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name }) => ({ symbol, company: name }));
 const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 
 
 
+const MarketDataUnavailable = () => (
+  <p role="status" className="text-xs text-gray-500">
+    Market data unavailable, please try again in a minute.
+  </p>
+);
+
 export default async function Home() {
   const user = await getSessionUser();
-  const [topStocks, watchlist, news] = await Promise.all([
+
+  // The watchlist quotes chain off the DB read but run in parallel with the
+  // top-stocks and news calls, instead of waiting for them.
+  const watchlistPromise = (user ? getWatchlistForUser(user.id) : Promise.resolve([])).then(
+    async (items) => ({
+      items,
+      // The grid shows name, price and change only: no fundamentals needed.
+      data: items.length > 0 ? await getTopStocksData(items, { fundamentals: false }) : [],
+    }),
+  );
+
+  const [topStocks, { items: watchlist, data: watchlistData }, news] = await Promise.all([
     getTopStocksData(TOP_STOCKS),
-    user ? getWatchlistForUser(user.id) : Promise.resolve([]),
+    watchlistPromise,
     getNews(),
   ]);
-  const watchlistSymbols = watchlist.map((item) => item.symbol);
-const watchlistData = watchlistSymbols.length > 0
-  ? await getTopStocksData(watchlistSymbols)
-  : [];
+
+  const topStocksUnavailable = topStocks.every((s) => s.status === "unavailable");
+  const watchlistUnavailable =
+    watchlistData.length > 0 && watchlistData.every((s) => s.status === "unavailable");
 
   return (
     <div className="flex flex-col gap-10 min-h-screen">
@@ -61,7 +76,10 @@ const watchlistData = watchlistSymbols.length > 0
               <p className="text-gray-500 text-sm">No stocks in your watchlist yet.</p>
             </div>
           ) : (
-<WatchlistGrid initialData={watchlistData} />
+            <>
+              {watchlistUnavailable && <MarketDataUnavailable />}
+              <WatchlistGrid initialData={watchlistData} />
+            </>
           )}
         </div>
       </div>
@@ -111,6 +129,7 @@ const watchlistData = watchlistSymbols.length > 0
               </tbody>
             </table>
           </div>
+          {topStocksUnavailable && <MarketDataUnavailable />}
         </div>
 
         {/* Financial News */}
@@ -122,6 +141,11 @@ const watchlistData = watchlistSymbols.length > 0
             </Link>
           </div>
           <div className="flex flex-col divide-y divide-gray-700 rounded-lg border border-gray-600 bg-gray-800 overflow-hidden">
+            {news.length === 0 && (
+              <p role="status" className="p-10 text-center text-sm text-gray-500">
+                No news at the moment.
+              </p>
+            )}
             {news.slice(0, 5).map((article, index) => (
               <a
                 key={`${article.id}-${index}`}

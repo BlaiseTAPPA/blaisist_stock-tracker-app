@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import TradingViewWidget from "@/components/TradingViewWidget";

@@ -1,9 +1,26 @@
 import 'server-only';
 
 import { getDateRange, validateArticle, formatArticle } from '@/lib/utils';
-import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants';
+import { mapWithConcurrency } from '@/lib/map-with-concurrency';
+import { FinnhubError, FinnhubRateLimitError } from '@/lib/finnhub/errors';
+import { enableFinnhubCallCounter } from '@/lib/finnhub/debug';
+
+export { FinnhubError, FinnhubRateLimitError };
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
+
+// Data Cache lifetimes, in seconds.
+const REVALIDATE = {
+  quote: 60,
+  profile: 86_400,
+  metric: 86_400,
+  news: 300,
+  search: 1_800,
+} as const;
+
+const REQUEST_TIMEOUT_MS = 5_000;
+
+enableFinnhubCallCounter();
 
 // Read on every call (not at module load) so a missing key fails the request
 // with an explicit message instead of crashing the build.
@@ -15,93 +32,172 @@ function getFinnhubToken(): string {
   return token;
 }
 
-// Internal only: never export this, it fetches whatever URL it is given.
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const retryJitterMs = () => 300 + Math.floor(Math.random() * 500); // 300–800 ms
 
-async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T> { 
-  const options: RequestInit & { next?: { revalidate?: number } } = revalidateSeconds
-    ? { cache: 'force-cache', next: { revalidate: revalidateSeconds } }
-    : { cache: 'no-store' };
+function isRetryable(err: unknown): boolean {
+  if (err instanceof FinnhubRateLimitError) return false; // never hammer a 429
+  if (err instanceof FinnhubError) return err.status === null || err.status >= 500;
+  return false;
+}
 
-  const res = await fetch(url, options);
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Fetch failed ${res.status}: ${text}`);
+function retryAfterSeconds(res: Response): number | null {
+  const value = Number(res.headers.get('retry-after'));
+  return Number.isFinite(value) && value > 0 ? value : null;
+}
+
+async function fetchOnce<T>(url: string, endpoint: string, revalidateSeconds: number): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      cache: 'force-cache',
+      next: { revalidate: revalidateSeconds },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (err) {
+    // Timeout (TimeoutError) or network failure. Don't wrap the original
+    // error as `cause`: its message may echo the URL.
+    const timedOut = err instanceof Error && err.name === 'TimeoutError';
+    throw new FinnhubError(endpoint, null, timedOut ? `timeout after ${REQUEST_TIMEOUT_MS} ms` : 'network error');
   }
-  return (await res.json()) as T;
+
+  if (res.status === 429) {
+    await res.body?.cancel().catch(() => {});
+    throw new FinnhubRateLimitError(endpoint, retryAfterSeconds(res));
+  }
+  if (!res.ok) {
+    await res.body?.cancel().catch(() => {});
+    throw new FinnhubError(endpoint, res.status);
+  }
+
+  try {
+    return (await res.json()) as T;
+  } catch {
+    throw new FinnhubError(endpoint, res.status, 'invalid JSON response');
+  }
+}
+
+// Passing `signal` opts the request out of Next's per-render fetch
+// memoization (see next/dist/server/lib/dedupe-fetch.js), so identical
+// in-flight requests are shared here instead. Entries live only while the
+// request is pending; the Data Cache (`force-cache` + `revalidate`) still
+// applies.
+const inFlight = new Map<string, Promise<unknown>>();
+
+// Internal only: never export this, it fetches whatever URL it is given.
+// `path` is relative to the API base and must not contain the token; the
+// token is appended here.
+async function fetchJSON<T>(path: string, revalidateSeconds: number): Promise<T> {
+  const separator = path.includes('?') ? '&' : '?';
+  const url = `${FINNHUB_BASE_URL}${path}${separator}token=${getFinnhubToken()}`;
+  const endpoint = path.split('?')[0];
+
+  const pending = inFlight.get(url);
+  if (pending) return pending as Promise<T>;
+
+  const request = (async () => {
+    try {
+      return await fetchOnce<T>(url, endpoint, revalidateSeconds);
+    } catch (err) {
+      if (!isRetryable(err)) throw err;
+      await sleep(retryJitterMs());
+      return fetchOnce<T>(url, endpoint, revalidateSeconds);
+    }
+  })();
+
+  inFlight.set(url, request);
+  try {
+    return await request;
+  } finally {
+    inFlight.delete(url);
+  }
 }
 
 export async function getStockQuote(symbol: string): Promise<QuoteData> {
-  const token = getFinnhubToken();
-  const url = `${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(symbol)}&token=${token}`;
-  return fetchJSON<QuoteData>(url, 60);
+  return fetchJSON<QuoteData>(`/quote?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.quote);
 }
 
 export async function getStockProfile(symbol: string): Promise<ProfileData> {
-  const token = getFinnhubToken();
-  const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(symbol)}&token=${token}`;
-  return fetchJSON<ProfileData>(url, 3600);
+  return fetchJSON<ProfileData>(`/stock/profile2?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.profile);
 }
 
 export async function getStockFinancials(symbol: string): Promise<FinancialsData> {
-  const token = getFinnhubToken();
-  const url = `${FINNHUB_BASE_URL}/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all&token=${token}`;
-  return fetchJSON<FinancialsData>(url, 3600);
+  return fetchJSON<FinancialsData>(`/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`, REVALIDATE.metric);
 }
 
-export async function getTopStocksData(symbols: string[]): Promise<StockWithData[]> {
-  const results = await Promise.all(
-    symbols.map(async (symbol) => {
-      try {
-        const [quote, profile, financials] = await Promise.all([
-          getStockQuote(symbol),
-          getStockProfile(symbol),
-          getStockFinancials(symbol),
-        ]);
+const MAX_CONCURRENT_SYMBOLS = 5;
 
-        const price = quote.c ?? 0;
-        const change = quote.dp ?? 0;
-        const cap = profile.marketCapitalization ?? 0;
-        const pe = financials.metric?.['peBasicExclExtraTTM'] ?? 0;
+const formatCap = (v: number) => {
+  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
+  if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
+  return `$${v.toFixed(0)}M`;
+};
 
-        const formatCap = (v: number) => {
-          if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
-          if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
-          return `$${v.toFixed(0)}M`;
-        };
+type StockInput = { symbol: string; company: string };
 
-        return {
-          userId: '',
-          symbol,
-          company: profile.name ?? symbol,
-          addedAt: new Date(),
-          currentPrice: price,
-          changePercent: change,
-          priceFormatted: `$${price.toFixed(2)}`,
-          changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
-          marketCap: cap ? formatCap(cap) : '—',
-          peRatio: pe ? pe.toFixed(1) : '—',
-        } satisfies StockWithData;
-      } catch {
-        return {
-          userId: '',
-          symbol,
-          company: symbol,
-          addedAt: new Date(),
-          priceFormatted: '—',
-          changeFormatted: '—',
-          marketCap: '—',
-          peRatio: '—',
-        } satisfies StockWithData;
-      }
-    })
-  );
-  return results;
+/** `unavailable`: no usable quote (Finnhub error, timeout, 429 or unknown symbol). */
+export type StockDataStatus = 'ok' | 'unavailable';
+export type StockRow = StockWithData & { status: StockDataStatus };
+
+/**
+ * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
+ * P/E and market cap when `fundamentals` is true. Company names come from the
+ * caller (static list or watchlist document), so no `/stock/profile2` call.
+ * Cold cost: 1 call per symbol, 2 with fundamentals; at most 5 symbols in flight.
+ */
+export async function getTopStocksData(
+  stocks: readonly StockInput[],
+  { fundamentals = true }: { fundamentals?: boolean } = {},
+): Promise<StockRow[]> {
+  return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company }) => {
+    try {
+      const [quote, financials] = await Promise.all([
+        getStockQuote(symbol),
+        // Fundamentals are optional: a failure there must not hide the price.
+        fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null),
+      ]);
+
+      // Finnhub answers unknown symbols with an all-zero quote.
+      if (!quote.c) throw new Error('empty quote');
+
+      const price = quote.c;
+      const change = quote.dp ?? 0;
+      const cap = financials?.metric?.['marketCapitalization'] ?? 0;
+      const pe = financials?.metric?.['peBasicExclExtraTTM'] ?? 0;
+
+      return {
+        userId: '',
+        symbol,
+        company,
+        addedAt: new Date(),
+        currentPrice: price,
+        changePercent: change,
+        priceFormatted: `$${price.toFixed(2)}`,
+        changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+        marketCap: cap ? formatCap(cap) : '—',
+        peRatio: pe ? pe.toFixed(1) : '—',
+        status: 'ok',
+      } satisfies StockRow;
+    } catch {
+      return {
+        userId: '',
+        symbol,
+        company,
+        addedAt: new Date(),
+        priceFormatted: '—',
+        changeFormatted: '—',
+        marketCap: '—',
+        peRatio: '—',
+        status: 'unavailable',
+      } satisfies StockRow;
+    }
+  });
 }
 
+/** Never throws: returns `[]` when Finnhub is unavailable. */
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5);
-    const token = getFinnhubToken();
     const cleanSymbols = (symbols || [])
       .map((s) => s?.trim().toUpperCase())
       .filter((s): s is string => Boolean(s));
@@ -115,8 +211,8 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       await Promise.all(
         cleanSymbols.map(async (sym) => {
           try {
-            const url = `${FINNHUB_BASE_URL}/company-news?symbol=${encodeURIComponent(sym)}&from=${range.from}&to=${range.to}&token=${token}`;
-            const articles = await fetchJSON<RawNewsArticle[]>(url, 300);
+            const path = `/company-news?symbol=${encodeURIComponent(sym)}&from=${range.from}&to=${range.to}`;
+            const articles = await fetchJSON<RawNewsArticle[]>(path, REVALIDATE.news);
             perSymbolArticles[sym] = (articles || []).filter(validateArticle);
           } catch (e) {
             console.error('Error fetching company news for', sym, e);
@@ -149,8 +245,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
     }
 
     // General market news fallback or when no symbols provided
-    const generalUrl = `${FINNHUB_BASE_URL}/news?category=general&token=${token}`;
-    const general = await fetchJSON<RawNewsArticle[]>(generalUrl, 300);
+    const general = await fetchJSON<RawNewsArticle[]>('/news?category=general', REVALIDATE.news);
 
     const seen = new Set<string>();
     const unique: RawNewsArticle[] = [];
@@ -166,73 +261,26 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
     const formatted = unique.slice(0, maxArticles).map((a, idx) => formatArticle(a, false, undefined, idx));
     return formatted;
   } catch (err) {
-    console.error('getNews error:', err);
-    throw new Error('Failed to fetch news');
+    console.error('getNews error:', err instanceof Error ? err.message : err);
+    return [];
   }
 }
 
-// Subset of Finnhub /stock/profile2 fields read by searchStocks.
-type Profile2Data = ProfileData & { ticker?: string; exchange?: string };
-// Search result carrying the exchange read from profile2 (internal only).
-type SearchResultWithExchange = FinnhubSearchResult & { __exchange?: string };
-
-export async function searchStocks(query?: string): Promise<StockWithWatchlistStatus[]> {
+export async function searchStocks(query: string): Promise<StockWithWatchlistStatus[]> {
   try {
-    const token = getFinnhubToken();
+    const trimmed = query.trim();
+    // Default results (empty query) come from the static POPULAR_STOCKS list,
+    // rendered by the Header without any Finnhub call.
+    if (!trimmed) return [];
 
-    const trimmed = typeof query === 'string' ? query.trim() : '';
-
-    let results: SearchResultWithExchange[] = [];
-
-    if (!trimmed) {
-      // Fetch top 10 popular symbols' profiles
-      const top = POPULAR_STOCK_SYMBOLS.slice(0, 10);
-      const profiles = await Promise.all(
-        top.map(async (sym) => {
-          try {
-            const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(sym)}&token=${token}`;
-            // Revalidate every hour
-            const profile = await fetchJSON<Profile2Data>(url, 3600);
-            return { sym, profile } as { sym: string; profile: Profile2Data | null };
-          } catch (e) {
-            console.error('Error fetching profile2 for', sym, e);
-            return { sym, profile: null } as { sym: string; profile: Profile2Data | null };
-          }
-        })
-      );
-
-      results = profiles
-        .map(({ sym, profile }) => {
-          const symbol = sym.toUpperCase();
-          const name: string | undefined = profile?.name || profile?.ticker || undefined;
-          const exchange: string | undefined = profile?.exchange || undefined;
-          if (!name) return undefined;
-          const r: SearchResultWithExchange = {
-            symbol,
-            description: name,
-            displaySymbol: symbol,
-            type: 'Common Stock',
-          };
-          // We don't include exchange in FinnhubSearchResult type, so carry via mapping later using profile
-          // To keep pipeline simple, attach exchange via closure map stage
-          // We'll reconstruct exchange when mapping to final type
-          r.__exchange = exchange; // internal only
-          return r;
-        })
-        .filter((x): x is SearchResultWithExchange => Boolean(x));
-    } else {
-      const url = `${FINNHUB_BASE_URL}/search?q=${encodeURIComponent(trimmed)}&token=${token}`;
-      const data = await fetchJSON<FinnhubSearchResponse>(url, 1800);
-      results = Array.isArray(data?.result) ? data.result : [];
-    }
+    const data = await fetchJSON<FinnhubSearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
+    const results: FinnhubSearchResult[] = Array.isArray(data?.result) ? data.result : [];
 
     const mapped: StockWithWatchlistStatus[] = results
       .map((r) => {
         const upper = (r.symbol || '').toUpperCase();
         const name = r.description || upper;
-        const exchangeFromDisplay = (r.displaySymbol as string | undefined) || undefined;
-        const exchangeFromProfile = r.__exchange;
-        const exchange = exchangeFromDisplay || exchangeFromProfile || 'US';
+        const exchange = r.displaySymbol || 'US';
         const type = r.type || 'Stock';
         const item: StockWithWatchlistStatus = {
           symbol: upper,
