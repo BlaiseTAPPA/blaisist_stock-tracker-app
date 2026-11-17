@@ -93,7 +93,7 @@ const inFlight = new Map<string, Promise<unknown>>();
 async function fetchJSON<T>(path: string, revalidateSeconds: number): Promise<T> {
   const separator = path.includes('?') ? '&' : '?';
   const url = `${FINNHUB_BASE_URL}${path}${separator}token=${getFinnhubToken()}`;
-  const endpoint = path.split('?')[0];
+  const [endpoint = path] = path.split('?');
 
   const pending = inFlight.get(url);
   if (pending) return pending as Promise<T>;
@@ -220,8 +220,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       const collected: MarketNewsArticle[] = [];
       // Round-robin up to 6 picks
       for (let round = 0; round < maxArticles; round++) {
-        for (let i = 0; i < cleanSymbols.length; i++) {
-          const sym = cleanSymbols[i];
+        for (const sym of cleanSymbols) {
           const list = perSymbolArticles[sym] || [];
           if (list.length === 0) continue;
           const article = list.shift();

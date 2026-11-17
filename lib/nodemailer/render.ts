@@ -17,7 +17,7 @@ import {
  */
 const fillTemplate = (template: string, values: Record<string, string>) =>
   template.replace(/\{\{(\w+)\}\}/g, (placeholder, key: string) =>
-    Object.hasOwn(values, key) ? values[key] : placeholder,
+    (Object.hasOwn(values, key) ? values[key] : undefined) ?? placeholder,
   );
 
 export const renderWelcomeEmail = ({

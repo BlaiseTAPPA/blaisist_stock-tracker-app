@@ -7,12 +7,13 @@ export async function mapWithConcurrency<T, R>(
   fn: (item: T, index: number) => Promise<R>,
 ): Promise<R[]> {
   const results = new Array<R>(items.length);
-  let next = 0;
+  // Shared by all workers: each `next()` hands out the following item once.
+  const entries = items.entries();
 
   const worker = async () => {
-    while (next < items.length) {
-      const index = next++;
-      results[index] = await fn(items[index], index);
+    for (let entry = entries.next(); !entry.done; entry = entries.next()) {
+      const [index, item] = entry.value;
+      results[index] = await fn(item, index);
     }
   };
 
