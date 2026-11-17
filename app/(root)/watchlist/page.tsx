@@ -12,10 +12,7 @@ export default async function WatchlistPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-100">My Watchlist</h1>
-        {/* <span className="text-sm text-gray-500">{items.length} stock{items.length !== 1 ? 's' : ''}</span> */}
-      </div>
+      <h1 className="text-2xl font-bold text-gray-100">My Watchlist</h1>
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/30 p-20 text-center">

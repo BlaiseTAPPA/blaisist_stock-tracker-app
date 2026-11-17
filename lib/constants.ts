@@ -29,22 +29,12 @@ export const PREFERRED_INDUSTRIES = [
     { value: 'Consumer Goods', label: 'Consumer Goods' },
 ];
 
-export const ALERT_TYPE_OPTIONS = [
-    { value: 'upper', label: 'Upper' },
-    { value: 'lower', label: 'Lower' },
-];
-
-export const CONDITION_OPTIONS = [
-    { value: 'greater', label: 'Greater than (>)' },
-    { value: 'less', label: 'Less than (<)' },
-];
-
 // TradingView Charts
 // Every embed script lives at `${TRADINGVIEW_SCRIPT_BASE_URL}<widget>.js`.
 export const TRADINGVIEW_SCRIPT_BASE_URL = 'https://s3.tradingview.com/external-embedding/embed-widget-';
 
 // The app is dark-only; one constant so a future theme switch has one place to change.
-export const TV_THEME = 'dark' as const;
+const TV_THEME = 'dark' as const;
 
 export const MARKET_OVERVIEW_WIDGET_CONFIG = {
     colorTheme: TV_THEME, // dark mode
@@ -123,17 +113,6 @@ export const HEATMAP_WIDGET_CONFIG = {
     height: '600',
 };
 
-export const TOP_STORIES_WIDGET_CONFIG = {
-    displayMode: 'regular',
-    feedMode: 'market',
-    colorTheme: TV_THEME,
-    isTransparent: true,
-    locale: 'en',
-    market: 'stock',
-    width: '100%',
-    height: '600',
-};
-
 export const NEWS_INDUSTRIES = [
   { label: 'All Markets', symbol: null, market: 'stock' },
   { label: 'Technology', symbol: 'NASDAQ:AAPL' },
@@ -154,51 +133,6 @@ export const getNewsWidgetConfig = (symbol?: string) => ({
   width: '100%',
   height: '600',
 });
-
-export const MARKET_DATA_WIDGET_CONFIG = {
-    title: 'Stocks',
-    width: '100%',
-    height: 600,
-    locale: 'en',
-    showSymbolLogo: true,
-    colorTheme: TV_THEME,
-    isTransparent: false,
-    backgroundColor: '#0F0F0F',
-    symbolsGroups: [
-        {
-            name: 'Financial',
-            symbols: [
-                { name: 'NYSE:JPM', displayName: 'JPMorgan Chase' },
-                { name: 'NYSE:WFC', displayName: 'Wells Fargo Co New' },
-                { name: 'NYSE:BAC', displayName: 'Bank Amer Corp' },
-                { name: 'NYSE:HSBC', displayName: 'Hsbc Hldgs Plc' },
-                { name: 'NYSE:C', displayName: 'Citigroup Inc' },
-                { name: 'NYSE:MA', displayName: 'Mastercard Incorporated' },
-            ],
-        },
-        {
-            name: 'Technology',
-            symbols: [
-                { name: 'NASDAQ:AAPL', displayName: 'Apple' },
-                { name: 'NASDAQ:GOOGL', displayName: 'Alphabet' },
-                { name: 'NASDAQ:MSFT', displayName: 'Microsoft' },
-                { name: 'NASDAQ:FB', displayName: 'Meta Platforms' },
-                { name: 'NYSE:ORCL', displayName: 'Oracle Corp' },
-                { name: 'NASDAQ:INTC', displayName: 'Intel Corp' },
-            ],
-        },
-        {
-            name: 'Services',
-            symbols: [
-                { name: 'NASDAQ:AMZN', displayName: 'Amazon' },
-                { name: 'NYSE:BABA', displayName: 'Alibaba Group Hldg Ltd' },
-                { name: 'NYSE:T', displayName: 'At&t Inc' },
-                { name: 'NYSE:WMT', displayName: 'Walmart' },
-                { name: 'NYSE:V', displayName: 'Visa' },
-            ],
-        },
-    ],
-};
 
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
@@ -306,80 +240,4 @@ export const POPULAR_STOCKS: readonly { symbol: string; name: string; exchange: 
     { symbol: 'NFLX', name: 'Netflix Inc', exchange: 'NASDAQ' },
     { symbol: 'ORCL', name: 'Oracle Corp', exchange: 'NYSE' },
     { symbol: 'CRM', name: 'Salesforce Inc', exchange: 'NYSE' },
-];
-
-export const POPULAR_STOCK_SYMBOLS = [
-    // Tech Giants (the big technology companies)
-    'AAPL',
-    'MSFT',
-    'GOOGL',
-    'AMZN',
-    'TSLA',
-    'META',
-    'NVDA',
-    'NFLX',
-    'ORCL',
-    'CRM',
-
-    // Growing Tech Companies
-    'ADBE',
-    'INTC',
-    'AMD',
-    'PYPL',
-    'UBER',
-    'ZOOM',
-    'SPOT',
-    'SQ',
-    'SHOP',
-    'ROKU',
-
-    // Newer Tech Companies
-    'SNOW',
-    'PLTR',
-    'COIN',
-    'RBLX',
-    'DDOG',
-    'CRWD',
-    'NET',
-    'OKTA',
-    'TWLO',
-    'ZM',
-
-    // Consumer & Delivery Apps
-    'DOCU',
-    'PTON',
-    'PINS',
-    'SNAP',
-    'LYFT',
-    'DASH',
-    'ABNB',
-    'RIVN',
-    'LCID',
-    'NIO',
-
-    // International Companies
-    'XPEV',
-    'LI',
-    'BABA',
-    'JD',
-    'PDD',
-    'TME',
-    'BILI',
-    'DIDI',
-    'GRAB',
-    'SE',
-];
-
-export const NO_MARKET_NEWS =
-    '<p class="mobile-text" style="margin:0 0 20px 0;font-size:16px;line-height:1.6;color:#4b5563;">No market news available today. Please check back tomorrow.</p>';
-
-export const WATCHLIST_TABLE_HEADER = [
-    'Company',
-    'Symbol',
-    'Price',
-    'Change',
-    'Market Cap',
-    'P/E Ratio',
-    'Alert',
-    'Action',
 ];
