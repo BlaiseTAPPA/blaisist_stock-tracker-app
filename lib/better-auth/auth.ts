@@ -5,6 +5,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { mongoClient } from "@/lib/db/mongo-client";
 import { inngest } from "@/lib/inngest/client";
+import { userVerified } from "@/lib/inngest/events";
 import { sendVerificationEmail } from "@/lib/nodemailer";
 
 /** Where the verification link lands, on success (signed in) or on error (`?error=CODE`). */
@@ -58,17 +59,17 @@ export const auth = betterAuth({
       // present on the stored document.
       const profile = user as typeof user & UserProfile;
       try {
-        await inngest.send({
-          name: "app/user.created",
-          data: {
+        await inngest.send(
+          userVerified.create({
+            userId: profile.id,
             email: profile.email,
             name: profile.name,
             country: profile.country ?? "",
             investmentGoals: profile.investmentGoals ?? "",
             riskTolerance: profile.riskTolerance ?? "",
             preferredIndustry: profile.preferredIndustry ?? "",
-          },
-        });
+          }),
+        );
       } catch (e) {
         console.error("Failed to send app/user.created event", e);
       }

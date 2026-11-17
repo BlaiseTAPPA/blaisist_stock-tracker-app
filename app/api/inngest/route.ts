@@ -1,6 +1,6 @@
 import {serve} from "inngest/next";
 import {inngest} from "@/lib/inngest/client";
-import {sendDailyNewsSummary, sendSignUpEmail} from "@/lib/inngest/functions";
+import {dailyNewsFanOut, newsDigestForUser, sendSignUpEmail} from "@/lib/inngest/functions";
 
 // The signing key is read from the environment by the SDK; never hard-code it.
 // Without it (or with dev mode on), requests to this endpoint are not
@@ -17,5 +17,5 @@ if (process.env.VERCEL_ENV === "production") {
 
 export const { GET, POST, PUT } = serve({
     client: inngest,
-    functions: [sendSignUpEmail, sendDailyNewsSummary],
+    functions: [sendSignUpEmail, dailyNewsFanOut, newsDigestForUser],
 })

@@ -130,7 +130,7 @@ export const getAlertText = (alert: Alert) => {
   return `Price ${condition} ${formatPrice(alert.threshold)}`;
 };
 
-export const getFormattedTodayDate = () => new Date().toLocaleDateString('en-US', {
+export const getFormattedTodayDate = (date: Date = new Date()) => date.toLocaleDateString('en-US', {
   weekday: 'long',
   year: 'numeric',
   month: 'long',

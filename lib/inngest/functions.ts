@@ -1,124 +1,140 @@
-import {inngest} from "@/lib/inngest/client";
-import {NEWS_SUMMARY_EMAIL_PROMPT, PERSONALIZED_WELCOME_EMAIL_PROMPT} from "@/lib/inngest/prompts";
-import {sendNewsSummaryEmail, sendWelcomeEmail} from "@/lib/nodemailer";
-import {getAllUsersForNewsEmail} from "@/lib/data/users";
-import { getWatchlistSymbolsByEmail } from "@/lib/data/watchlist";
+import { cron } from "inngest";
+import { inngest } from "@/lib/inngest/client";
+import { dailyNewsRequested, newsDigestRequested, userVerified } from "@/lib/inngest/events";
+import { NEWS_SUMMARY_EMAIL_PROMPT, PERSONALIZED_WELCOME_EMAIL_PROMPT } from "@/lib/inngest/prompts";
+import { sendNewsSummaryEmail, sendWelcomeEmail } from "@/lib/nodemailer";
+import { getNewsDigestRecipients } from "@/lib/data/users";
 import { getNews } from "@/lib/finnhub/client";
 import { getFormattedTodayDate } from "@/lib/utils";
 
+// Step IDs must stay constant and free of personal data: they are stored in
+// the Inngest run history.
+
+const GEMINI_MODEL = "gemini-2.5-flash-lite";
+
+/** Events per `step.sendEvent` call, well below Inngest's request size limit. */
+const FAN_OUT_CHUNK_SIZE = 500;
+
+type GeminiResponse = {
+    candidates?: { content?: { parts?: ({ text: string } | object)[] } }[];
+};
+
+const firstText = (response: GeminiResponse): string | null => {
+    const part = response.candidates?.[0]?.content?.parts?.[0];
+    return part && "text" in part ? part.text : null;
+};
+
 export const sendSignUpEmail = inngest.createFunction(
-    { 
-        id: 'sign-up-email',
-        triggers: [{ event: 'app/user.created' }],
+    {
+        id: "sign-up-email",
+        triggers: [userVerified],
+        // One welcome email per user, even if the event is sent twice.
+        idempotency: "event.data.userId",
     },
     async ({ event, step }) => {
+        const { email, name, country, investmentGoals, riskTolerance, preferredIndustry } = event.data;
+
         const userProfile = `
-            - Country: ${event.data.country}
-            - Investment goals: ${event.data.investmentGoals}
-            - Risk tolerance: ${event.data.riskTolerance}
-            - Preferred industry: ${event.data.preferredIndustry}
-        `
+            - Country: ${country}
+            - Investment goals: ${investmentGoals}
+            - Risk tolerance: ${riskTolerance}
+            - Preferred industry: ${preferredIndustry}
+        `;
 
-        const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace('{{userProfile}}', userProfile)
+        const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace("{{userProfile}}", userProfile);
 
-        const response = await step.ai.infer('generate-welcome-intro', {
-            model: step.ai.models.gemini({ model: 'gemini-2.5-flash-lite' }),
-            body: {
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            { text: prompt }
-                        ]
-                    }]
-            }
-        })
-
-        await step.run('send-welcome-email', async () => {
-            const part = response.candidates?.[0]?.content?.parts?.[0];
-            const introText = (part && 'text' in part ? part.text : null) ||'Thanks for joining Signalist. You now have the tools to track markets and make smarter moves.'
-
-            const { data: { email, name } } = event;
-
-            return await sendWelcomeEmail({ email, name, intro: introText });
-        })
-
-        return {
-            success: true,
-            message: 'Welcome email sent successfully'
-        }
-    }
-)
-
-export const sendDailyNewsSummary = inngest.createFunction(
-    { 
-        id: 'daily-news-summary',
-        triggers: [
-            { event: 'app/send.daily.news' },
-            { cron: '0 12 * * *' }
-        ],
-    },
-    async ({ step }) => {
-        // Step #1: Get all users for news delivery
-        const users = await step.run('get-all-users', getAllUsersForNewsEmail)
-
-        if(!users || users.length === 0) return { success: false, message: 'No users found for news email' };
-
-        // Step #2: For each user, get watchlist symbols -> fetch news (fallback to general)
-        const results = await step.run('fetch-user-news', async () => {
-            const perUser: Array<{ user: User; articles: MarketNewsArticle[] }> = [];
-            for (const user of users as User[]) {
-                try {
-                    const symbols = await getWatchlistSymbolsByEmail(user.email);
-                    let articles = await getNews(symbols);
-                    articles = (articles || []).slice(0, 6);
-                    if (!articles || articles.length === 0) {
-                        articles = await getNews();
-                        articles = (articles || []).slice(0, 6);
-                    }
-                    perUser.push({ user, articles });
-                } catch (e) {
-                    console.error('daily-news: error preparing user news', user.email, e);
-                    perUser.push({ user, articles: [] });
-                }
-            }
-            return perUser;
+        const response = await step.ai.infer("generate-welcome-intro", {
+            model: step.ai.models.gemini({ model: GEMINI_MODEL }),
+            body: { contents: [{ role: "user", parts: [{ text: prompt }] }] },
         });
 
-        // Step #3: Summarize news via AI
-        const userNewsSummaries: { user: User; newsContent: string | null }[] = [];
+        await step.run("send-welcome-email", async () => {
+            const intro = firstText(response)
+                || "Thanks for joining Signalist. You now have the tools to track markets and make smarter moves.";
 
-        for (const { user, articles } of results) {
-            try {
-                const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace('{{newsData}}', JSON.stringify(articles, null, 2));
+            await sendWelcomeEmail({ email, name, intro });
+        });
 
-                const response = await step.ai.infer(`summarize-news-${user.email}`, {
-                    model: step.ai.models.gemini({ model: 'gemini-2.5-flash-lite' }),
-                    body: {
-                        contents: [{ role: 'user', parts: [{ text: prompt }]}]
-                    }
-                });
+        return { success: true, message: "Welcome email sent successfully" };
+    }
+);
 
-                const part = response.candidates?.[0]?.content?.parts?.[0];
-                const newsContent = (part && 'text' in part ? part.text : null) || 'No market news.'
+/**
+ * Daily digest, step 1: load every recipient in one query and emit one
+ * `app/news.digest.requested` event per recipient. The per-user work happens
+ * in `news-digest-user`, so one failure or timeout only affects one user.
+ */
+export const dailyNewsFanOut = inngest.createFunction(
+    {
+        id: "daily-news-fanout",
+        triggers: [cron("0 12 * * *"), dailyNewsRequested],
+    },
+    async ({ step }) => {
+        // The date is computed inside the step so a replay (even after
+        // midnight UTC) reuses the same day, hence the same idempotency keys.
+        const { date, recipients } = await step.run("load-recipients", async () => ({
+            date: new Date().toISOString().slice(0, 10),
+            recipients: await getNewsDigestRecipients(),
+        }));
 
-                userNewsSummaries.push({ user, newsContent });
-            } catch {
-                console.error('Failed to summarize news for : ', user.email);
-                userNewsSummaries.push({ user, newsContent: null });
-            }
+        if (recipients.length === 0) return { sent: 0, date };
+
+        for (let i = 0; i < recipients.length; i += FAN_OUT_CHUNK_SIZE) {
+            const chunk = recipients.slice(i, i + FAN_OUT_CHUNK_SIZE);
+            await step.sendEvent(
+                `fan-out-${i / FAN_OUT_CHUNK_SIZE}`,
+                chunk.map(({ id, email, name, symbols }) =>
+                    newsDigestRequested.create(
+                        { userId: id, email, name, symbols, date },
+                        // Same id = same event for Inngest, deduplicated for 24 h.
+                        { id: `news-digest-${id}-${date}` },
+                    )
+                ),
+            );
         }
 
-        // Step #4: Send the emails
-        await step.run('send-news-emails', async () => {
-            await Promise.all(
-                userNewsSummaries.map(async ({ user, newsContent }) => {
-                    if(!newsContent) return false;
-                    return await sendNewsSummaryEmail({ email: user.email, date: getFormattedTodayDate(), newsContent })
-                })
-            )
-        })
-
-        return { success: true, message: 'Daily news summary emails sent successfully' }
+        return { sent: recipients.length, date };
     }
-)
+);
+
+/** Daily digest, step 2: news, summary and email for one recipient. */
+export const newsDigestForUser = inngest.createFunction(
+    {
+        id: "news-digest-user",
+        triggers: [newsDigestRequested],
+        // At most one digest per user and per day, even if the fan-out runs twice.
+        idempotency: "event.data.userId + '-' + event.data.date",
+        // Finnhub free tier: 60 calls/min. A run makes up to 3 symbol calls
+        // plus 1 general-news fallback, so 15 runs/min stays under it (and
+        // well under Gmail's sending limits). Excess runs are queued, not dropped.
+        throttle: { limit: 15, period: "1m" },
+        concurrency: { limit: 5 },
+    },
+    async ({ event, step }) => {
+        const { email, symbols, date } = event.data;
+
+        // getNews falls back to general market news when the symbols have none.
+        const articles = await step.run("fetch-news", async () => (await getNews(symbols)).slice(0, 6));
+
+        if (articles.length === 0) return { sent: false, reason: "no-news" };
+
+        const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace("{{newsData}}", JSON.stringify(articles, null, 2));
+
+        const response = await step.ai.infer("summarize", {
+            model: step.ai.models.gemini({ model: GEMINI_MODEL }),
+            body: { contents: [{ role: "user", parts: [{ text: prompt }] }] },
+        });
+
+        const newsContent = firstText(response) || "No market news.";
+
+        await step.run("send-email", async () => {
+            await sendNewsSummaryEmail({
+                email,
+                date: getFormattedTodayDate(new Date(`${date}T00:00:00Z`)),
+                newsContent,
+            });
+        });
+
+        return { sent: true };
+    }
+);
