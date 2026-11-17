@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:db": "node ./scripts/test-db-connection.mjs"
+    "test:db": "node ./scripts/test-db-connection.mjs",
+    "preview:emails": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON ./scripts/preview-emails.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.25",
