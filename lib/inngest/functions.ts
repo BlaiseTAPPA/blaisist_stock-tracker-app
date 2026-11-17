@@ -132,6 +132,8 @@ export const newsDigestForUser = inngest.createFunction(
                 email,
                 date: getFormattedTodayDate(new Date(`${date}T00:00:00Z`)),
                 newsContent,
+                // Links in the summary must point to these articles.
+                allowedUrls: articles.map((article) => article.url),
             });
         });
 
