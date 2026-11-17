@@ -148,8 +148,12 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 </tr>
                             </table>
                             
+                            <!-- Disclaimer: fixed text, outside the AI-generated placeholders -->
+                            <p class="mobile-text dark-text-muted" style="margin: 40px 0 0 0; font-size: 12px; line-height: 1.5; color: #9095A1 !important; text-align: center;">
+                                This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.
+                            </p>
                             <!-- Footer Text -->
-                            <p class="mobile-text dark-text-muted" style="margin: 40px 0 0 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important; text-align: center;">
+                            <p class="mobile-text dark-text-muted" style="margin: 20px 0 0 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important; text-align: center;">
                                Signalist HQ, Germersheim, GER 76726, Deutshland <br>
                                 <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
                                 <a href="https://blaisist_stock-tracker-app.vercel.app/" style="color: #CCDADC !important; text-decoration: underline;">Visit Signalist</a><br>
@@ -283,6 +287,10 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             
                             <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
+                                <!-- Disclaimer: fixed text, outside the AI-generated placeholders -->
+                                <p class="mobile-text dark-text-muted" style="margin: 0 0 20px 0; font-size: 12px; line-height: 1.5; color: #9095A1 !important; text-align: center;">
+                                    This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.
+                                </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
                                     You're receiving this because you subscribed to Signalist news updates.
                                 </p>

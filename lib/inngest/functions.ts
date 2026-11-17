@@ -41,7 +41,7 @@ export const sendSignUpEmail = inngest.createFunction(
             - Preferred industry: ${preferredIndustry}
         `;
 
-        const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace("{{userProfile}}", userProfile);
+        const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace("{{userProfile}}", () => userProfile);
 
         const response = await step.ai.infer("generate-welcome-intro", {
             model: step.ai.models.gemini({ model: GEMINI_MODEL }),
@@ -50,7 +50,7 @@ export const sendSignUpEmail = inngest.createFunction(
 
         await step.run("send-welcome-email", async () => {
             const intro = firstText(response)
-                || "Thanks for joining Signalist. You now have the tools to track markets and make smarter moves.";
+                || "Thanks for joining Signalist. You now have the tools to track markets and follow the stocks you care about.";
 
             await sendWelcomeEmail({ email, name, intro });
         });
@@ -118,7 +118,8 @@ export const newsDigestForUser = inngest.createFunction(
 
         if (articles.length === 0) return { sent: false, reason: "no-news" };
 
-        const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace("{{newsData}}", JSON.stringify(articles, null, 2));
+        // Function replacer: a `$` in article text must not be read as a pattern.
+        const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace("{{newsData}}", () => JSON.stringify(articles, null, 2));
 
         const response = await step.ai.infer("summarize", {
             model: step.ai.models.gemini({ model: GEMINI_MODEL }),
