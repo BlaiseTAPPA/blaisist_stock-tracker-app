@@ -4,6 +4,9 @@ import { getDateRange, validateArticle, formatArticle } from '@/lib/utils';
 import { mapWithConcurrency } from '@/lib/map-with-concurrency';
 import { FinnhubError, FinnhubRateLimitError } from '@/lib/finnhub/errors';
 import { enableFinnhubCallCounter } from '@/lib/finnhub/debug';
+import type { MetricResponse, ProfileResponse, QuoteResponse, SearchResponse, SearchResultItem } from '@/types/finnhub';
+import type { MarketNewsArticle, RawNewsArticle } from '@/types/news';
+import type { StockQuoteRow, StockSearchResult } from '@/types/stock';
 
 export { FinnhubError, FinnhubRateLimitError };
 
@@ -113,16 +116,16 @@ async function fetchJSON<T>(path: string, revalidateSeconds: number): Promise<T>
   }
 }
 
-export async function getStockQuote(symbol: string): Promise<QuoteData> {
-  return fetchJSON<QuoteData>(`/quote?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.quote);
+export async function getStockQuote(symbol: string): Promise<QuoteResponse> {
+  return fetchJSON<QuoteResponse>(`/quote?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.quote);
 }
 
-export async function getStockProfile(symbol: string): Promise<ProfileData> {
-  return fetchJSON<ProfileData>(`/stock/profile2?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.profile);
+export async function getStockProfile(symbol: string): Promise<ProfileResponse> {
+  return fetchJSON<ProfileResponse>(`/stock/profile2?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.profile);
 }
 
-export async function getStockFinancials(symbol: string): Promise<FinancialsData> {
-  return fetchJSON<FinancialsData>(`/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`, REVALIDATE.metric);
+export async function getStockFinancials(symbol: string): Promise<MetricResponse> {
+  return fetchJSON<MetricResponse>(`/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`, REVALIDATE.metric);
 }
 
 const MAX_CONCURRENT_SYMBOLS = 5;
@@ -135,9 +138,6 @@ const formatCap = (v: number) => {
 
 type StockInput = { symbol: string; company: string };
 
-/** `unavailable`: no usable quote (Finnhub error, timeout, 429 or unknown symbol). */
-export type StockDataStatus = 'ok' | 'unavailable';
-export type StockRow = StockWithData & { status: StockDataStatus };
 
 /**
  * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
@@ -148,7 +148,7 @@ export type StockRow = StockWithData & { status: StockDataStatus };
 export async function getTopStocksData(
   stocks: readonly StockInput[],
   { fundamentals = true }: { fundamentals?: boolean } = {},
-): Promise<StockRow[]> {
+): Promise<StockQuoteRow[]> {
   return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company }) => {
     try {
       const [quote, financials] = await Promise.all([
@@ -166,10 +166,8 @@ export async function getTopStocksData(
       const pe = financials?.metric?.['peBasicExclExtraTTM'] ?? 0;
 
       return {
-        userId: '',
         symbol,
         company,
-        addedAt: new Date(),
         currentPrice: price,
         changePercent: change,
         priceFormatted: `$${price.toFixed(2)}`,
@@ -177,19 +175,17 @@ export async function getTopStocksData(
         marketCap: cap ? formatCap(cap) : '—',
         peRatio: pe ? pe.toFixed(1) : '—',
         status: 'ok',
-      } satisfies StockRow;
+      } satisfies StockQuoteRow;
     } catch {
       return {
-        userId: '',
         symbol,
         company,
-        addedAt: new Date(),
         priceFormatted: '—',
         changeFormatted: '—',
         marketCap: '—',
         peRatio: '—',
         status: 'unavailable',
-      } satisfies StockRow;
+      } satisfies StockQuoteRow;
     }
   });
 }
@@ -266,24 +262,24 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
   }
 }
 
-export async function searchStocks(query: string): Promise<StockWithWatchlistStatus[]> {
+export async function searchStocks(query: string): Promise<StockSearchResult[]> {
   try {
     const trimmed = query.trim();
     // Default results (empty query) come from the static POPULAR_STOCKS list,
     // rendered by the Header without any Finnhub call.
     if (!trimmed) return [];
 
-    const data = await fetchJSON<FinnhubSearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
-    const results: FinnhubSearchResult[] = Array.isArray(data?.result) ? data.result : [];
+    const data = await fetchJSON<SearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
+    const results: SearchResultItem[] = Array.isArray(data?.result) ? data.result : [];
 
-    const mapped: StockWithWatchlistStatus[] = results
+    const mapped: StockSearchResult[] = results
       .map((r) => {
         const upper = (r.symbol || '').toUpperCase();
         const name = r.description || upper;
         const type = r.type || 'Stock';
         // `/search` has no exchange field (`displaySymbol` is the ticker again),
         // so `exchange` is left out rather than showing the symbol twice.
-        const item: StockWithWatchlistStatus = {
+        const item: StockSearchResult = {
           symbol: upper,
           name,
           type,

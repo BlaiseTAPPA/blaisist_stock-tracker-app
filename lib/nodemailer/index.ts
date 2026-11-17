@@ -5,6 +5,12 @@ import {
   renderWelcomeEmail,
 } from "./render";
 
+type WelcomeEmailData = {
+  email: string;
+  name: string;
+  intro: string;
+};
+
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

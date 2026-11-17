@@ -1,5 +1,5 @@
 // Watchlist types shared by the server action and the client components.
-// Prompt 13 will consolidate these with `types/global.d.ts`.
+// Stock and search types live in `types/stock.ts`.
 
 export type ToggleWatchlistResult =
   | { ok: true; added: boolean }

@@ -1,5 +1,6 @@
 "use server";
 
+import type { SignInFormData, SignUpFormData } from "@/types/forms";
 import { headers } from "next/headers";
 import { isAPIError } from "better-auth/api";
 import { auth, VERIFY_EMAIL_CALLBACK_URL } from "../better-auth/auth";

@@ -1,3 +1,4 @@
+import type { StockSearchResult } from "@/types/stock";
 import Header from "@/components/Header";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { POPULAR_STOCKS } from "@/lib/constants";
@@ -7,7 +8,7 @@ import { redirect } from "next/navigation";
 
 // Default search results: a static list, so rendering the layout costs no
 // Finnhub call (the Header used to fetch 10 /stock/profile2 on every page).
-const initialStocks: StockWithWatchlistStatus[] = POPULAR_STOCKS.map((s) => ({
+const initialStocks: StockSearchResult[] = POPULAR_STOCKS.map((s) => ({
   symbol: s.symbol,
   name: s.name,
   exchange: s.exchange,
