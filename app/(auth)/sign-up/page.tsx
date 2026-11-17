@@ -4,7 +4,6 @@ import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
-import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import {
@@ -12,14 +11,12 @@ import {
   RISK_TOLERANCE_OPTIONS,
   PREFERRED_INDUSTRIES,
 } from "@/lib/constants";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { type Control, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const SignUp = () => {
-  // Set once the account is created: the user must verify their email
-  // before they can sign in.
-  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -49,7 +46,7 @@ const SignUp = () => {
         toast.error(result.error);
         return;
       }
-      setPendingEmail(data.email);
+      router.push("/");
     } catch (e) {
       console.error(e);
       toast.error("Sign up failed", {
@@ -58,24 +55,6 @@ const SignUp = () => {
       });
     }
   };
-
-  if (pendingEmail) {
-    return (
-      <>
-        <h1 className="form-title">Check your inbox</h1>
-        <VerifyEmailNotice
-          email={pendingEmail}
-          title={`We sent a verification link to ${pendingEmail}`}
-          description="Click the link in the email to activate your account and sign in. It expires in 1 hour; also check your spam folder."
-        />
-        <FooterLink
-          text="Already verified?"
-          linkText="Sign in"
-          href="/sign-in"
-        />
-      </>
-    );
-  }
 
   return (
     <>

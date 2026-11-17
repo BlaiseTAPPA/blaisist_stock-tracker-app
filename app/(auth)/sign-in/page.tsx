@@ -3,36 +3,14 @@
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
-import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
 import { signInWithEmail } from "@/lib/actions/auth.actions";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-// Codes Better Auth appends as `?error=` when a verification link fails.
-const VERIFY_LINK_ERRORS: Record<string, string> = {
-  TOKEN_EXPIRED:
-    "This verification link has expired. Sign in to get a new one.",
-  INVALID_TOKEN:
-    "This verification link is invalid. Sign in to get a new one.",
-};
-
-const VerifyLinkError = () => {
-  const code = useSearchParams().get("error");
-  if (!code) return null;
-
-  return (
-    <p role="alert" className="mb-5 text-sm text-red-500">
-      {VERIFY_LINK_ERRORS[code] ??
-        "We could not verify your email. Please try again."}
-    </p>
-  );
-};
 
 const SignIn = () => {
-  const router = useRouter();
-  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const router = useRouter (); 
   const {
     register,
     handleSubmit,
@@ -48,13 +26,8 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      setUnverifiedEmail(null);
       const result = await signInWithEmail(data);
       if (!result.success) {
-        if (result.reason === "EMAIL_NOT_VERIFIED") {
-          setUnverifiedEmail(data.email);
-          return;
-        }
         toast.error(result.error);
         return;
       }
@@ -71,18 +44,6 @@ const SignIn = () => {
   return (
     <>
       <h1 className="form-title">Log in to your account</h1>
-      <Suspense fallback={null}>
-        <VerifyLinkError />
-      </Suspense>
-      {unverifiedEmail && (
-        <div className="mb-5">
-          <VerifyEmailNotice
-            email={unverifiedEmail}
-            title="Please verify your email address"
-            description="Check your inbox to activate your account. The link may take a minute to arrive; also check your spam folder."
-          />
-        </div>
-      )}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="email"
