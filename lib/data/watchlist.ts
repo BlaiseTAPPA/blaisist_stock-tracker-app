@@ -12,7 +12,11 @@ export async function getWatchlistForUser(
   if (!userId) return [];
 
   await connectToDatabase();
-  const items = await Watchlist.find({ userId }).lean();
+  // Newest first; the compound index starts with `userId`, so this sorts the
+  // (small) per-user result in memory.
+  const items = await Watchlist.find({ userId }, { _id: 0, symbol: 1, company: 1, addedAt: 1 })
+    .sort({ addedAt: -1 })
+    .lean();
   return items.map((i) => ({
     symbol: String(i.symbol),
     company: String(i.company),
