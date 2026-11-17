@@ -3,6 +3,7 @@ import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/finnhub/client";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
+import SearchTrigger from "@/components/search/SearchTrigger";
 import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS } from "@/lib/constants";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
@@ -91,9 +92,7 @@ export default async function Home() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-100">Today&apos;s Top Stocks</h2>
-            <Link href="/search" className="text-sm text-gray-500 hover:text-yellow-500 transition-colors">
-              View all
-            </Link>
+            <SearchTrigger variant="link" label="Search all stocks" className="text-sm text-gray-500" />
           </div>
           <div className="rounded-lg border border-gray-600 bg-gray-800 overflow-hidden">
             <table className="w-full text-sm">
