@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { User } from "@/types/user";
 import { headers } from "next/headers";
 import { auth } from "@/lib/better-auth/auth";
 

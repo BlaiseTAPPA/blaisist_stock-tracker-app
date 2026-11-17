@@ -11,6 +11,10 @@ import {
   TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl,
 } from "@/lib/constants";
 
+type StockDetailsPageProps = {
+  params: Promise<{ symbol: string }>;
+};
+
 export default async function StockDetails({ params }: StockDetailsPageProps) {
   const { symbol } = await params;
   const user = await getSessionUser();

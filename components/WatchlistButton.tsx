@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
 
+type WatchlistButtonProps = {
+  symbol: string;
+  company: string;
+  isInWatchlist: boolean;
+  showTrashIcon?: boolean;
+  type?: "button" | "icon";
+};
+
 const WatchlistButton = ({
   symbol,
   company,

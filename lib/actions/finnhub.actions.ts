@@ -1,5 +1,6 @@
 "use server";
 
+import type { StockSearchResult } from "@/types/stock";
 import { z } from "zod";
 import { requireUser, UnauthenticatedError } from "@/lib/auth/session";
 import { searchStocks } from "@/lib/finnhub/client";
@@ -52,7 +53,7 @@ function isThrottled(userId: string): boolean {
 
 export async function searchStocksAction(
   query: string,
-): Promise<StockWithWatchlistStatus[]> {
+): Promise<StockSearchResult[]> {
   let userId: string;
   try {
     ({ id: userId } = await requireUser());

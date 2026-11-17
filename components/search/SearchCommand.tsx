@@ -1,5 +1,6 @@
 "use client";
 
+import type { StockSearchResult } from "@/types/stock";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, TrendingUp } from "lucide-react";
@@ -19,7 +20,7 @@ const MAX_QUERY_LENGTH = 32; // same bound as the server action's validation
 type SearchCommandProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialStocks: StockWithWatchlistStatus[];
+  initialStocks: StockSearchResult[];
 };
 
 // Mounted once, by SearchProvider. The palette body lives inside the dialog
@@ -39,13 +40,13 @@ export default function SearchCommand({ open, onOpenChange, initialStocks }: Sea
   );
 }
 
-type SearchResults = { query: string; stocks: StockWithWatchlistStatus[]; failed: boolean };
+type SearchResults = { query: string; stocks: StockSearchResult[]; failed: boolean };
 
 function SearchPalette({
   initialStocks,
   onNavigate,
 }: {
-  initialStocks: StockWithWatchlistStatus[];
+  initialStocks: StockSearchResult[];
   onNavigate: () => void;
 }) {
   const router = useRouter();

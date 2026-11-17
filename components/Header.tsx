@@ -1,3 +1,4 @@
+import type { User } from "@/types/user";
 import Image from "next/image";
 import Link from "next/link";
 import NavItems from "./NavItems";

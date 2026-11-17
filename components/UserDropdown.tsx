@@ -1,5 +1,6 @@
 "use client";
 
+import type { User } from "@/types/user";
 import {
   DropdownMenu,
   DropdownMenuContent,

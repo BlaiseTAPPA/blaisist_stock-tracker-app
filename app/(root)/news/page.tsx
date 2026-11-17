@@ -7,7 +7,7 @@ import { NEWS_INDUSTRIES, getNewsWidgetConfig, TRADINGVIEW_SCRIPT_BASE_URL as sc
 
 const NewsPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const active = NEWS_INDUSTRIES[activeIndex];
+  const active = NEWS_INDUSTRIES[activeIndex] ?? NEWS_INDUSTRIES[0];
 
   return (
     <main className="p-6">

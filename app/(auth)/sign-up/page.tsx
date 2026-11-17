@@ -13,7 +13,8 @@ import {
   PREFERRED_INDUSTRIES,
 } from "@/lib/constants";
 import { useState } from "react";
-import { type Control, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import type { SignUpFormData } from "@/types/forms";
 import { toast } from "sonner";
 
 const SignUp = () => {
@@ -37,10 +38,6 @@ const SignUp = () => {
     },
     mode: "onBlur",
   });
-
-  // Field components take an untyped `Control`; prompt 13 (TS-02) makes them
-  // generic over the form values and removes this cast.
-  const fieldControl = control as unknown as Control;
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
@@ -115,7 +112,7 @@ const SignUp = () => {
         <CountrySelectField
           name="country"
           label="Country"
-          control={fieldControl}
+          control={control}
           error={errors.country}
           required
         />
@@ -125,7 +122,7 @@ const SignUp = () => {
           label="Investment Goals"
           placeholder="Select your investment goal"
           options={INVESTMENT_GOALS}
-          control={fieldControl}
+          control={control}
           error={errors.preferredIndustry}
           required
         />
@@ -134,7 +131,7 @@ const SignUp = () => {
           label="Risk Tolerance"
           placeholder="Select your risk level"
           options={RISK_TOLERANCE_OPTIONS}
-          control={fieldControl}
+          control={control}
           error={errors.riskTolerance}
           required
         />
@@ -143,7 +140,7 @@ const SignUp = () => {
           label="Preferred Industry"
           placeholder="Select your preferred industry"
           options={PREFERRED_INDUSTRIES}
-          control={fieldControl}
+          control={control}
           error={errors.preferredIndustry}
           required
         />

@@ -17,7 +17,7 @@ const CHARTS = [
 /** One advanced chart at a time: only the active tab's widget is mounted. */
 export default function StockChartTabs({ symbol }: { symbol: string }) {
   const [active, setActive] = useState(0);
-  const chart = CHARTS[active];
+  const chart = CHARTS[active] ?? CHARTS[0];
 
   return (
     <div className="flex flex-col gap-3">

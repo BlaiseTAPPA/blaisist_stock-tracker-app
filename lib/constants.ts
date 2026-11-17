@@ -141,7 +141,7 @@ export const NEWS_INDUSTRIES = [
   { label: 'Healthcare', symbol: 'NYSE:JNJ' },
   { label: 'Energy', symbol: 'NYSE:XOM' },
   { label: 'Consumer', symbol: 'NYSE:WMT' },
-];
+] as const;
 
 export const getNewsWidgetConfig = (symbol?: string) => ({
   displayMode: 'regular',

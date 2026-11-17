@@ -1,5 +1,6 @@
 "use client";
 
+import type { StockSearchResult } from "@/types/stock";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import SearchCommand from "@/components/search/SearchCommand";
 
@@ -24,7 +25,7 @@ export function SearchProvider({
   initialStocks,
   children,
 }: {
-  initialStocks: StockWithWatchlistStatus[];
+  initialStocks: StockSearchResult[];
   children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
