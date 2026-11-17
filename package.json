@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test:db": "node ./scripts/test-db-connection.mjs",
     "preview:emails": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON ./scripts/preview-emails.mjs"
   },
@@ -45,6 +47,8 @@
     "dotenv": "^16.6.1",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "shadcn": "^4.7.0",
     "tailwindcss": "^4",
     "typescript": "^5"
