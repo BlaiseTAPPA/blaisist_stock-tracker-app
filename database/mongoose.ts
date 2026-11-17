@@ -1,40 +1,34 @@
 import mongoose from "mongoose";
-
-const MONGODB_URI = process.env.MONGODB_URI;
+import { mongoClient } from "@/lib/db/mongo-client";
 
 declare global {
-  var mongooseCache: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  };
+  var mongooseCache: { promise: Promise<typeof mongoose> | null } | undefined;
 }
 
-let cached = global.mongooseCache;
+const cached = (globalThis.mongooseCache ??= { promise: null });
 
-if (!cached) {
-  cached = global.mongooseCache = { conn: null, promise: null };
-}
+// Fail fast instead of queueing model operations while disconnected
+// (same behaviour as the previous `mongoose.connect(uri, { bufferCommands: false })`).
+mongoose.set("bufferCommands", false);
 
-export const connectToDatabase = async () => {
-  if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI must be set within .env");
-  }
-
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false });
-  }
-
-  try {
-    cached.conn = await cached.promise;
+/**
+ * Attaches Mongoose to the app-wide MongoClient, so Mongoose models and
+ * Better Auth share one connection pool instead of opening two.
+ * `setClient()` requires a connected client, hence the explicit `connect()`.
+ */
+export const connectToDatabase = (): Promise<typeof mongoose> => {
+  cached.promise ??= (async () => {
+    await mongoClient.connect();
+    if (mongoose.connection.readyState === mongoose.ConnectionStates.disconnected) {
+      mongoose.connection.setClient(mongoClient);
+    }
     console.log(`Connected to MongoDB: ${process.env.NODE_ENV ?? "unknown"}`);
-    return cached.conn;
-  } catch (error) {
+    return mongoose;
+  })().catch((error: unknown) => {
     cached.promise = null;
     console.error("MongoDB connection error:", error);
     throw error;
-  }
+  });
+
+  return cached.promise;
 };
