@@ -17,7 +17,7 @@ const NewsPage = () => {
           <button
             key={industry.label}
             onClick={() => setActiveIndex(i)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors
               ${activeIndex === i
                 ? 'bg-yellow-500 text-black'
                 : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
