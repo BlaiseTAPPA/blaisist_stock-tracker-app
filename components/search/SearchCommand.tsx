@@ -115,7 +115,13 @@ function SearchPalette({
             {!isSearchMode ? "No stocks available" : status}
           </div>
         ) : (
-          <CommandGroup heading={isSearchMode ? `Search results (${stocks.length})` : `Popular stocks (${stocks.length})`}>
+          <CommandGroup
+            heading={
+              isSearchMode
+                ? `Search results (${stocks.length})`
+                : `Popular stocks (${stocks.length})`
+            }
+          >
             {stocks.map((stock) => (
               <CommandItem
                 key={stock.symbol}
@@ -124,7 +130,7 @@ function SearchPalette({
                 className="search-item cursor-pointer"
               >
                 <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="search-item-name truncate">{stock.name}</div>
                   <div className="text-sm text-gray-500">
                     {[stock.symbol, stock.exchange, stock.type].filter(Boolean).join(" · ")}

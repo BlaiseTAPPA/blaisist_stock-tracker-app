@@ -2,13 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function DashboardError({
-  error,
-  retry,
-}: {
-  error: unknown;
-  retry: () => void;
-}) {
+export default function DashboardError({ error, retry }: { error: unknown; retry: () => void }) {
   useEffect(() => {
     // In production, Server Component errors arrive with a generic message and
     // a `digest` that matches the server log entry.

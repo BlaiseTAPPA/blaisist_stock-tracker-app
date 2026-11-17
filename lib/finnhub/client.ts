@@ -1,16 +1,22 @@
-import 'server-only';
+import "server-only";
 
-import { getDateRange, validateArticle, formatArticle } from '@/lib/utils';
-import { mapWithConcurrency } from '@/lib/map-with-concurrency';
-import { FinnhubError, FinnhubRateLimitError } from '@/lib/finnhub/errors';
-import { enableFinnhubCallCounter } from '@/lib/finnhub/debug';
-import type { MetricResponse, ProfileResponse, QuoteResponse, SearchResponse, SearchResultItem } from '@/types/finnhub';
-import type { MarketNewsArticle, RawNewsArticle } from '@/types/news';
-import type { StockQuoteRow, StockSearchResult } from '@/types/stock';
+import { getDateRange, validateArticle, formatArticle } from "@/lib/utils";
+import { mapWithConcurrency } from "@/lib/map-with-concurrency";
+import { FinnhubError, FinnhubRateLimitError } from "@/lib/finnhub/errors";
+import { enableFinnhubCallCounter } from "@/lib/finnhub/debug";
+import type {
+  MetricResponse,
+  ProfileResponse,
+  QuoteResponse,
+  SearchResponse,
+  SearchResultItem,
+} from "@/types/finnhub";
+import type { MarketNewsArticle, RawNewsArticle } from "@/types/news";
+import type { StockQuoteRow, StockSearchResult } from "@/types/stock";
 
 export { FinnhubError, FinnhubRateLimitError };
 
-const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
+const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
 
 // Data Cache lifetimes, in seconds.
 const REVALIDATE = {
@@ -30,7 +36,7 @@ enableFinnhubCallCounter();
 function getFinnhubToken(): string {
   const token = process.env.FINNHUB_API_KEY;
   if (!token) {
-    throw new Error('FINNHUB_API_KEY is not configured');
+    throw new Error("FINNHUB_API_KEY is not configured");
   }
   return token;
 }
@@ -45,7 +51,7 @@ function isRetryable(err: unknown): boolean {
 }
 
 function retryAfterSeconds(res: Response): number | null {
-  const value = Number(res.headers.get('retry-after'));
+  const value = Number(res.headers.get("retry-after"));
   return Number.isFinite(value) && value > 0 ? value : null;
 }
 
@@ -53,15 +59,19 @@ async function fetchOnce<T>(url: string, endpoint: string, revalidateSeconds: nu
   let res: Response;
   try {
     res = await fetch(url, {
-      cache: 'force-cache',
+      cache: "force-cache",
       next: { revalidate: revalidateSeconds },
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
   } catch (err) {
     // Timeout (TimeoutError) or network failure. Don't wrap the original
     // error as `cause`: its message may echo the URL.
-    const timedOut = err instanceof Error && err.name === 'TimeoutError';
-    throw new FinnhubError(endpoint, null, timedOut ? `timeout after ${REQUEST_TIMEOUT_MS} ms` : 'network error');
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
+    throw new FinnhubError(
+      endpoint,
+      null,
+      timedOut ? `timeout after ${REQUEST_TIMEOUT_MS} ms` : "network error",
+    );
   }
 
   if (res.status === 429) {
@@ -76,7 +86,7 @@ async function fetchOnce<T>(url: string, endpoint: string, revalidateSeconds: nu
   try {
     return (await res.json()) as T;
   } catch {
-    throw new FinnhubError(endpoint, res.status, 'invalid JSON response');
+    throw new FinnhubError(endpoint, res.status, "invalid JSON response");
   }
 }
 
@@ -91,9 +101,9 @@ const inFlight = new Map<string, Promise<unknown>>();
 // `path` is relative to the API base and must not contain the token; the
 // token is appended here.
 async function fetchJSON<T>(path: string, revalidateSeconds: number): Promise<T> {
-  const separator = path.includes('?') ? '&' : '?';
+  const separator = path.includes("?") ? "&" : "?";
   const url = `${FINNHUB_BASE_URL}${path}${separator}token=${getFinnhubToken()}`;
-  const [endpoint = path] = path.split('?');
+  const [endpoint = path] = path.split("?");
 
   const pending = inFlight.get(url);
   if (pending) return pending as Promise<T>;
@@ -121,11 +131,17 @@ export async function getStockQuote(symbol: string): Promise<QuoteResponse> {
 }
 
 export async function getStockProfile(symbol: string): Promise<ProfileResponse> {
-  return fetchJSON<ProfileResponse>(`/stock/profile2?symbol=${encodeURIComponent(symbol)}`, REVALIDATE.profile);
+  return fetchJSON<ProfileResponse>(
+    `/stock/profile2?symbol=${encodeURIComponent(symbol)}`,
+    REVALIDATE.profile,
+  );
 }
 
 export async function getStockFinancials(symbol: string): Promise<MetricResponse> {
-  return fetchJSON<MetricResponse>(`/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`, REVALIDATE.metric);
+  return fetchJSON<MetricResponse>(
+    `/stock/metric?symbol=${encodeURIComponent(symbol)}&metric=all`,
+    REVALIDATE.metric,
+  );
 }
 
 const MAX_CONCURRENT_SYMBOLS = 5;
@@ -138,11 +154,11 @@ type StockInput = { symbol: string; company: string; currency?: string };
 
 // Finnhub's profile has no currency for unknown symbols, and the profile call
 // may fail: US listings are the common case, so fall back to USD.
-const DEFAULT_CURRENCY = 'USD';
+const DEFAULT_CURRENCY = "USD";
 
 /** Finnhub sends `null` for missing metrics and `0` for unknown ones. */
 const nonZeroOrUndefined = (value: number | null | undefined) =>
-  typeof value === 'number' && Number.isFinite(value) && value !== 0 ? value : undefined;
+  typeof value === "number" && Number.isFinite(value) && value !== 0 ? value : undefined;
 
 /**
  * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
@@ -156,40 +172,48 @@ export async function getTopStocksData(
   stocks: readonly StockInput[],
   { fundamentals = true }: { fundamentals?: boolean } = {},
 ): Promise<StockQuoteRow[]> {
-  return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company, currency }) => {
-    // Optional data: a failure there must not hide the price.
-    const profilePromise = currency ? Promise.resolve(null) : getStockProfile(symbol).catch(() => null);
-    const financialsPromise = fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null);
+  return mapWithConcurrency(
+    stocks,
+    MAX_CONCURRENT_SYMBOLS,
+    async ({ symbol, company, currency }) => {
+      // Optional data: a failure there must not hide the price.
+      const profilePromise = currency
+        ? Promise.resolve(null)
+        : getStockProfile(symbol).catch(() => null);
+      const financialsPromise = fundamentals
+        ? getStockFinancials(symbol).catch(() => null)
+        : Promise.resolve(null);
 
-    try {
-      const [quote, profile, financials] = await Promise.all([
-        getStockQuote(symbol),
-        profilePromise,
-        financialsPromise,
-      ]);
+      try {
+        const [quote, profile, financials] = await Promise.all([
+          getStockQuote(symbol),
+          profilePromise,
+          financialsPromise,
+        ]);
 
-      // Finnhub answers unknown symbols with an all-zero quote.
-      if (!quote.c) throw new Error('empty quote');
+        // Finnhub answers unknown symbols with an all-zero quote.
+        if (!quote.c) throw new Error("empty quote");
 
-      return {
-        symbol,
-        company,
-        currency: currency ?? (profile?.currency || DEFAULT_CURRENCY),
-        currentPrice: quote.c,
-        changePercent: quote.dp ?? undefined,
-        marketCapMillions: nonZeroOrUndefined(financials?.metric?.['marketCapitalization']),
-        peRatio: nonZeroOrUndefined(financials?.metric?.['peBasicExclExtraTTM']),
-        status: 'ok',
-      } satisfies StockQuoteRow;
-    } catch {
-      return {
-        symbol,
-        company,
-        currency: currency ?? DEFAULT_CURRENCY,
-        status: 'unavailable',
-      } satisfies StockQuoteRow;
-    }
-  });
+        return {
+          symbol,
+          company,
+          currency: currency ?? (profile?.currency || DEFAULT_CURRENCY),
+          currentPrice: quote.c,
+          changePercent: quote.dp ?? undefined,
+          marketCapMillions: nonZeroOrUndefined(financials?.metric?.["marketCapitalization"]),
+          peRatio: nonZeroOrUndefined(financials?.metric?.["peBasicExclExtraTTM"]),
+          status: "ok",
+        } satisfies StockQuoteRow;
+      } catch {
+        return {
+          symbol,
+          company,
+          currency: currency ?? DEFAULT_CURRENCY,
+          status: "unavailable",
+        } satisfies StockQuoteRow;
+      }
+    },
+  );
 }
 
 /** Never throws: returns `[]` when Finnhub is unavailable. */
@@ -213,10 +237,10 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
             const articles = await fetchJSON<RawNewsArticle[]>(path, REVALIDATE.news);
             perSymbolArticles[sym] = (articles || []).filter(validateArticle);
           } catch (e) {
-            console.error('Error fetching company news for', sym, e);
+            console.error("Error fetching company news for", sym, e);
             perSymbolArticles[sym] = [];
           }
-        })
+        }),
       );
 
       const collected: MarketNewsArticle[] = [];
@@ -242,7 +266,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
     }
 
     // General market news fallback or when no symbols provided
-    const general = await fetchJSON<RawNewsArticle[]>('/news?category=general', REVALIDATE.news);
+    const general = await fetchJSON<RawNewsArticle[]>("/news?category=general", REVALIDATE.news);
 
     const seen = new Set<string>();
     const unique: RawNewsArticle[] = [];
@@ -255,10 +279,12 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       if (unique.length >= 20) break; // cap early before final slicing
     }
 
-    const formatted = unique.slice(0, maxArticles).map((a, idx) => formatArticle(a, false, undefined, idx));
+    const formatted = unique
+      .slice(0, maxArticles)
+      .map((a, idx) => formatArticle(a, false, undefined, idx));
     return formatted;
   } catch (err) {
-    console.error('getNews error:', err instanceof Error ? err.message : err);
+    console.error("getNews error:", err instanceof Error ? err.message : err);
     return [];
   }
 }
@@ -270,14 +296,17 @@ export async function searchStocks(query: string): Promise<StockSearchResult[]> 
     // rendered by the Header without any Finnhub call.
     if (!trimmed) return [];
 
-    const data = await fetchJSON<SearchResponse>(`/search?q=${encodeURIComponent(trimmed)}`, REVALIDATE.search);
+    const data = await fetchJSON<SearchResponse>(
+      `/search?q=${encodeURIComponent(trimmed)}`,
+      REVALIDATE.search,
+    );
     const results: SearchResultItem[] = Array.isArray(data?.result) ? data.result : [];
 
     const mapped: StockSearchResult[] = results
       .map((r) => {
-        const upper = (r.symbol || '').toUpperCase();
+        const upper = (r.symbol || "").toUpperCase();
         const name = r.description || upper;
-        const type = r.type || 'Stock';
+        const type = r.type || "Stock";
         // `/search` has no exchange field (`displaySymbol` is the ticker again),
         // so `exchange` is left out rather than showing the symbol twice.
         const item: StockSearchResult = {
@@ -292,7 +321,7 @@ export async function searchStocks(query: string): Promise<StockSearchResult[]> 
 
     return mapped;
   } catch (err) {
-    console.error('Error in stock search:', err);
+    console.error("Error in stock search:", err);
     return [];
   }
 }

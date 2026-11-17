@@ -1,9 +1,5 @@
 import nodemailer from "nodemailer";
-import {
-  renderNewsSummaryEmail,
-  renderVerificationEmail,
-  renderWelcomeEmail,
-} from "./render";
+import { renderNewsSummaryEmail, renderVerificationEmail, renderWelcomeEmail } from "./render";
 
 type WelcomeEmailData = {
   email: string;
@@ -22,11 +18,7 @@ export const transporter = nodemailer.createTransport({
 /** Display name plus address: a bare `"Signalist"` is not a valid sender. */
 const FROM = `"Signalist" <${process.env.NODEMAILER_EMAIL}>`;
 
-export const sendWelcomeEmail = async ({
-  email,
-  name,
-  intro,
-}: WelcomeEmailData) => {
+export const sendWelcomeEmail = async ({ email, name, intro }: WelcomeEmailData) => {
   await transporter.sendMail({
     from: FROM,
     to: email,

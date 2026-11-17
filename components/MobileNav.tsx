@@ -30,7 +30,7 @@ export default function MobileNav() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         aria-label="Open menu"
-        className="sm:hidden -ml-2 inline-flex size-11 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:text-yellow-500 focus-visible:outline-2 focus-visible:outline-yellow-500"
+        className="-ml-2 inline-flex size-11 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:text-yellow-500 focus-visible:outline-2 focus-visible:outline-yellow-500 sm:hidden"
       >
         <Menu className="size-6" aria-hidden="true" />
       </SheetTrigger>
@@ -44,7 +44,13 @@ export default function MobileNav() {
       >
         <SheetHeader className="border-b border-gray-600">
           <SheetTitle>
-            <Image src="/assets/icons/logo.svg" alt="Signalist" width={140} height={32} className="h-8 w-auto" />
+            <Image
+              src="/assets/icons/logo.svg"
+              alt="Signalist"
+              width={140}
+              height={32}
+              className="h-8 w-auto"
+            />
           </SheetTitle>
           <SheetDescription className="sr-only">Main navigation</SheetDescription>
         </SheetHeader>

@@ -2,6 +2,4 @@
 // Stock, search and quote-row types live in `types/stock.ts`.
 
 export type ToggleWatchlistResult =
-  | { ok: true; added: boolean }
-  | { ok: false; reason: "unauthenticated" | "invalid" | "error" };
-
+  { ok: true; added: boolean } | { ok: false; reason: "unauthenticated" | "invalid" | "error" };

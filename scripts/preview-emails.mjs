@@ -26,9 +26,7 @@ registerHooks({
   },
 });
 
-const { renderWelcomeEmail, renderNewsSummaryEmail } = await import(
-  "../lib/nodemailer/render.ts"
-);
+const { renderWelcomeEmail, renderNewsSummaryEmail } = await import("../lib/nodemailer/render.ts");
 
 const DISCLAIMER =
   "This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.";
@@ -59,7 +57,10 @@ const news = renderNewsSummaryEmail({
 const checks = [];
 const check = (label, ok) => checks.push({ label, ok });
 
-for (const [email, html] of [["welcome", welcome], ["news", news]]) {
+for (const [email, html] of [
+  ["welcome", welcome],
+  ["news", news],
+]) {
   check(`${email}: disclaimer present`, html.includes(DISCLAIMER));
   check(`${email}: no <script>`, !/<script/i.test(html));
   // The templates have their own logo <img>: only the injected ones must go.
@@ -72,7 +73,10 @@ for (const [email, html] of [["welcome", welcome], ["news", news]]) {
   check(`${email}: code fences removed`, !html.includes("```"));
   check(`${email}: unsafe inline style dropped`, !/url\(/i.test(html));
   check(`${email}: \`$\` in AI text kept literally`, html.includes("$' $&amp; kept as text"));
-  check(`${email}: no placeholder left`, !/\{\{(name|intro|date|newsContent)\}\}/.test(html.replace("$&amp; {{intro}}", "")));
+  check(
+    `${email}: no placeholder left`,
+    !/\{\{(name|intro|date|newsContent)\}\}/.test(html.replace("$&amp; {{intro}}", "")),
+  );
 }
 
 check(

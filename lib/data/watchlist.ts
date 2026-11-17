@@ -24,10 +24,7 @@ export async function getWatchlistForUser(
   }));
 }
 
-export async function isSymbolInWatchlist(
-  userId: string,
-  symbol: string,
-): Promise<boolean> {
+export async function isSymbolInWatchlist(userId: string, symbol: string): Promise<boolean> {
   if (!userId) return false;
 
   await connectToDatabase();
@@ -35,9 +32,7 @@ export async function isSymbolInWatchlist(
   return !!exists;
 }
 
-export async function getWatchlistSymbolsByUserId(
-  userId: string,
-): Promise<string[]> {
+export async function getWatchlistSymbolsByUserId(userId: string): Promise<string[]> {
   if (!userId) return [];
 
   try {

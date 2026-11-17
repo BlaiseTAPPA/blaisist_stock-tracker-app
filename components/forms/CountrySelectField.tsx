@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { Controller, type FieldValues } from "react-hook-form";
 import type { CountrySelectFieldProps } from "@/types/forms";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -51,7 +47,7 @@ const CountrySelect = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between country-select-trigger"
+          className="country-select-trigger w-full justify-between"
         >
           {value ? (
             <span className="flex items-center gap-2">
@@ -64,19 +60,11 @@ const CountrySelect = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-full p-0 !bg-gray-800 border-gray-600"
-        align="start"
-      >
-        <Command className="bg-gray-800 border-gray-600">
-          <CommandInput
-            placeholder="Search countries..."
-            className="country-select-input"
-          />
-          <CommandEmpty className="country-select-empty">
-            No country found.
-          </CommandEmpty>
-          <CommandList className="max-h-60 bg-gray-800 scrollbar-hide-default">
+      <PopoverContent className="w-full border-gray-600 !bg-gray-800 p-0" align="start">
+        <Command className="border-gray-600 bg-gray-800">
+          <CommandInput placeholder="Search countries..." className="country-select-input" />
+          <CommandEmpty className="country-select-empty">No country found.</CommandEmpty>
+          <CommandList className="scrollbar-hide-default max-h-60 bg-gray-800">
             <CommandGroup className="bg-gray-800">
               {countries.map((country) => (
                 <CommandItem
@@ -86,7 +74,7 @@ const CountrySelect = ({
                     onChange(country.value);
                     setOpen(false);
                   }}
-                  className="!bg-gray-800 aria-selected:!bg-gray-600 data-[selected=true]:!bg-gray-600 country-select-item"
+                  className="country-select-item !bg-gray-800 aria-selected:!bg-gray-600 data-[selected=true]:!bg-gray-600"
                 >
                   <Check
                     className={cn(
@@ -126,14 +114,10 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
         rules={{
           required: required ? `Please select ${label.toLowerCase()}` : false,
         }}
-        render={({ field }) => (
-          <CountrySelect value={field.value} onChange={field.onChange} />
-        )}
+        render={({ field }) => <CountrySelect value={field.value} onChange={field.onChange} />}
       />
       {error && <p className="text-sm text-red-500">{error.message}</p>}
-      <p className="text-xs text-gray-500">
-        Helps us show market data and news relevant to you.
-      </p>
+      <p className="text-xs text-gray-500">Helps us show market data and news relevant to you.</p>
     </div>
   );
 };

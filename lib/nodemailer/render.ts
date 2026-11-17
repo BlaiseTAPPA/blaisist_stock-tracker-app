@@ -16,17 +16,13 @@ import {
  * containing `{{…}}` (say, a user name) is never substituted itself.
  */
 const fillTemplate = (template: string, values: Record<string, string>) =>
-  template.replace(/\{\{(\w+)\}\}/g, (placeholder, key: string) =>
-    (Object.hasOwn(values, key) ? values[key] : undefined) ?? placeholder,
+  template.replace(
+    /\{\{(\w+)\}\}/g,
+    (placeholder, key: string) =>
+      (Object.hasOwn(values, key) ? values[key] : undefined) ?? placeholder,
   );
 
-export const renderWelcomeEmail = ({
-  name,
-  intro,
-}: {
-  name: string;
-  intro: string;
-}): string =>
+export const renderWelcomeEmail = ({ name, intro }: { name: string; intro: string }): string =>
   fillTemplate(WELCOME_EMAIL_TEMPLATE, {
     name: escapeHtml(name),
     // No URL is given to the model, so the intro keeps no link at all.
@@ -48,13 +44,7 @@ export const renderNewsSummaryEmail = ({
     newsContent: sanitizeEmailHtml(newsContent, { allowedUrls }),
   });
 
-export const renderVerificationEmail = ({
-  name,
-  url,
-}: {
-  name: string;
-  url: string;
-}): string =>
+export const renderVerificationEmail = ({ name, url }: { name: string; url: string }): string =>
   fillTemplate(VERIFY_EMAIL_TEMPLATE, {
     name: escapeHtml(name),
     url: escapeHtml(url),

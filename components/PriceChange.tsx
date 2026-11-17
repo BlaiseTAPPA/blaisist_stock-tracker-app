@@ -31,7 +31,9 @@ const PriceChange = ({ value, className }: PriceChangeProps) => {
   const direction = getDirection(value);
 
   return (
-    <span className={cn("inline-flex items-center gap-1 tabular-nums", COLOR[direction], className)}>
+    <span
+      className={cn("inline-flex items-center gap-1 tabular-nums", COLOR[direction], className)}
+    >
       {direction === "up" && (
         <>
           <span aria-hidden="true">▲</span>

@@ -1,10 +1,6 @@
 import { z } from "zod";
 import countryList from "react-select-country-list";
-import {
-  INVESTMENT_GOALS,
-  PREFERRED_INDUSTRIES,
-  RISK_TOLERANCE_OPTIONS,
-} from "@/lib/constants";
+import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
 
 // Shared by the sign-up server action and the Better Auth user fields, so the
 // profile that reaches the AI prompts is always one of the form's options.
@@ -30,7 +26,10 @@ export const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Full name is required.").max(100, "Full name is too long."),
   email: z.email("Invalid email address."),
   // Same bounds as `emailAndPassword` in lib/better-auth/auth.ts.
-  password: z.string().min(8, "Password must be at least 8 characters.").max(128, "Password is too long."),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .max(128, "Password is too long."),
   country: countrySchema,
   investmentGoals: investmentGoalsSchema,
   riskTolerance: riskToleranceSchema,

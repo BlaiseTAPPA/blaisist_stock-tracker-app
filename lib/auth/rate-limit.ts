@@ -64,11 +64,7 @@ const hit = async (key: string, rule: Rule, retry = true): Promise<number | null
           $set: {
             count: { $cond: [windowOver, 1, { $add: ["$count", 1] }] },
             expiresAt: {
-              $cond: [
-                windowOver,
-                new Date(now.getTime() + rule.window * 1000),
-                "$expiresAt",
-              ],
+              $cond: [windowOver, new Date(now.getTime() + rule.window * 1000), "$expiresAt"],
             },
           },
         },

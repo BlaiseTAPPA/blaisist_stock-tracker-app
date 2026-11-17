@@ -25,7 +25,12 @@ type SearchTriggerProps = {
   onActivate?: () => void;
 };
 
-export default function SearchTrigger({ label = "Search", variant = "nav", className, onActivate }: SearchTriggerProps) {
+export default function SearchTrigger({
+  label = "Search",
+  variant = "nav",
+  className,
+  onActivate,
+}: SearchTriggerProps) {
   const { open } = useSearch();
   const isApple = useIsApplePlatform();
 

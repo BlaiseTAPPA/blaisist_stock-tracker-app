@@ -6,10 +6,9 @@ import MobileNav from "./MobileNav";
 import UserDropdown from "./UserDropdown";
 
 const Header = ({ user }: { user: User }) => {
-
   return (
-    <header className="sticky top-0 header ">
-      <div className="container header-wrapper">
+    <header className="header sticky top-0">
+      <div className="header-wrapper container">
         <div className="flex items-center gap-2">
           <MobileNav />
           <Link href="/" className="inline-flex min-h-11 items-center">
