@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { SYMBOL_INFO_WIDGET_CONFIG } from "@/lib/constants";
 import Link from "next/link";
+import SearchTrigger from "@/components/search/SearchTrigger";
 
 const scriptUrl = "https://s3.tradingview.com/external-embedding/embed-widget-";
 
@@ -20,9 +21,7 @@ export default async function WatchlistPage() {
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/30 p-20 text-center">
           <p className="text-gray-500 text-sm mb-2">Your watchlist is empty.</p>
-          <Link href="/search" className="text-sm text-yellow-500 hover:underline">
-            Browse stocks →
-          </Link>
+          <SearchTrigger variant="link" label="Browse stocks →" className="text-sm text-yellow-500 hover:underline" />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
