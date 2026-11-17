@@ -47,7 +47,7 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
           />
 
           <TradingViewWidget
-            scriptUrl={`${scriptUrl}company-profile.js`}
+            scriptUrl={`${scriptUrl}symbol-profile.js`}
             config={COMPANY_PROFILE_WIDGET_CONFIG(symbol)}
             height={440}
           />
