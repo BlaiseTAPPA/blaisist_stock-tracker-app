@@ -1,6 +1,7 @@
-export const NAV_ITEMS = [
+// `search` is not a page: it opens the search palette (SearchTrigger).
+export const NAV_ITEMS: readonly ({ href: string; label: string } | { action: 'search'; label: string })[] = [
     { href: '/', label: 'Dashboard' },
-    { href: '/search', label: 'Search' },
+    { action: 'search', label: 'Search' },
     { href: '/news', label: 'News' },
     { href: '/watchlist', label: 'Watchlist' },
     { href: '/heatmap', label: 'Heatmap' },
