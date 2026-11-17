@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
-import { Control, Controller, FieldError } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
+import type { CountrySelectFieldProps } from "@/types/forms";
 import {
   Popover,
   PopoverContent,
@@ -21,14 +21,6 @@ import { Label } from "@/components/ui/label";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import countryList from "react-select-country-list";
-
-type CountrySelectProps = {
-  name: string;
-  label: string;
-  control: Control<any>;
-  error?: FieldError;
-  required?: boolean;
-};
 
 // Country options are static: compute them once per module, not per render.
 const countries = countryList().getData();
@@ -116,13 +108,13 @@ const CountrySelect = ({
   );
 };
 
-export const CountrySelectField = ({
+export const CountrySelectField = <TFieldValues extends FieldValues>({
   name,
   label,
   control,
   error,
   required = false,
-}: CountrySelectProps) => {
+}: CountrySelectFieldProps<TFieldValues>) => {
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="form-label">

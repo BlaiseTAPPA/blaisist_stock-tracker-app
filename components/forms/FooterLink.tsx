@@ -1,3 +1,4 @@
+import type { FooterLinkProps } from "@/types/forms";
 import Link from "next/link"
 
 const FooterLink = ({text, linkText, href} : FooterLinkProps) => {

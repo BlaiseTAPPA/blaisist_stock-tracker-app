@@ -1,4 +1,5 @@
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
+import type { SelectFieldProps } from "@/types/forms";
 import { Label } from "../ui/label";
 
 import {
@@ -9,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const SelectField = ({
+const SelectField = <TFieldValues extends FieldValues>({
   name,
   label,
   placeholder,
@@ -17,7 +18,7 @@ const SelectField = ({
   control,
   error,
   required = false,
-}: SelectFieldProps) => {
+}: SelectFieldProps<TFieldValues>) => {
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="form-label">

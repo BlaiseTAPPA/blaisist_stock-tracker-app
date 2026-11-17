@@ -1,5 +1,6 @@
 "use client";
 
+import type { SignInFormData } from "@/types/forms";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
