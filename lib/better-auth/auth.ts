@@ -7,6 +7,13 @@ import { mongoClient } from "@/lib/db/mongo-client";
 import { inngest } from "@/lib/inngest/client";
 import { userVerified } from "@/lib/inngest/events";
 import { sendVerificationEmail } from "@/lib/nodemailer";
+import {
+  countrySchema,
+  investmentGoalsSchema,
+  preferredIndustrySchema,
+  riskToleranceSchema,
+} from "@/lib/validation/signup";
+import type { z } from "zod";
 
 /** Where the verification link lands, on success (signed in) or on error (`?error=CODE`). */
 export const VERIFY_EMAIL_CALLBACK_URL = "/sign-in";
@@ -18,7 +25,16 @@ type UserProfile = {
   preferredIndustry?: string | null;
 };
 
-const profileField = { type: "string", required: false, input: true } as const;
+// The validators also cover requests sent straight to the HTTP handler
+// (`/api/auth/sign-up/email`, `/api/auth/update-user`), which skip the
+// sign-up server action and its zod check.
+const profileField = (schema: z.ZodType<string>) =>
+  ({
+    type: "string",
+    required: false,
+    input: true,
+    validator: { input: schema },
+  }) as const;
 
 // Built synchronously: `mongoClient.db()` does not connect, so importing this
 // module (e.g. while `next build` collects page data) never reaches MongoDB.
@@ -31,10 +47,10 @@ export const auth = betterAuth({
     // Stored at sign-up so the welcome email, sent only after verification,
     // can still be personalised.
     additionalFields: {
-      country: profileField,
-      investmentGoals: profileField,
-      riskTolerance: profileField,
-      preferredIndustry: profileField,
+      country: profileField(countrySchema),
+      investmentGoals: profileField(investmentGoalsSchema),
+      riskTolerance: profileField(riskToleranceSchema),
+      preferredIndustry: profileField(preferredIndustrySchema),
     },
   },
   emailAndPassword: {
