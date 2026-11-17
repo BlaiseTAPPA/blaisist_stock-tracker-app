@@ -1108,3 +1108,57 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
     </table>
 </body>
 </html>`;
+
+// Placeholders: {{name}} and {{url}}. Both must be HTML-escaped by the caller.
+export const VERIFY_EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Verify your email address</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #050505;">
+        <tr>
+            <td align="center" style="padding: 40px 16px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: #141414; border: 1px solid #30333A; border-radius: 8px;">
+                    <tr>
+                        <td style="padding: 32px 32px 0 32px;">
+                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="Signalist" width="130" style="max-width: 100%; height: auto;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 32px;">
+                            <h1 style="margin: 0 0 20px 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #FDD458;">
+                                Confirm your email address
+                            </h1>
+                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                                Hi {{name}}, click the button below to verify your email address and activate your Signalist account. The link expires in 1 hour.
+                            </p>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+                                <tr>
+                                    <td style="border-radius: 8px; background-color: #FDD458;">
+                                        <a href="{{url}}" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 500; color: #000000; text-decoration: none;">
+                                            Verify my email
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin: 0 0 8px 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
+                                If the button does not work, copy this link into your browser:
+                            </p>
+                            <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.5; color: #9ca3af; word-break: break-all;">
+                                {{url}}
+                            </p>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6b7280;">
+                                You did not create a Signalist account? You can safely ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;

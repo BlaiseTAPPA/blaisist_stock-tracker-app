@@ -19,12 +19,17 @@ import { mongoClient } from "@/lib/db/mongo-client";
 type RateLimitDoc = { _id: string; count: number; expiresAt: Date };
 type Rule = { window: number; max: number };
 
-export type AuthRateLimitAction = "sign-in" | "sign-up";
+export type AuthRateLimitAction = "sign-in" | "sign-up" | "resend-verification";
 
 // `window` is in seconds. Every attempt counts, successful or not.
 const RULES: Record<AuthRateLimitAction, { ip: Rule; email: Rule }> = {
   "sign-in": { ip: { window: 60, max: 5 }, email: { window: 60, max: 5 } },
   "sign-up": { ip: { window: 3600, max: 5 }, email: { window: 3600, max: 5 } },
+  // Each call can send an email to the address: keep it tight.
+  "resend-verification": {
+    ip: { window: 60, max: 3 },
+    email: { window: 3600, max: 3 },
+  },
 };
 
 const COLLECTION = "auth_rate_limit";
