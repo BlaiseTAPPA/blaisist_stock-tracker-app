@@ -5,7 +5,7 @@ import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import SearchTrigger from "@/components/search/SearchTrigger";
 import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
-import WatchlistGrid from "@/components/WatchlistGrid";
+import WatchlistGrid, { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
 
 
 
@@ -28,8 +28,12 @@ export default async function Home() {
   const watchlistPromise = (user ? getWatchlistForUser(user.id) : Promise.resolve([])).then(
     async (items) => ({
       items,
-      // The grid shows name, price and change only: no fundamentals needed.
-      data: items.length > 0 ? await getTopStocksData(items, { fundamentals: false }) : [],
+      // Quotes only for the cards the grid shows (newest first); it needs
+      // name, price and change only: no fundamentals.
+      data:
+        items.length > 0
+          ? await getTopStocksData(items.slice(0, WATCHLIST_GRID_MAX), { fundamentals: false })
+          : [],
     }),
   );
 
@@ -78,7 +82,7 @@ export default async function Home() {
           ) : (
             <>
               {watchlistUnavailable && <MarketDataUnavailable />}
-              <WatchlistGrid stocks={watchlistData} />
+              <WatchlistGrid stocks={watchlistData} total={watchlist.length} />
             </>
           )}
         </div>
@@ -93,7 +97,7 @@ export default async function Home() {
             <h2 className="text-xl font-bold text-gray-100">Today&apos;s Top Stocks</h2>
             <SearchTrigger variant="link" label="Search all stocks" className="text-sm text-gray-500" />
           </div>
-          <div className="rounded-lg border border-gray-600 bg-gray-800 overflow-hidden">
+          <div className="rounded-lg border border-gray-600 bg-gray-800 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="table-header-row text-xs uppercase tracking-wider">
@@ -108,9 +112,11 @@ export default async function Home() {
               <tbody>
                 {topStocks.map((stock) => (
                   <tr key={stock.symbol} className="table-row">
-                    <td className="py-2.5 pl-4 text-gray-300 font-medium truncate max-w-[120px]">
+                    <td className="py-2.5 pl-4 text-gray-300 font-medium">
                       <Link href={`/stocks/${stock.symbol}`} className="hover:text-yellow-500 transition-colors">
-                        {stock.company}
+                        <span className="block truncate max-w-[7.5rem] sm:max-w-[14rem]" title={stock.company}>
+                          {stock.company}
+                        </span>
                       </Link>
                     </td>
                     <td className="py-2.5 px-3 text-gray-400 font-mono text-xs">{stock.symbol}</td>

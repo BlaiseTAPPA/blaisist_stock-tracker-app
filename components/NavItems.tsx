@@ -4,8 +4,16 @@ import {NAV_ITEMS} from "@/lib/constants";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import SearchTrigger from "@/components/search/SearchTrigger";
+import {cn} from "@/lib/utils";
 
-const NavItems = () => {
+type NavItemsProps = {
+    /** `bar`: horizontal header nav. `sheet`: vertical list with 44 px touch targets. */
+    variant?: 'bar' | 'sheet';
+    /** Called when an item is activated (the mobile sheet closes itself with it). */
+    onNavigate?: (target: 'link' | 'search') => void;
+}
+
+const NavItems = ({variant = 'bar', onNavigate}: NavItemsProps) => {
     const pathname = usePathname()
 
     const isActive = (path: string) => {
@@ -14,19 +22,28 @@ const NavItems = () => {
         return pathname.startsWith(path);
     }
 
+    const isSheet = variant === 'sheet';
+    const itemClass = isSheet
+        ? 'flex min-h-11 w-full items-center rounded-md px-3 text-base hover:bg-gray-700/50'
+        : '';
+
     return (
-        <ul className="flex flex-col sm:flex-row p-2 gap-3 sm:gap-10 font-medium">
+        <ul className={cn('flex font-medium', isSheet ? 'flex-col gap-1' : 'flex-row p-2 gap-6 lg:gap-10')}>
             {NAV_ITEMS.map((item) => {
                 if ('action' in item) return (
                     <li key="search-trigger">
-                        <SearchTrigger label={item.label} />
+                        <SearchTrigger label={item.label} onActivate={() => onNavigate?.('search')} className={itemClass} />
                     </li>
                 )
 
+                const active = isActive(item.href);
                 return <li key={item.href}>
-                    <Link href={item.href} className={`hover:text-yellow-500 transition-colors ${
-                        isActive(item.href) ? 'text-gray-100' : ''
-                    }`}>
+                    <Link
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        onClick={() => onNavigate?.('link')}
+                        className={cn('hover:text-yellow-500 transition-colors', itemClass, active && 'text-gray-100')}
+                    >
                         {item.label}
                     </Link>
                 </li>
