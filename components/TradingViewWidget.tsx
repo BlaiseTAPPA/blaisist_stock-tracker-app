@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, type CSSProperties } from "react";
-import useTradingViewWidget, { type WidgetHeight } from "../hooks/useTradingViewWidget";
+import useTradingViewWidget, { type WidgetHeight } from "@/hooks/useTradingViewWidget";
 import { cn } from "@/lib/utils";
 
 interface TradingViewWidgetProps {
