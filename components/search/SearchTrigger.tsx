@@ -21,16 +21,21 @@ type SearchTriggerProps = {
   /** `nav`: styled like a nav link, with the ⌘K hint. `link`: inline text link. */
   variant?: "nav" | "link";
   className?: string;
+  /** Runs before the palette opens (e.g. the mobile menu closes itself first). */
+  onActivate?: () => void;
 };
 
-export default function SearchTrigger({ label = "Search", variant = "nav", className }: SearchTriggerProps) {
+export default function SearchTrigger({ label = "Search", variant = "nav", className, onActivate }: SearchTriggerProps) {
   const { open } = useSearch();
   const isApple = useIsApplePlatform();
 
   return (
     <button
       type="button"
-      onClick={open}
+      onClick={() => {
+        onActivate?.();
+        open();
+      }}
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
       className={cn(
