@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, type CSSProperties } from "react";
-import useTradingViewWidget, { type WidgetHeight } from "../hooks/useTradingViewWidget";
+import useTradingViewWidget, { type WidgetHeight } from "@/hooks/useTradingViewWidget";
 import { cn } from "@/lib/utils";
 
 interface TradingViewWidgetProps {
@@ -34,15 +34,10 @@ const TradingViewWidget = ({
 
   return (
     <div className="w-full">
-      {title && (
-        <h3 className="font-semibold text-2xl text-gray-100 mb-5">{title}</h3>
-      )}
+      {title && <h3 className="mb-5 text-2xl font-semibold text-gray-100">{title}</h3>}
       <div className="relative h-(--tv-h) md:h-(--tv-h-md)" style={sizeVars}>
         {/* Left empty on purpose: the hook owns this node's children. */}
-        <div
-          ref={containerRef}
-          className={cn("tradingview-widget-container h-full", className)}
-        />
+        <div ref={containerRef} className={cn("tradingview-widget-container h-full", className)} />
         {!loaded && (
           <div
             aria-hidden

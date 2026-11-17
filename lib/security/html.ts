@@ -53,8 +53,7 @@ const toHttpsUrl = (value: string): string | null => {
 };
 
 /** Removes the markdown code fences (```html … ```) the model sometimes adds. */
-const stripCodeFences = (html: string): string =>
-  html.replace(/```[a-z]*/gi, "").trim();
+const stripCodeFences = (html: string): string => html.replace(/```[a-z]*/gi, "").trim();
 
 /**
  * Sanitizes model-generated HTML before it goes into an email.
@@ -69,9 +68,7 @@ export const sanitizeEmailHtml = (
   html: string,
   { allowedUrls = [] }: { allowedUrls?: readonly string[] } = {},
 ): string => {
-  const allowed = new Set(
-    allowedUrls.map(toHttpsUrl).filter((url): url is string => url !== null),
-  );
+  const allowed = new Set(allowedUrls.map(toHttpsUrl).filter((url): url is string => url !== null));
 
   return sanitizeHtml(stripCodeFences(html), {
     allowedTags: EMAIL_TAGS,

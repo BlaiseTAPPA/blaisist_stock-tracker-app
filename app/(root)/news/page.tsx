@@ -1,9 +1,12 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 import TradingViewWidget from "@/components/TradingViewWidget";
-import { NEWS_INDUSTRIES, getNewsWidgetConfig, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
-
+import {
+  NEWS_INDUSTRIES,
+  getNewsWidgetConfig,
+  TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl,
+} from "@/lib/constants";
 
 const NewsPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -12,16 +15,16 @@ const NewsPage = () => {
   return (
     <main className="p-6">
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="mb-6 flex flex-wrap gap-2">
         {NEWS_INDUSTRIES.map((industry, i) => (
           <button
             key={industry.label}
             onClick={() => setActiveIndex(i)}
-            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-              ${activeIndex === i
-                ? 'bg-yellow-500 text-black'
-                : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
-              }`}
+            className={`min-h-11 rounded-full px-4 py-1.5 text-sm font-medium transition-colors sm:min-h-0 ${
+              activeIndex === i
+                ? "bg-yellow-500 text-black"
+                : "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
+            }`}
           >
             {industry.label}
           </button>

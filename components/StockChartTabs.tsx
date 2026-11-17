@@ -32,7 +32,7 @@ export default function StockChartTabs({ symbol }: { symbol: string }) {
             aria-controls="chart-panel"
             onClick={() => setActive(i)}
             className={cn(
-              "min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+              "min-h-11 rounded-full px-4 py-1.5 text-sm font-medium transition-colors sm:min-h-0",
               active === i
                 ? "bg-yellow-500 text-black"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700",

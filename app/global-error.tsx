@@ -6,12 +6,7 @@
 // the global styles itself.
 import "./globals.css";
 
-export default function GlobalError({
-  retry,
-}: {
-  error: unknown;
-  retry: () => void;
-}) {
+export default function GlobalError({ retry }: { error: unknown; retry: () => void }) {
   return (
     <html lang="en" className="dark">
       <body className="flex min-h-screen flex-col items-center justify-center gap-2 p-10 text-center text-gray-400 antialiased">

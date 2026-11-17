@@ -7,8 +7,10 @@ export class FinnhubError extends Error {
   readonly endpoint: string;
 
   constructor(endpoint: string, status: number | null, reason?: string) {
-    super(`Finnhub ${endpoint} failed: ${reason ?? (status === null ? 'network error' : `HTTP ${status}`)}`);
-    this.name = 'FinnhubError';
+    super(
+      `Finnhub ${endpoint} failed: ${reason ?? (status === null ? "network error" : `HTTP ${status}`)}`,
+    );
+    this.name = "FinnhubError";
     this.endpoint = endpoint;
     this.status = status;
   }
@@ -19,8 +21,8 @@ export class FinnhubRateLimitError extends FinnhubError {
   readonly retryAfterSeconds: number | null;
 
   constructor(endpoint: string, retryAfterSeconds: number | null) {
-    super(endpoint, 429, 'rate limited (HTTP 429)');
-    this.name = 'FinnhubRateLimitError';
+    super(endpoint, 429, "rate limited (HTTP 429)");
+    this.name = "FinnhubRateLimitError";
     this.retryAfterSeconds = retryAfterSeconds;
   }
 }

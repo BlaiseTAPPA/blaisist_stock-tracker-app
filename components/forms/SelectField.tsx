@@ -36,7 +36,7 @@ const SelectField = <TFieldValues extends FieldValues>({
             <SelectTrigger className="select-trigger">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-600 text-white">
+            <SelectContent className="border-gray-600 bg-gray-800 text-white">
               {options.map((option) => (
                 <SelectItem
                   value={option.value}

@@ -1,0 +1,14 @@
+# Generated / vendored
+.next/
+out/
+build/
+node_modules/
+package-lock.json
+next-env.d.ts
+tsconfig.tsbuildinfo
+public/
+
+# Local, untracked docs
+AUDIT.md
+docs/
+.vercel/

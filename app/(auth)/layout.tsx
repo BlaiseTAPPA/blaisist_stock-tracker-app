@@ -5,9 +5,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
-   const session = await auth.api.getSession ({headers : await headers ()})
-  if(session?.user) redirect("/")
-
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (session?.user) redirect("/");
 
   return (
     <main className="auth-layout">
@@ -21,18 +20,18 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
             className="h-auto w-auto"
           />
         </Link>
-        <div className="pb-6 lg:pb-8 flex-1">{children}</div>
+        <div className="flex-1 pb-6 lg:pb-8">{children}</div>
       </section>
       <section className="auth-right-section">
-        <div className="z-10 relative lg:mt-4 lg:mb-16">
+        <div className="relative z-10 lg:mt-4 lg:mb-16">
           <blockquote className="auth-blockquote">
-            Signalist turned my watchlist into a winning list. The alerts are
-            spot-on, and I feel more confident making moves in the market
+            Signalist turned my watchlist into a winning list. The alerts are spot-on, and I feel
+            more confident making moves in the market
           </blockquote>
           <div className="flex items-center justify-between">
             <div>
               <cite className="auth-testimonial-author">- Blaise TAPPA</cite>
-              <p className="max-md:text-xs text-gray-500">Trusted Investor</p>
+              <p className="text-gray-500 max-md:text-xs">Trusted Investor</p>
             </div>{" "}
             <div className="flex items-center gap-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -42,14 +41,14 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
                   key={star}
                   width={20}
                   height={20}
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                 />
               ))}
             </div>
           </div>
         </div>
 
-        <div className="flex-1 relative">
+        <div className="relative flex-1">
           <Image
             src="/assets/images/dashboard.png"
             alt="Dashboard Preview"

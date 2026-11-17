@@ -21,7 +21,7 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
   const inWatchlist = user ? await isSymbolInWatchlist(user.id, symbol.toUpperCase()) : false;
 
   return (
-    <div className="flex flex-col gap-8 min-h-screen p-4 md:p-6 lg:p-8">
+    <div className="flex min-h-screen flex-col gap-8 p-4 md:p-6 lg:p-8">
       {/* Above the fold, loaded eagerly: symbol info and a single chart. */}
       <section className="flex flex-col-reverse gap-4 md:flex-row md:items-start">
         <div className="min-w-0 flex-1">
@@ -35,14 +35,18 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
         {/* `.watchlist-btn` is `w-full`: give it a fixed width on desktop so it
             doesn't squeeze the symbol-info widget down to zero. */}
         <div className="w-full md:w-60 md:shrink-0">
-          <WatchlistButton symbol={symbol.toUpperCase()} company={symbol.toUpperCase()} isInWatchlist={inWatchlist} />
+          <WatchlistButton
+            symbol={symbol.toUpperCase()}
+            company={symbol.toUpperCase()}
+            isInWatchlist={inWatchlist}
+          />
         </div>
       </section>
 
       <StockChartTabs symbol={symbol} />
 
       {/* Below the fold: mounted only as they approach the viewport. */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-6">
           <TradingViewWidget
             scriptUrl={`${scriptUrl}technical-analysis.js`}

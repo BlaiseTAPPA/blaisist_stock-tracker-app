@@ -29,9 +29,7 @@ const requestLog = new Map<string, number[]>();
 
 function isThrottled(userId: string): boolean {
   const now = Date.now();
-  const recent = (requestLog.get(userId) ?? []).filter(
-    (t) => now - t < THROTTLE_WINDOW_MS,
-  );
+  const recent = (requestLog.get(userId) ?? []).filter((t) => now - t < THROTTLE_WINDOW_MS);
 
   if (recent.length >= THROTTLE_MAX_REQUESTS) {
     requestLog.set(userId, recent);
@@ -51,9 +49,7 @@ function isThrottled(userId: string): boolean {
   return false;
 }
 
-export async function searchStocksAction(
-  query: string,
-): Promise<StockSearchResult[]> {
+export async function searchStocksAction(query: string): Promise<StockSearchResult[]> {
   let userId: string;
   try {
     ({ id: userId } = await requireUser());

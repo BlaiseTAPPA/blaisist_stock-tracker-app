@@ -1,13 +1,13 @@
-import 'server-only';
+import "server-only";
 
-import {connectToDatabase} from "@/database/mongoose";
-import {Watchlist} from "@/database/models/watchlist.model";
+import { connectToDatabase } from "@/database/mongoose";
+import { Watchlist } from "@/database/models/watchlist.model";
 
 export type NewsDigestRecipient = {
-    id: string;
-    email: string;
-    name: string;
-    symbols: string[];
+  id: string;
+  email: string;
+  name: string;
+  symbols: string[];
 };
 
 /**
@@ -23,27 +23,36 @@ export const MAX_DIGEST_SYMBOLS = 3;
  * The join uses the `userId` index of the watchlist collection.
  */
 export const getNewsDigestRecipients = async (): Promise<NewsDigestRecipient[]> => {
-    const mongoose = await connectToDatabase();
-    const db = mongoose.connection.db;
-    if (!db) throw new Error('Mongoose connection not connected');
+  const mongoose = await connectToDatabase();
+  const db = mongoose.connection.db;
+  if (!db) throw new Error("Mongoose connection not connected");
 
-    return db.collection('user').aggregate<NewsDigestRecipient>([
-        { $match: { emailVerified: true, email: { $type: 'string', $ne: '' }, name: { $type: 'string', $ne: '' } } },
-        // Watchlist.userId holds the session user id, i.e. the stringified _id.
-        { $addFields: { uid: { $ifNull: ['$id', { $toString: '$_id' }] } } },
-        {
-            $lookup: {
-                from: Watchlist.collection.collectionName,
-                localField: 'uid',
-                foreignField: 'userId',
-                pipeline: [
-                    { $sort: { addedAt: -1 } },
-                    { $limit: MAX_DIGEST_SYMBOLS },
-                    { $project: { _id: 0, symbol: 1 } },
-                ],
-                as: 'watchlist',
-            },
+  return db
+    .collection("user")
+    .aggregate<NewsDigestRecipient>([
+      {
+        $match: {
+          emailVerified: true,
+          email: { $type: "string", $ne: "" },
+          name: { $type: "string", $ne: "" },
         },
-        { $project: { _id: 0, id: '$uid', email: 1, name: 1, symbols: '$watchlist.symbol' } },
-    ]).toArray();
-}
+      },
+      // Watchlist.userId holds the session user id, i.e. the stringified _id.
+      { $addFields: { uid: { $ifNull: ["$id", { $toString: "$_id" }] } } },
+      {
+        $lookup: {
+          from: Watchlist.collection.collectionName,
+          localField: "uid",
+          foreignField: "userId",
+          pipeline: [
+            { $sort: { addedAt: -1 } },
+            { $limit: MAX_DIGEST_SYMBOLS },
+            { $project: { _id: 0, symbol: 1 } },
+          ],
+          as: "watchlist",
+        },
+      },
+      { $project: { _id: 0, id: "$uid", email: 1, name: 1, symbols: "$watchlist.symbol" } },
+    ])
+    .toArray();
+};

@@ -13,10 +13,8 @@ import { toast } from "sonner";
 
 // Codes Better Auth appends as `?error=` when a verification link fails.
 const VERIFY_LINK_ERRORS: Record<string, string> = {
-  TOKEN_EXPIRED:
-    "This verification link has expired. Sign in to get a new one.",
-  INVALID_TOKEN:
-    "This verification link is invalid. Sign in to get a new one.",
+  TOKEN_EXPIRED: "This verification link has expired. Sign in to get a new one.",
+  INVALID_TOKEN: "This verification link is invalid. Sign in to get a new one.",
 };
 
 const VerifyLinkError = () => {
@@ -25,8 +23,7 @@ const VerifyLinkError = () => {
 
   return (
     <p role="alert" className="mb-5 text-sm text-red-500">
-      {VERIFY_LINK_ERRORS[code] ??
-        "We could not verify your email. Please try again."}
+      {VERIFY_LINK_ERRORS[code] ?? "We could not verify your email. Please try again."}
     </p>
   );
 };
@@ -46,7 +43,6 @@ const SignIn = () => {
     mode: "onBlur",
   });
 
-
   const onSubmit = async (data: SignInFormData) => {
     try {
       setUnverifiedEmail(null);
@@ -63,8 +59,7 @@ const SignIn = () => {
     } catch (e) {
       console.error(e);
       toast.error("Sign in failed", {
-        description:
-          e instanceof Error ? e.message : "Failed to sign in",
+        description: e instanceof Error ? e.message : "Failed to sign in",
       });
     }
   };
@@ -107,11 +102,7 @@ const SignIn = () => {
           validation={{ required: "Password is required", minLength: 8 }}
         />
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="yellow-btn w-full mt-5"
-        >
+        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
           {isSubmitting ? "Signing in…" : "Log In"}
         </Button>
         <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />

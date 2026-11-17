@@ -7,11 +7,7 @@ import SelectField from "@/components/forms/SelectField";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
-import {
-  INVESTMENT_GOALS,
-  RISK_TOLERANCE_OPTIONS,
-  PREFERRED_INDUSTRIES,
-} from "@/lib/constants";
+import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SignUpFormData } from "@/types/forms";
@@ -50,8 +46,7 @@ const SignUp = () => {
     } catch (e) {
       console.error(e);
       toast.error("Sign up failed", {
-        description:
-          e instanceof Error ? e.message : "Failed to create an account",
+        description: e instanceof Error ? e.message : "Failed to create an account",
       });
     }
   };
@@ -65,11 +60,7 @@ const SignUp = () => {
           title={`We sent a verification link to ${pendingEmail}`}
           description="Click the link in the email to activate your account and sign in. It expires in 1 hour; also check your spam folder."
         />
-        <FooterLink
-          text="Already verified?"
-          linkText="Sign in"
-          href="/sign-in"
-        />
+        <FooterLink text="Already verified?" linkText="Sign in" href="/sign-in" />
       </>
     );
   }
@@ -145,18 +136,10 @@ const SignUp = () => {
           required
         />
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="yellow-btn w-full mt-5"
-        >
+        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
           {isSubmitting ? "Creating account…" : "Start Your Investing Journey"}
         </Button>
-        <FooterLink
-          text="Already have an account?"
-          linkText="Sign in"
-          href="/sign-in"
-        />
+        <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
       </form>
     </>
   );

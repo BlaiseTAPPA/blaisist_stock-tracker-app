@@ -8,8 +8,7 @@ import { checkAuthRateLimit } from "../auth/rate-limit";
 import { signUpSchema } from "../validation/signup";
 
 type AuthResult =
-  | { success: true }
-  | { success: false; error: string; reason?: "EMAIL_NOT_VERIFIED" };
+  { success: true } | { success: false; error: string; reason?: "EMAIL_NOT_VERIFIED" };
 
 const GENERIC_ERROR = "Something went wrong. Please try again.";
 const INVALID_FORM_ERROR = "Please check the form and try again.";
@@ -34,9 +33,7 @@ const toAuthError = (e: unknown): string => {
   }
 };
 
-export const signUpWithEmail = async (
-  data: SignUpFormData,
-): Promise<AuthResult> => {
+export const signUpWithEmail = async (data: SignUpFormData): Promise<AuthResult> => {
   // Server actions are public endpoints: never trust the client's values.
   const parsed = signUpSchema.safeParse(data);
   if (!parsed.success) {
@@ -45,15 +42,8 @@ export const signUpWithEmail = async (
       error: parsed.error.issues[0]?.message ?? INVALID_FORM_ERROR,
     };
   }
-  const {
-    email,
-    password,
-    fullName,
-    country,
-    investmentGoals,
-    riskTolerance,
-    preferredIndustry,
-  } = parsed.data;
+  const { email, password, fullName, country, investmentGoals, riskTolerance, preferredIndustry } =
+    parsed.data;
 
   const limited = await checkAuthRateLimit("sign-up", email);
   if (limited) return { success: false, error: limited };
@@ -83,10 +73,7 @@ export const signUpWithEmail = async (
   }
 };
 
-export const signInWithEmail = async ({
-  email,
-  password,
-}: SignInFormData): Promise<AuthResult> => {
+export const signInWithEmail = async ({ email, password }: SignInFormData): Promise<AuthResult> => {
   const limited = await checkAuthRateLimit("sign-in", email);
   if (limited) return { success: false, error: limited };
 
@@ -115,9 +102,7 @@ export const signInWithEmail = async ({
  * request, whether or not the address has an unverified account, so it cannot
  * be used to probe which emails are registered.
  */
-export const resendVerificationEmail = async (
-  email: string,
-): Promise<AuthResult> => {
+export const resendVerificationEmail = async (email: string): Promise<AuthResult> => {
   const limited = await checkAuthRateLimit("resend-verification", email);
   if (limited) return { success: false, error: limited };
 

@@ -1,6 +1,6 @@
-import 'server-only';
+import "server-only";
 
-import diagnosticsChannel from 'node:diagnostics_channel';
+import diagnosticsChannel from "node:diagnostics_channel";
 
 // Opt-in counter of real HTTP requests sent to Finnhub (FINNHUB_DEBUG=1).
 //
@@ -13,11 +13,11 @@ import diagnosticsChannel from 'node:diagnostics_channel';
 
 type UndiciRequestMessage = { request: { origin?: string | URL; path?: string } };
 
-const FINNHUB_ORIGIN = 'https://finnhub.io';
-const SUBSCRIBED = Symbol.for('signalist.finnhub.debugCounter');
+const FINNHUB_ORIGIN = "https://finnhub.io";
+const SUBSCRIBED = Symbol.for("signalist.finnhub.debugCounter");
 
 export function enableFinnhubCallCounter(): void {
-  if (process.env.FINNHUB_DEBUG !== '1') return;
+  if (process.env.FINNHUB_DEBUG !== "1") return;
 
   const store = globalThis as typeof globalThis & { [SUBSCRIBED]?: { calls: number } };
   if (store[SUBSCRIBED]) return; // already subscribed (module re-evaluated by HMR)
@@ -25,12 +25,12 @@ export function enableFinnhubCallCounter(): void {
   const state = { calls: 0 };
   store[SUBSCRIBED] = state;
 
-  diagnosticsChannel.subscribe('undici:request:create', (message) => {
+  diagnosticsChannel.subscribe("undici:request:create", (message) => {
     const { request } = message as UndiciRequestMessage;
-    if (!String(request.origin ?? '').startsWith(FINNHUB_ORIGIN)) return;
+    if (!String(request.origin ?? "").startsWith(FINNHUB_ORIGIN)) return;
 
     state.calls += 1;
-    const pathname = (request.path ?? '').split('?')[0];
+    const pathname = (request.path ?? "").split("?")[0];
     console.log(`[finnhub] ${state.calls} calls (${pathname})`);
   });
 }
