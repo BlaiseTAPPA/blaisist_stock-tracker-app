@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import TradingViewWidget from "@/components/TradingViewWidget";
-import { NEWS_INDUSTRIES, getNewsWidgetConfig } from "@/lib/constants";
+import { NEWS_INDUSTRIES, getNewsWidgetConfig, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
 
-const scriptUrl = "https://s3.tradingview.com/external-embedding/embed-widget-";
 
 const NewsPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);

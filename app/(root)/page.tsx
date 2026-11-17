@@ -4,13 +4,12 @@ import { getTopStocksData, getNews } from "@/lib/finnhub/client";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import SearchTrigger from "@/components/search/SearchTrigger";
-import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS } from "@/lib/constants";
+import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
 import WatchlistGrid from "@/components/WatchlistGrid";
 
 
 
 const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name }) => ({ symbol, company: name }));
-const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 
 
