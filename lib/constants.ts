@@ -40,8 +40,14 @@ export const CONDITION_OPTIONS = [
 ];
 
 // TradingView Charts
+// Every embed script lives at `${TRADINGVIEW_SCRIPT_BASE_URL}<widget>.js`.
+export const TRADINGVIEW_SCRIPT_BASE_URL = 'https://s3.tradingview.com/external-embedding/embed-widget-';
+
+// The app is dark-only; one constant so a future theme switch has one place to change.
+export const TV_THEME = 'dark' as const;
+
 export const MARKET_OVERVIEW_WIDGET_CONFIG = {
-    colorTheme: 'dark', // dark mode
+    colorTheme: TV_THEME, // dark mode
     dateRange: '12M', // last 12 months
     locale: 'en', // language
     largeChartUrl: '', // link to a large chart if needed
@@ -106,7 +112,7 @@ export const HEATMAP_WIDGET_CONFIG = {
     isTransparent: true,
     locale: 'en',
     symbolUrl: '',
-    colorTheme: 'dark',
+    colorTheme: TV_THEME,
     exchanges: [],
     hasTopBar: false,
     isDataSetEnabled: false,
@@ -120,7 +126,7 @@ export const HEATMAP_WIDGET_CONFIG = {
 export const TOP_STORIES_WIDGET_CONFIG = {
     displayMode: 'regular',
     feedMode: 'market',
-    colorTheme: 'dark',
+    colorTheme: TV_THEME,
     isTransparent: true,
     locale: 'en',
     market: 'stock',
@@ -140,7 +146,7 @@ export const NEWS_INDUSTRIES = [
 export const getNewsWidgetConfig = (symbol?: string) => ({
   displayMode: 'regular',
   feedMode: symbol ? 'symbol' : 'market',
-  colorTheme: 'dark',
+  colorTheme: TV_THEME,
   isTransparent: true,
   locale: 'en',
   market: 'stock',
@@ -155,7 +161,7 @@ export const MARKET_DATA_WIDGET_CONFIG = {
     height: 600,
     locale: 'en',
     showSymbolLogo: true,
-    colorTheme: 'dark',
+    colorTheme: TV_THEME,
     isTransparent: false,
     backgroundColor: '#0F0F0F',
     symbolsGroups: [
@@ -196,7 +202,7 @@ export const MARKET_DATA_WIDGET_CONFIG = {
 
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
+    colorTheme: TV_THEME,
     isTransparent: true,
     locale: 'en',
     width: '100%',
@@ -217,7 +223,7 @@ export const CANDLE_CHART_WIDGET_CONFIG = (symbol: string) => ({
     save_image: false,
     style: 1,
     symbol: symbol.toUpperCase(),
-    theme: 'dark',
+    theme: TV_THEME,
     timezone: 'Etc/UTC',
     backgroundColor: '#141414',
     gridColor: '#141414',
@@ -243,7 +249,7 @@ export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
     save_image: false,
     style: 10,
     symbol: symbol.toUpperCase(),
-    theme: 'dark',
+    theme: TV_THEME,
     timezone: 'Etc/UTC',
     backgroundColor: '#141414',
     gridColor: '#141414',
@@ -257,8 +263,8 @@ export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
 
 export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
-    isTransparent: 'true',
+    colorTheme: TV_THEME,
+    isTransparent: true,
     locale: 'en',
     width: '100%',
     height: 400,
@@ -268,8 +274,8 @@ export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
 
 export const COMPANY_PROFILE_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
-    isTransparent: 'true',
+    colorTheme: TV_THEME,
+    isTransparent: true,
     locale: 'en',
     width: '100%',
     height: 440,
@@ -277,8 +283,8 @@ export const COMPANY_PROFILE_WIDGET_CONFIG = (symbol: string) => ({
 
 export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
-    isTransparent: 'true',
+    colorTheme: TV_THEME,
+    isTransparent: true,
     locale: 'en',
     width: '100%',
     height: 905,

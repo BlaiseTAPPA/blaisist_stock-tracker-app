@@ -1,8 +1,7 @@
 import TradingViewWidget from '@/components/TradingViewWidget'
-import { HEATMAP_WIDGET_CONFIG} from "@/lib/constants";
+import { HEATMAP_WIDGET_CONFIG, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
 
 
-const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
 const HeatMapPage = () => {
   return (

@@ -1,11 +1,10 @@
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import TradingViewWidget from "@/components/TradingViewWidget";
-import { SYMBOL_INFO_WIDGET_CONFIG } from "@/lib/constants";
+import { SYMBOL_INFO_WIDGET_CONFIG, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
 import Link from "next/link";
 import SearchTrigger from "@/components/search/SearchTrigger";
 
-const scriptUrl = "https://s3.tradingview.com/external-embedding/embed-widget-";
 
 export default async function WatchlistPage() {
   const user = await getSessionUser();
