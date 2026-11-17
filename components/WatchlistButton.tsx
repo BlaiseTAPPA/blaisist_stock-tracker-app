@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useMemo, useState, useTransition } from "react";
-import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
+import React, { useOptimistic, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useWatchlistStore } from "@/store/watchlistStore";
-import type { StockWithData } from "@/store/watchlistStore";
+import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
 
 const WatchlistButton = ({
   symbol,
@@ -12,52 +11,50 @@ const WatchlistButton = ({
   isInWatchlist,
   showTrashIcon = false,
   type = "button",
-  stockData,
-}: WatchlistButtonProps & { stockData?: StockWithData }) => {
-  const [added, setAdded] = useState<boolean>(!!isInWatchlist);
+}: WatchlistButtonProps) => {
+  const router = useRouter();
+  // Confirmed server state, updated from each action result.
+  const [confirmed, setConfirmed] = useState<boolean>(!!isInWatchlist);
+  // Flips immediately on click; falls back to `confirmed` when the transition
+  // ends, so a failed action rolls back on its own.
+  const [added, setOptimisticAdded] = useOptimistic(confirmed);
   const [isPending, startTransition] = useTransition();
 
-  const { addToWatchlist, removeFromWatchlist } = useWatchlistStore();
+  const handleClick = () => {
+    startTransition(async () => {
+      setOptimisticAdded(!added);
 
-  const label = useMemo(() => {
-    if (type === "icon") return "";
-    return added ? "Remove from Watchlist" : "Add to Watchlist";
-  }, [added, type]);
+      const result = await toggleWatchlist(symbol, company);
 
-const handleClick = () => {
-  startTransition(async () => {
-    try {
-      const { added: newState } = await toggleWatchlist(symbol, company);
-
-      setAdded(newState);
-
-      if (newState && stockData) {
-        const stockToAdd: StockWithData = {
-          ...stockData,
-          priceFormatted: stockData.priceFormatted ?? "—",
-          changeFormatted: stockData.changeFormatted ?? "0.00",
-          changePercent: stockData.changePercent ?? 0,
-          addedAt: stockData.addedAt ?? new Date().toISOString(),
-        };
-
-        addToWatchlist(stockToAdd);
-
-        toast.success(`${symbol} added to your watchlist`);
-      } else {
-        removeFromWatchlist(symbol);
-        toast.success(`${symbol} removed to your watchlist`);
+      if (!result.ok) {
+        if (result.reason === "unauthenticated") {
+          toast.error("Your session has expired. Please sign in again.");
+          router.push("/sign-in");
+        } else {
+          toast.error("Couldn't update your watchlist. Please try again.");
+        }
+        return;
       }
-    } catch {
-      toast.error("Logginf you in to manage your watchlist");
-    }
-  });
-};
+
+      // Updates after an `await` must be wrapped again to stay in the transition.
+      startTransition(() => setConfirmed(result.added));
+      toast.success(
+        result.added
+          ? `${symbol} added to your watchlist`
+          : `${symbol} removed from your watchlist`,
+      );
+    });
+  };
 
   if (type === "icon") {
+    const iconLabel = added ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`;
     return (
       <button
-        title={added ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`}
-        aria-label={added ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`}
+        type="button"
+        title={iconLabel}
+        aria-label={iconLabel}
+        aria-pressed={added}
+        aria-busy={isPending}
         className={`watchlist-icon-btn ${added ? "watchlist-icon-added" : ""}`}
         onClick={handleClick}
         disabled={isPending}
@@ -69,6 +66,7 @@ const handleClick = () => {
           stroke="#FACC15"
           strokeWidth="1.5"
           className="watchlist-star"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -82,16 +80,19 @@ const handleClick = () => {
 
   return (
     <button
+      type="button"
+      aria-pressed={added}
+      aria-busy={isPending}
       className={`watchlist-btn ${added ? "watchlist-remove" : ""}`}
       onClick={handleClick}
       disabled={isPending}
     >
       {showTrashIcon && added ? (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-7 4v6m4-6v6m4-6v6" />
         </svg>
       ) : null}
-      <span>{isPending ? "..." : label}</span>
+      <span>{isPending ? "Saving…" : added ? "Remove from Watchlist" : "Add to Watchlist"}</span>
     </button>
   );
 };
