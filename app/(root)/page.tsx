@@ -78,7 +78,7 @@ export default async function Home() {
           ) : (
             <>
               {watchlistUnavailable && <MarketDataUnavailable />}
-              <WatchlistGrid initialData={watchlistData} />
+              <WatchlistGrid stocks={watchlistData} />
             </>
           )}
         </div>
