@@ -280,12 +280,12 @@ export async function searchStocks(query: string): Promise<StockWithWatchlistSta
       .map((r) => {
         const upper = (r.symbol || '').toUpperCase();
         const name = r.description || upper;
-        const exchange = r.displaySymbol || 'US';
         const type = r.type || 'Stock';
+        // `/search` has no exchange field (`displaySymbol` is the ticker again),
+        // so `exchange` is left out rather than showing the symbol twice.
         const item: StockWithWatchlistStatus = {
           symbol: upper,
           name,
-          exchange,
           type,
           isInWatchlist: false,
         };

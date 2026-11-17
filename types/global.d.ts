@@ -78,7 +78,8 @@ declare global {
     type Stock = {
         symbol: string;
         name: string;
-        exchange: string;
+        // Finnhub /search doesn't return the listing exchange.
+        exchange?: string;
         type: string;
     };
 
