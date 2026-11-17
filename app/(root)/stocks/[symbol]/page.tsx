@@ -28,7 +28,11 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
             lazy={false}
           />
         </div>
-        <WatchlistButton symbol={symbol.toUpperCase()} company={symbol.toUpperCase()} isInWatchlist={inWatchlist} />
+        {/* `.watchlist-btn` is `w-full`: give it a fixed width on desktop so it
+            doesn't squeeze the symbol-info widget down to zero. */}
+        <div className="w-full md:w-60 md:shrink-0">
+          <WatchlistButton symbol={symbol.toUpperCase()} company={symbol.toUpperCase()} isInWatchlist={inWatchlist} />
+        </div>
       </section>
 
       <StockChartTabs symbol={symbol} />
