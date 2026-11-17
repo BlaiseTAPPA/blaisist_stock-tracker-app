@@ -6,10 +6,12 @@ import { getSessionUser } from "@/lib/auth/session";
 import SearchTrigger from "@/components/search/SearchTrigger";
 import { MARKET_OVERVIEW_WIDGET_CONFIG, POPULAR_STOCKS, TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl } from "@/lib/constants";
 import WatchlistGrid, { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
+import PriceChange from "@/components/PriceChange";
+import { formatMarketCap, formatPrice, formatRatio } from "@/lib/format";
 
 
 
-const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name }) => ({ symbol, company: name }));
+const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name, currency }) => ({ symbol, company: name, currency }));
 
 
 
@@ -120,14 +122,18 @@ export default async function Home() {
                       </Link>
                     </td>
                     <td className="py-2.5 px-3 text-gray-400 font-mono text-xs">{stock.symbol}</td>
-                    <td className="py-2.5 px-3 text-right text-gray-100 font-medium">{stock.priceFormatted}</td>
-                    <td className={`py-2.5 px-3 text-right font-medium ${
-                      (stock.changePercent ?? 0) >= 0 ? "text-teal-400" : "text-red-500"
-                    }`}>
-                      {stock.changeFormatted}
+                    <td className="py-2.5 px-3 text-right text-gray-100 font-medium tabular-nums">
+                      {formatPrice(stock.currentPrice, stock.currency)}
                     </td>
-                    <td className="py-2.5 px-3 text-right text-gray-400 hidden lg:table-cell">{stock.marketCap}</td>
-                    <td className="py-2.5 pr-4 text-right text-gray-400 hidden lg:table-cell">{stock.peRatio}</td>
+                    <td className="py-2.5 px-3 text-right font-medium">
+                      <PriceChange value={stock.changePercent} />
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-gray-400 tabular-nums hidden lg:table-cell">
+                      {formatMarketCap(stock.marketCapMillions, stock.currency)}
+                    </td>
+                    <td className="py-2.5 pr-4 text-right text-gray-400 tabular-nums hidden lg:table-cell">
+                      {formatRatio(stock.peRatio)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

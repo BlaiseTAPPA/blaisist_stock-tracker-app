@@ -1,14 +1,16 @@
 import Link from "next/link";
 import StockLogo from "@/components/StockLogo";
 import AddStockTile from "@/components/AddStockTile";
-import type { StockWithData } from "@/types/watchlist";
+import PriceChange from "@/components/PriceChange";
+import { formatPrice } from "@/lib/format";
+import type { StockQuoteRow } from "@/types/stock";
 
 /** The dashboard shows at most this many watchlist cards. */
 export const WATCHLIST_GRID_MAX = 12;
 
 type WatchlistGridProps = {
   /** Cards to render (the caller passes at most WATCHLIST_GRID_MAX). */
-  stocks: StockWithData[];
+  stocks: StockQuoteRow[];
   /** Size of the whole watchlist, for the "View all (N)" link. */
   total: number;
 };
@@ -35,10 +37,10 @@ const WatchlistGrid = ({ stocks, total }: WatchlistGridProps) => {
                 </svg>
               </div>
               <p className="text-xs text-gray-300 font-medium truncate">{stock.company}</p>
-              <p className="text-base font-bold text-gray-100">{stock.priceFormatted ?? "—"}</p>
-              <p className={`text-xs font-medium ${(stock.changePercent ?? 0) >= 0 ? "text-teal-400" : "text-red-500"}`}>
-                {stock.changeFormatted ?? "—"}
+              <p className="text-base font-bold text-gray-100 tabular-nums">
+                {formatPrice(stock.currentPrice, stock.currency)}
               </p>
+              <PriceChange value={stock.changePercent} className="text-xs font-medium" />
             </Link>
           </li>
         ))}

@@ -130,60 +130,62 @@ export async function getStockFinancials(symbol: string): Promise<MetricResponse
 
 const MAX_CONCURRENT_SYMBOLS = 5;
 
-const formatCap = (v: number) => {
-  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}T`;
-  if (v >= 1_000) return `$${(v / 1_000).toFixed(2)}B`;
-  return `$${v.toFixed(0)}M`;
-};
+/**
+ * `currency` is the listing currency when the caller already knows it (static
+ * list); otherwise it is read from `/stock/profile2` (24 h cache).
+ */
+type StockInput = { symbol: string; company: string; currency?: string };
 
-type StockInput = { symbol: string; company: string };
+// Finnhub's profile has no currency for unknown symbols, and the profile call
+// may fail: US listings are the common case, so fall back to USD.
+const DEFAULT_CURRENCY = 'USD';
 
+/** Finnhub sends `null` for missing metrics and `0` for unknown ones. */
+const nonZeroOrUndefined = (value: number | null | undefined) =>
+  typeof value === 'number' && Number.isFinite(value) && value !== 0 ? value : undefined;
 
 /**
  * Quote (60 s cache) for each stock, plus `/stock/metric` (24 h cache) for the
- * P/E and market cap when `fundamentals` is true. Company names come from the
- * caller (static list or watchlist document), so no `/stock/profile2` call.
- * Cold cost: 1 call per symbol, 2 with fundamentals; at most 5 symbols in flight.
+ * P/E and market cap when `fundamentals` is true, plus `/stock/profile2`
+ * (24 h cache) for the listing currency when the caller doesn't pass one.
+ * Company names come from the caller (static list or watchlist document).
+ * Cold cost per symbol: 1 call, +1 with fundamentals, +1 without a known
+ * currency; at most 5 symbols in flight.
  */
 export async function getTopStocksData(
   stocks: readonly StockInput[],
   { fundamentals = true }: { fundamentals?: boolean } = {},
 ): Promise<StockQuoteRow[]> {
-  return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company }) => {
+  return mapWithConcurrency(stocks, MAX_CONCURRENT_SYMBOLS, async ({ symbol, company, currency }) => {
+    // Optional data: a failure there must not hide the price.
+    const profilePromise = currency ? Promise.resolve(null) : getStockProfile(symbol).catch(() => null);
+    const financialsPromise = fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null);
+
     try {
-      const [quote, financials] = await Promise.all([
+      const [quote, profile, financials] = await Promise.all([
         getStockQuote(symbol),
-        // Fundamentals are optional: a failure there must not hide the price.
-        fundamentals ? getStockFinancials(symbol).catch(() => null) : Promise.resolve(null),
+        profilePromise,
+        financialsPromise,
       ]);
 
       // Finnhub answers unknown symbols with an all-zero quote.
       if (!quote.c) throw new Error('empty quote');
 
-      const price = quote.c;
-      const change = quote.dp ?? 0;
-      const cap = financials?.metric?.['marketCapitalization'] ?? 0;
-      const pe = financials?.metric?.['peBasicExclExtraTTM'] ?? 0;
-
       return {
         symbol,
         company,
-        currentPrice: price,
-        changePercent: change,
-        priceFormatted: `$${price.toFixed(2)}`,
-        changeFormatted: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
-        marketCap: cap ? formatCap(cap) : '—',
-        peRatio: pe ? pe.toFixed(1) : '—',
+        currency: currency ?? (profile?.currency || DEFAULT_CURRENCY),
+        currentPrice: quote.c,
+        changePercent: quote.dp ?? undefined,
+        marketCapMillions: nonZeroOrUndefined(financials?.metric?.['marketCapitalization']),
+        peRatio: nonZeroOrUndefined(financials?.metric?.['peBasicExclExtraTTM']),
         status: 'ok',
       } satisfies StockQuoteRow;
     } catch {
       return {
         symbol,
         company,
-        priceFormatted: '—',
-        changeFormatted: '—',
-        marketCap: '—',
-        peRatio: '—',
+        currency: currency ?? DEFAULT_CURRENCY,
         status: 'unavailable',
       } satisfies StockQuoteRow;
     }

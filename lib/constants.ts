@@ -227,17 +227,18 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
 });
 
 // Static list for the dashboard "top stocks" table and the search dialog's
-// default results. Names and exchanges rarely change, so hard-coding them
-// saves 10 Finnhub /stock/profile2 calls per render (API-01).
-export const POPULAR_STOCKS: readonly { symbol: string; name: string; exchange: string }[] = [
-    { symbol: 'AAPL', name: 'Apple Inc', exchange: 'NASDAQ' },
-    { symbol: 'MSFT', name: 'Microsoft Corp', exchange: 'NASDAQ' },
-    { symbol: 'GOOGL', name: 'Alphabet Inc', exchange: 'NASDAQ' },
-    { symbol: 'AMZN', name: 'Amazon.com Inc', exchange: 'NASDAQ' },
-    { symbol: 'TSLA', name: 'Tesla Inc', exchange: 'NASDAQ' },
-    { symbol: 'META', name: 'Meta Platforms Inc', exchange: 'NASDAQ' },
-    { symbol: 'NVDA', name: 'NVIDIA Corp', exchange: 'NASDAQ' },
-    { symbol: 'NFLX', name: 'Netflix Inc', exchange: 'NASDAQ' },
-    { symbol: 'ORCL', name: 'Oracle Corp', exchange: 'NYSE' },
-    { symbol: 'CRM', name: 'Salesforce Inc', exchange: 'NYSE' },
+// default results. Names, exchanges and currencies rarely change, so
+// hard-coding them saves 10 Finnhub /stock/profile2 calls per render (API-01).
+// All are US listings, quoted in USD.
+export const POPULAR_STOCKS: readonly { symbol: string; name: string; exchange: string; currency: string }[] = [
+    { symbol: 'AAPL', name: 'Apple Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'MSFT', name: 'Microsoft Corp', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'AMZN', name: 'Amazon.com Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'TSLA', name: 'Tesla Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'META', name: 'Meta Platforms Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'NVDA', name: 'NVIDIA Corp', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'NFLX', name: 'Netflix Inc', exchange: 'NASDAQ', currency: 'USD' },
+    { symbol: 'ORCL', name: 'Oracle Corp', exchange: 'NYSE', currency: 'USD' },
+    { symbol: 'CRM', name: 'Salesforce Inc', exchange: 'NYSE', currency: 'USD' },
 ];

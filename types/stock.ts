@@ -14,15 +14,19 @@ export type StockSearchResult = Stock & {
 /** `unavailable`: no usable quote (Finnhub error, timeout, 429 or unknown symbol). */
 export type StockDataStatus = "ok" | "unavailable";
 
-/** One row of the dashboard tables, built from a quote (and optional fundamentals). */
+/**
+ * One row of the dashboard tables and watchlist grid: raw numbers, formatted at
+ * render time by `lib/format.ts`. A field is `undefined` when Finnhub has no value.
+ */
 export type StockQuoteRow = {
   symbol: string;
   company: string;
+  /** ISO 4217 code of the listing (Finnhub profile), e.g. "USD". */
+  currency: string;
   currentPrice?: number;
   changePercent?: number;
-  priceFormatted: string;
-  changeFormatted: string;
-  marketCap: string;
-  peRatio: string;
+  /** In millions of `currency`, as Finnhub sends it. */
+  marketCapMillions?: number;
+  peRatio?: number;
   status: StockDataStatus;
 };
