@@ -4,12 +4,14 @@ import { headers } from "next/headers";
 import { isAPIError } from "better-auth/api";
 import { auth, VERIFY_EMAIL_CALLBACK_URL } from "../better-auth/auth";
 import { checkAuthRateLimit } from "../auth/rate-limit";
+import { signUpSchema } from "../validation/signup";
 
 type AuthResult =
   | { success: true }
   | { success: false; error: string; reason?: "EMAIL_NOT_VERIFIED" };
 
 const GENERIC_ERROR = "Something went wrong. Please try again.";
+const INVALID_FORM_ERROR = "Please check the form and try again.";
 const EMAIL_NOT_VERIFIED_ERROR =
   "Please verify your email address: check your inbox to activate your account.";
 
@@ -31,15 +33,27 @@ const toAuthError = (e: unknown): string => {
   }
 };
 
-export const signUpWithEmail = async ({
-  email,
-  password,
-  fullName,
-  country,
-  investmentGoals,
-  riskTolerance,
-  preferredIndustry,
-}: SignUpFormData): Promise<AuthResult> => {
+export const signUpWithEmail = async (
+  data: SignUpFormData,
+): Promise<AuthResult> => {
+  // Server actions are public endpoints: never trust the client's values.
+  const parsed = signUpSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues[0]?.message ?? INVALID_FORM_ERROR,
+    };
+  }
+  const {
+    email,
+    password,
+    fullName,
+    country,
+    investmentGoals,
+    riskTolerance,
+    preferredIndustry,
+  } = parsed.data;
+
   const limited = await checkAuthRateLimit("sign-up", email);
   if (limited) return { success: false, error: limited };
 
