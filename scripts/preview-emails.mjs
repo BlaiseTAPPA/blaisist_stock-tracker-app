@@ -54,7 +54,8 @@ const trappedAiHtml = `\`\`\`html
 <p onmouseover="alert(1)">$' $& kept as text</p>
 \`\`\``;
 
-const SETTINGS_URL = "https://app.example.com/settings";
+const APP_URL = "https://app.example.com";
+const SETTINGS_URL = `${APP_URL}/settings`;
 // A token with characters that must be escaped in an attribute.
 const UNSUBSCRIBE_URL = 'https://app.example.com/unsubscribe?token=abc"<x>&y=1';
 const RESET_URL =
@@ -63,12 +64,14 @@ const RESET_URL =
 const welcome = renderWelcomeEmail({
   name: trappedName,
   intro: trappedAiHtml,
+  appUrl: APP_URL,
   settingsUrl: SETTINGS_URL,
 });
 const news = renderNewsSummaryEmail({
   date: "Tuesday, November 17, 2026",
   newsContent: trappedAiHtml,
   allowedUrls: [ALLOWED_URL],
+  appUrl: APP_URL,
   unsubscribeUrl: UNSUBSCRIBE_URL,
   settingsUrl: SETTINGS_URL,
 });
@@ -117,6 +120,13 @@ check(
   "news: unsubscribe link present and escaped",
   news.includes('href="https://app.example.com/unsubscribe?token=abc&quot;&lt;x&gt;&amp;y=1"'),
 );
+for (const [email, html] of [
+  ["welcome", welcome],
+  ["news", news],
+]) {
+  check(`${email}: app links use the configured URL`, html.includes(`href="${APP_URL}/"`));
+  check(`${email}: no hardcoded app domain`, !html.includes("vercel.app"));
+}
 check("news: settings link present", news.includes(`href="${SETTINGS_URL}"`));
 check(
   "welcome: transactional, links to settings and has no unsubscribe",

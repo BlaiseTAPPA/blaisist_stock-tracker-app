@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import nodemailer, { type SendMailOptions } from "nodemailer";
-import { appUrl } from "../app-url";
+import { appUrl, getAppUrl } from "../app-url";
 import { createUnsubscribeToken } from "../email/unsubscribe-token";
 import {
   renderNewsSummaryEmail,
@@ -50,7 +50,12 @@ export const sendWelcomeEmail = async ({ email, name, intro }: WelcomeEmailData)
     to: email,
     subject: "Welcome to FinGenius - Your stock market toolkit is ready!",
     text: "Thanks for joining FinGenius",
-    html: renderWelcomeEmail({ name, intro, settingsUrl: appUrl("/settings") }),
+    html: renderWelcomeEmail({
+      name,
+      intro,
+      appUrl: getAppUrl(),
+      settingsUrl: appUrl("/settings"),
+    }),
   });
 };
 
@@ -112,6 +117,7 @@ export const sendNewsSummaryEmail = async ({
       date,
       newsContent,
       allowedUrls,
+      appUrl: getAppUrl(),
       // The link opens a confirmation page: a GET never unsubscribes, so
       // link scanners can't unsubscribe anyone.
       unsubscribeUrl: appUrl(`/unsubscribe?token=${token}`),

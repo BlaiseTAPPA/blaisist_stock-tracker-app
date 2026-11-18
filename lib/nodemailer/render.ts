@@ -26,15 +26,19 @@ const fillTemplate = (template: string, values: Record<string, string>) =>
 export const renderWelcomeEmail = ({
   name,
   intro,
+  appUrl,
   settingsUrl,
 }: {
   name: string;
   intro: string;
+  /** Public app URL, without a trailing slash. */
+  appUrl: string;
   /** Transactional email: it links to the email settings, not to an unsubscribe. */
   settingsUrl: string;
 }): string =>
   fillTemplate(WELCOME_EMAIL_TEMPLATE, {
     name: escapeHtml(name),
+    appUrl: escapeHtml(appUrl),
     settingsUrl: escapeHtml(settingsUrl),
     // No URL is given to the model, so the intro keeps no link at all.
     intro: sanitizeEmailHtml(intro),
@@ -44,6 +48,7 @@ export const renderNewsSummaryEmail = ({
   date,
   newsContent,
   allowedUrls,
+  appUrl,
   unsubscribeUrl,
   settingsUrl,
 }: {
@@ -51,12 +56,15 @@ export const renderNewsSummaryEmail = ({
   newsContent: string;
   /** URLs of the articles given to the model: the only links kept. */
   allowedUrls: readonly string[];
+  /** Public app URL, without a trailing slash. */
+  appUrl: string;
   /** Signed confirmation page link (`/unsubscribe?token=…`). */
   unsubscribeUrl: string;
   settingsUrl: string;
 }): string =>
   fillTemplate(NEWS_SUMMARY_EMAIL_TEMPLATE, {
     date: escapeHtml(date),
+    appUrl: escapeHtml(appUrl),
     unsubscribeUrl: escapeHtml(unsubscribeUrl),
     settingsUrl: escapeHtml(settingsUrl),
     newsContent: sanitizeEmailHtml(newsContent, { allowedUrls }),
