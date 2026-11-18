@@ -25,6 +25,8 @@ export type StockQuoteRow = {
   currency: string;
   currentPrice?: number;
   changePercent?: number;
+  /** Unix timestamp (seconds) of the quote, Finnhub `quote.t`; `undefined` without a quote. */
+  quoteTime?: number;
   /** In millions of `currency`, as Finnhub sends it. */
   marketCapMillions?: number;
   peRatio?: number;

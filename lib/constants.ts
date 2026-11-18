@@ -229,7 +229,7 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
   largeChartUrl: "",
 });
 
-// Static list for the dashboard "top stocks" table and the search dialog's
+// Static list for the dashboard "Popular stocks" table and the search dialog's
 // default results. Names, exchanges and currencies rarely change, so
 // hard-coding them saves 10 Finnhub /stock/profile2 calls per render (API-01).
 // All are US listings, quoted in USD.

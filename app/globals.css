@@ -183,11 +183,11 @@
   .auth-right-section {
     @apply flex w-full flex-col justify-start bg-gray-800 px-6 py-4 max-lg:border-t max-lg:border-gray-600 md:p-6 lg:h-screen lg:w-[55%] lg:px-18 lg:py-12;
   }
-  .auth-blockquote {
-    @apply mb-1 text-sm font-medium text-gray-400 md:mb-6 md:text-xl lg:mb-8 lg:text-2xl;
+  .auth-tagline {
+    @apply mb-4 text-lg font-semibold text-gray-100 md:mb-6 md:text-2xl;
   }
-  .auth-testimonial-author {
-    @apply text-xs font-bold text-gray-400 not-italic md:text-lg;
+  .auth-features {
+    @apply mb-2 flex flex-col gap-3 text-sm text-gray-400 md:gap-4 md:text-base;
   }
   .auth-dashboard-preview {
     @apply left-0 hidden h-auto w-[1024px] max-w-none rounded-xl border-6 border-gray-800 shadow-2xl lg:block;

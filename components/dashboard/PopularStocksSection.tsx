@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { getTopStocksData } from "@/lib/finnhub/client";
+import { Suspense } from "react";
+import { getTopStocksData, oldestQuoteTime } from "@/lib/finnhub/client";
 import { POPULAR_STOCKS } from "@/lib/constants";
 import PriceChange from "@/components/PriceChange";
 import MarketDataUnavailable from "@/components/dashboard/MarketDataUnavailable";
+import MarketStatusBadge from "@/components/dashboard/MarketStatusBadge";
+import DataTimestamp from "@/components/DataTimestamp";
 import { formatMarketCap, formatPrice, formatRatio } from "@/lib/format";
 
 const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name, currency }) => ({
@@ -64,7 +67,17 @@ export default async function PopularStocksSection() {
           </tbody>
         </table>
       </div>
-      {unavailable && <MarketDataUnavailable />}
+      {unavailable ? (
+        <MarketDataUnavailable />
+      ) : (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <DataTimestamp time={oldestQuoteTime(topStocks)} />
+          {/* Its own boundary: a slow market-status call never holds the table. */}
+          <Suspense fallback={null}>
+            <MarketStatusBadge />
+          </Suspense>
+        </div>
+      )}
     </>
   );
 }

@@ -17,6 +17,8 @@ export type StockPageData = {
   price?: number;
   /** Percent change; `undefined` when the quote is empty or unavailable. */
   changePercent?: number;
+  /** Unix timestamp (seconds) of the quote (`quote.t`); `undefined` without a quote. */
+  quoteTime?: number;
 };
 
 const DEFAULT_CURRENCY = "USD";
@@ -60,5 +62,6 @@ export const getStockPageData = cache(async (rawSymbol: string): Promise<StockPa
     currency: profile?.currency || DEFAULT_CURRENCY,
     price: hasQuote ? quote.c : undefined,
     changePercent: hasQuote ? (quote.dp ?? undefined) : undefined,
+    quoteTime: hasQuote ? quote.t || undefined : undefined,
   };
 });

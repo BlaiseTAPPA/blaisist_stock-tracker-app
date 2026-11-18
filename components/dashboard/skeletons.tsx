@@ -35,7 +35,7 @@ export const WatchlistSkeleton = ({ cards = 6 }: { cards?: number }) => (
 );
 
 export const PopularStocksSkeleton = () => (
-  <Busy label="Loading top stocks…">
+  <Busy label="Loading popular stocks…">
     <div className={`${pulse} h-80`} />
   </Busy>
 );

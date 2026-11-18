@@ -1,9 +1,10 @@
 import { getSessionUser } from "@/lib/auth/session";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
-import { getTopStocksData } from "@/lib/finnhub/client";
+import { getTopStocksData, oldestQuoteTime } from "@/lib/finnhub/client";
 import SearchTrigger from "@/components/search/SearchTrigger";
 import WatchlistGrid, { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
 import MarketDataUnavailable from "@/components/dashboard/MarketDataUnavailable";
+import DataTimestamp from "@/components/DataTimestamp";
 
 /** Session, then watchlist (DB), then quotes for the cards shown. Streams on its own. */
 export default async function WatchlistSection() {
@@ -35,7 +36,7 @@ export default async function WatchlistSection() {
 
   return (
     <>
-      {unavailable && <MarketDataUnavailable />}
+      {unavailable ? <MarketDataUnavailable /> : <DataTimestamp time={oldestQuoteTime(data)} />}
       <WatchlistGrid stocks={data} total={items.length} />
     </>
   );
