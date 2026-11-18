@@ -73,14 +73,45 @@ describe("toggleWatchlist", () => {
     ]);
   });
 
-  it("removes a symbol already in the watchlist", async () => {
-    await toggleWatchlist("AAPL", "Apple Inc.");
+  it("removes a symbol already in the watchlist and returns its original date", async () => {
+    const addedAt = new Date("2026-01-02T03:04:05.000Z");
+    await Watchlist.create({ userId: ADA.id, symbol: "AAPL", company: "Apple Inc.", addedAt });
 
     await expect(toggleWatchlist("AAPL", "Apple Inc.")).resolves.toEqual({
       ok: true,
       added: false,
+      addedAt: addedAt.toISOString(),
     });
     expect(await symbolsOf(ADA.id)).toEqual([]);
+  });
+
+  it("undoes a removal with the original date, and never removes on undo", async () => {
+    const addedAt = "2026-01-02T03:04:05.000Z";
+
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: true,
+      added: true,
+    });
+    const doc = await Watchlist.findOne({ userId: ADA.id, symbol: "AAPL" }).lean();
+    expect(doc?.addedAt.toISOString()).toBe(addedAt);
+
+    // A second undo (double click) leaves it in the watchlist.
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: true,
+      added: true,
+    });
+    expect(await symbolsOf(ADA.id)).toEqual(["AAPL"]);
+  });
+
+  it.each([
+    ["a malformed date", "yesterday"],
+    ["a date in the future", "2999-01-01T00:00:00.000Z"],
+  ])("rejects an undo with %s", async (_label, addedAt) => {
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: false,
+      reason: "invalid",
+    });
+    expect(await Watchlist.countDocuments()).toBe(0);
   });
 
   it("only touches the signed-in user's watchlist", async () => {
