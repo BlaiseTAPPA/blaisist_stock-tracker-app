@@ -10,6 +10,7 @@ import {
 const MarketSummarySection = () => (
   <div className="overflow-hidden rounded-lg border border-gray-600 bg-gray-800">
     <TradingViewWidget
+      title="Market overview chart"
       scriptUrl={`${scriptUrl}market-overview.js`}
       config={MARKET_OVERVIEW_WIDGET_CONFIG}
       className="custom-chart"

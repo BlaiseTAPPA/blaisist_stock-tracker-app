@@ -10,10 +10,10 @@ import { signUpSchema } from "../validation/signup";
 type AuthResult =
   { success: true } | { success: false; error: string; reason?: "EMAIL_NOT_VERIFIED" };
 
-const GENERIC_ERROR = "Something went wrong. Please try again.";
-const INVALID_FORM_ERROR = "Please check the form and try again.";
+const GENERIC_ERROR = "Something went wrong. Try again in a moment.";
+const INVALID_FORM_ERROR = "Check the form, then try again.";
 const EMAIL_NOT_VERIFIED_ERROR =
-  "Please verify your email address: check your inbox to activate your account.";
+  "Verify your email address: check your inbox to activate your account.";
 
 // Maps Better Auth errors to messages that are safe to show in the UI.
 // Anything unexpected gets the generic message; the details stay in the logs.

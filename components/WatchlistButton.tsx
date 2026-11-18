@@ -40,10 +40,10 @@ const WatchlistButton = ({
 
       if (!result.ok) {
         if (result.reason === "unauthenticated") {
-          toast.error("Your session has expired. Please sign in again.");
+          toast.error("Your session has expired. Sign in again.");
           router.push("/sign-in");
         } else {
-          toast.error("Couldn't update your watchlist. Please try again.");
+          toast.error("Couldn't update your watchlist. Try again in a moment.");
         }
         return;
       }

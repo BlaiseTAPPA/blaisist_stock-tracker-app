@@ -19,7 +19,13 @@ export default defineConfig({
     hookTimeout: 120_000,
     coverage: {
       provider: "v8",
-      include: ["lib/format.ts", "lib/security/**", "lib/validation/**", "lib/finnhub/client.ts"],
+      include: [
+        "lib/format.ts",
+        "lib/time.ts",
+        "lib/security/**",
+        "lib/validation/**",
+        "lib/finnhub/client.ts",
+      ],
       reporter: ["text", "html"],
       thresholds: { lines: 70, functions: 70, branches: 70, statements: 70 },
     },

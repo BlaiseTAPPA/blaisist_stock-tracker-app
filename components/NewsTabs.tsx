@@ -37,7 +37,7 @@ const NewsTabs = () => {
               tabIndex={selected ? 0 : -1}
               onClick={() => setActiveIndex(i)}
               className={cn(
-                "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors sm:min-h-0",
+                "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors",
                 selected
                   ? "bg-yellow-500 text-gray-900"
                   : "bg-gray-800 text-gray-300 hover:bg-gray-700",
@@ -52,6 +52,7 @@ const NewsTabs = () => {
       <div id="news-panel" role="tabpanel" aria-labelledby={tabId(activeIndex)}>
         <TradingViewWidget
           key={active.label} // force re-mount on tab change
+          title={`${active.label} news`}
           scriptUrl={`${scriptUrl}timeline.js`}
           config={getNewsWidgetConfig(active.symbol ?? undefined)}
           height={600}

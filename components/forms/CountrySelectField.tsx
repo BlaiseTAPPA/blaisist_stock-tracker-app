@@ -131,7 +131,7 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
         name={name}
         control={control}
         rules={{
-          required: required ? `Please select ${label.toLowerCase()}` : false,
+          required: required ? `Select your ${label.toLowerCase()}` : false,
         }}
         render={({ field }) => (
           <CountrySelect

@@ -5,7 +5,11 @@ import useTradingViewWidget, { type WidgetHeight } from "@/hooks/useTradingViewW
 import { cn } from "@/lib/utils";
 
 interface TradingViewWidgetProps {
-  title?: string;
+  /**
+   * Accessible name of the widget's iframe, e.g. "Apple Inc. candlestick
+   * chart". Required: screen readers otherwise announce an unnamed "frame".
+   */
+  title: string;
   scriptUrl: string;
   config: Record<string, unknown>;
   /** Pixels, or `{ base, md }` to use a different height from 768 px up. */
@@ -24,6 +28,7 @@ const TradingViewWidget = ({
   className,
 }: TradingViewWidgetProps) => {
   const { containerRef, loaded, base, md } = useTradingViewWidget(scriptUrl, config, {
+    title,
     height,
     lazy,
   });
@@ -34,7 +39,6 @@ const TradingViewWidget = ({
 
   return (
     <div className="w-full">
-      {title && <h3 className="mb-5 text-2xl font-semibold text-gray-100">{title}</h3>}
       <div className="relative h-(--tv-h) md:h-(--tv-h-md)" style={sizeVars}>
         {/* Left empty on purpose: the hook owns this node's children. */}
         <div ref={containerRef} className={cn("tradingview-widget-container h-full", className)} />

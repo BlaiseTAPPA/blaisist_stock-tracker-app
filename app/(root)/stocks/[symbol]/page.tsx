@@ -40,6 +40,7 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
 
   const { symbol: sym, name, exchange, currency, price, changePercent, quoteTime } = stock;
   const inWatchlist = user ? await isSymbolInWatchlist(user.id, sym) : false;
+  const label = name ?? sym;
 
   return (
     <div className="flex flex-col gap-8">
@@ -76,24 +77,27 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
 
       {/* Above the fold, loaded eagerly: symbol info and a single chart. */}
       <TradingViewWidget
+        title={`${label} price summary`}
         scriptUrl={`${scriptUrl}symbol-info.js`}
         config={SYMBOL_INFO_WIDGET_CONFIG(sym)}
         height={170}
         lazy={false}
       />
 
-      <StockChartTabs symbol={sym} />
+      <StockChartTabs symbol={sym} name={label} />
 
       {/* Below the fold: mounted only as they approach the viewport. */}
       <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-6">
           <TradingViewWidget
+            title={`${label} technical analysis`}
             scriptUrl={`${scriptUrl}technical-analysis.js`}
             config={TECHNICAL_ANALYSIS_WIDGET_CONFIG(sym)}
             height={400}
           />
 
           <TradingViewWidget
+            title={`${label} company profile`}
             scriptUrl={`${scriptUrl}symbol-profile.js`}
             config={COMPANY_PROFILE_WIDGET_CONFIG(sym)}
             height={440}
@@ -101,6 +105,7 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
         </div>
 
         <TradingViewWidget
+          title={`${label} financials`}
           scriptUrl={`${scriptUrl}financials.js`}
           config={COMPANY_FINANCIALS_WIDGET_CONFIG(sym)}
           height={{ base: 560, md: 820 }}

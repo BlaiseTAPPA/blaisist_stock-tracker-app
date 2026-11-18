@@ -5,11 +5,11 @@ import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
+import FormError from "@/components/forms/FormError";
 import { signInWithEmail } from "@/lib/actions/auth.actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 // Codes Better Auth appends as `?error=` when a verification link fails.
 const VERIFY_LINK_ERRORS: Record<string, string> = {
@@ -23,7 +23,7 @@ const VerifyLinkError = () => {
 
   return (
     <p role="alert" className="mb-5 text-sm text-red-500">
-      {VERIFY_LINK_ERRORS[code] ?? "We couldn't verify your email. Please try again."}
+      {VERIFY_LINK_ERRORS[code] ?? "Your email couldn't be verified. Sign in to get a new link."}
     </p>
   );
 };
@@ -31,6 +31,7 @@ const VerifyLinkError = () => {
 const SignInForm = () => {
   const router = useRouter();
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -44,29 +45,29 @@ const SignInForm = () => {
   });
 
   const onSubmit = async (data: SignInFormData) => {
+    setUnverifiedEmail(null);
+    setFormError(null);
     try {
-      setUnverifiedEmail(null);
       const result = await signInWithEmail(data);
       if (!result.success) {
         if (result.reason === "EMAIL_NOT_VERIFIED") {
           setUnverifiedEmail(data.email);
           return;
         }
-        toast.error(result.error);
+        setFormError(result.error);
         return;
       }
       router.push("/");
     } catch (e) {
+      // Network failure or a server action that threw: no detail to show.
       console.error(e);
-      toast.error("Sign in failed", {
-        description: e instanceof Error ? e.message : "Failed to sign in",
-      });
+      setFormError("Sign in failed. Check your connection, then try again.");
     }
   };
 
   return (
     <>
-      <h1 className="form-title">Log in to your account</h1>
+      <h1 className="form-title">Sign in to FinGenius</h1>
       <Suspense fallback={null}>
         <VerifyLinkError />
       </Suspense>
@@ -74,7 +75,7 @@ const SignInForm = () => {
         <div className="mb-5">
           <VerifyEmailNotice
             email={unverifiedEmail}
-            title="Please verify your email address"
+            title="Verify your email address"
             description="Check your inbox to activate your account. The link may take a minute to arrive; also check your spam folder."
           />
         </div>
@@ -85,7 +86,7 @@ const SignInForm = () => {
           label="Email"
           type="email"
           autoComplete="email"
-          placeholder="donniedarko@example.com"
+          placeholder="you@example.com"
           register={register}
           error={errors.email}
           validation={{
@@ -102,15 +103,17 @@ const SignInForm = () => {
           register={register}
           error={errors.password}
           validation={{
-            required: "Password is required",
-            minLength: { value: 8, message: "Password must be at least 8 characters" },
+            // Only required: the length rule belongs to sign-up, and quoting
+            // it here would mislead a user who just mistyped.
+            required: "Enter your password",
           }}
         />
 
+        <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
-          {isSubmitting ? "Signing in…" : "Log in"}
+          {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
-        <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />
+        <FooterLink text="Don't have an account?" linkText="Create account" href="/sign-up" />
       </form>
     </>
   );

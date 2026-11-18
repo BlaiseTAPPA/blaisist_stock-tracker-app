@@ -56,7 +56,9 @@ const NavItems = ({ variant = "bar", onNavigate }: NavItemsProps) => {
               className={cn(
                 "rounded-sm focus-ring transition-colors hover:text-yellow-500",
                 itemClass,
-                active && "text-gray-100",
+                // Not only lighter: a 2 px underline marks the current page (1.4.1).
+                active &&
+                  "text-gray-100 underline decoration-yellow-500 decoration-2 underline-offset-8",
               )}
             >
               {item.label}

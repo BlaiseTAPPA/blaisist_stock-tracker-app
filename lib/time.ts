@@ -1,5 +1,10 @@
-// Date helpers for the viewer's browser: every formatter uses the browser's
-// time zone and language (`undefined` locale), never the server's.
+// Date helpers for the viewer's browser. Words and formats are US English
+// ("en-US"), like the rest of the UI and the numbers (`lib/format.ts`); the
+// time zone is the browser's (no `timeZone` option: the default is the right
+// one). They run client-side only, through `useNow`, so the server's zone
+// never reaches the text and hydration can't mismatch.
+
+const LOCALE = "en-US";
 
 const sameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() &&
@@ -7,24 +12,29 @@ const sameDay = (a: Date, b: Date) =>
   a.getDate() === b.getDate();
 
 /**
- * "3:42 PM" when `date` is today, "Nov 14, 4:00 PM" otherwise (a weekend shows
- * Friday's close), with the year when it differs from the current one.
+ * "3:42 PM EST" when `date` is today, "Nov 14, 4:00 PM GMT+1" otherwise (a
+ * weekend shows Friday's close), with the year when it differs from the
+ * current one. The zone name says which clock the time is on.
  */
 export function formatAsOf(date: Date, now: Date): string {
   if (sameDay(date, now)) {
-    return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    return date.toLocaleTimeString(LOCALE, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
   }
-  return date.toLocaleString(undefined, {
+  return date.toLocaleString(LOCALE, {
     month: "short",
     day: "numeric",
     ...(date.getFullYear() !== now.getFullYear() && { year: "numeric" }),
     hour: "numeric",
     minute: "2-digit",
+    timeZoneName: "short",
   });
 }
 
-// Words in English like the rest of the UI ("3h ago"); dates follow the browser.
-const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto", style: "narrow" });
+const relative = new Intl.RelativeTimeFormat(LOCALE, { numeric: "auto", style: "narrow" });
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -40,13 +50,20 @@ export function formatRelativeDate(date: Date, now: Date): string {
   if (elapsed < MINUTE) return "just now";
   if (elapsed < HOUR) return relative.format(-Math.floor(elapsed / MINUTE), "minute");
   if (elapsed < DAY) return relative.format(-Math.floor(elapsed / HOUR), "hour");
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(LOCALE, {
     month: "short",
     day: "numeric",
     ...(date.getFullYear() !== now.getFullYear() && { year: "numeric" }),
   });
 }
 
-/** Full date and time, for the `title` tooltip of a relative date. */
+/** "Nov 14, 2025, 4:00 PM GMT+1", for the `title` tooltip of a date. */
 export const formatFullDate = (date: Date) =>
-  date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  date.toLocaleString(LOCALE, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });

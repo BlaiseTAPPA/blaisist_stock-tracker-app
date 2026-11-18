@@ -9,7 +9,7 @@ export default function SymbolNotFound() {
       <p className="font-mono text-sm text-yellow-500">404</p>
       <h1 className="empty-title">Symbol not found</h1>
       <p className="empty-description">
-        We couldn&apos;t find a stock with this symbol. Check the ticker or search for the company.
+        No stock matches this symbol. Check the ticker or search by company name.
       </p>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
         <SearchTrigger

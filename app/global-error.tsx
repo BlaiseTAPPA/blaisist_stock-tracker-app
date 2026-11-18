@@ -14,7 +14,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
         <div role="alert" className="flex flex-col items-center">
           <h1 className="empty-title">Something went wrong</h1>
           <p className="empty-description">
-            The app couldn&apos;t load. Please try again in a moment.
+            The app couldn&apos;t load. Check your connection, then try again.
           </p>
           <button type="button" onClick={() => retry()} className="yellow-btn px-6">
             Try again

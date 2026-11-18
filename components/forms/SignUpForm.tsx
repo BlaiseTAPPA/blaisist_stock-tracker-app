@@ -5,18 +5,19 @@ import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
+import FormError from "@/components/forms/FormError";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SignUpFormData } from "@/types/forms";
-import { toast } from "sonner";
 
 const SignUpForm = () => {
   // Set once the account is created: the user must verify their email
   // before they can sign in.
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -37,18 +38,18 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (data: SignUpFormData) => {
+    setFormError(null);
     try {
       const result = await signUpWithEmail(data);
       if (!result.success) {
-        toast.error(result.error);
+        setFormError(result.error);
         return;
       }
       setPendingEmail(data.email);
     } catch (e) {
+      // Network failure or a server action that threw: no detail to show.
       console.error(e);
-      toast.error("Sign up failed", {
-        description: e instanceof Error ? e.message : "Failed to create an account",
-      });
+      setFormError("Couldn't create your account. Check your connection, then try again.");
     }
   };
 
@@ -68,13 +69,13 @@ const SignUpForm = () => {
 
   return (
     <>
-      <h1 className="form-title">Sign up and personalize</h1>
+      <h1 className="form-title">Create your account</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="fullName"
           label="Full name"
           autoComplete="name"
-          placeholder="John Doe"
+          placeholder="Your name"
           register={register}
           error={errors.fullName}
           validation={{
@@ -87,7 +88,7 @@ const SignUpForm = () => {
           label="Email"
           type="email"
           autoComplete="email"
-          placeholder="donniedarko@example.com"
+          placeholder="you@example.com"
           register={register}
           error={errors.email}
           validation={{
@@ -145,8 +146,9 @@ const SignUpForm = () => {
           required
         />
 
+        <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
-          {isSubmitting ? "Creating account…" : "Start your investing journey"}
+          {isSubmitting ? "Creating account…" : "Create account"}
         </Button>
         <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
       </form>
