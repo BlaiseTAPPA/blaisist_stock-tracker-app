@@ -237,7 +237,7 @@
     @apply !bg-transparent py-6 text-center text-gray-500;
   }
   .search-loader {
-    @apply absolute top-1/2 right-12 h-4 w-4 -translate-y-1/2 animate-spin text-gray-500;
+    @apply absolute top-1/2 right-12 h-4 w-4 -translate-y-1/2 text-gray-500 motion-safe:animate-spin;
   }
   .search-item {
     @apply my-3 w-full rounded-none px-1 data-[selected=true]:bg-gray-700;

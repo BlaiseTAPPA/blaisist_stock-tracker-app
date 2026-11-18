@@ -4,7 +4,7 @@
 
 import { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
 
-const pulse = "animate-pulse rounded-lg border border-gray-600 bg-gray-800";
+const pulse = "motion-safe:animate-pulse rounded-lg border border-gray-600 bg-gray-800";
 
 /** Announced once per skeleton; the visual blocks are hidden from screen readers. */
 const Busy = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -15,7 +15,7 @@ const Busy = ({ label, children }: { label: string; children: React.ReactNode })
 );
 
 export const SectionTitleSkeleton = () => (
-  <div aria-hidden="true" className="h-7 w-48 animate-pulse rounded bg-gray-700" />
+  <div aria-hidden="true" className="h-7 w-48 rounded bg-gray-700 motion-safe:animate-pulse" />
 );
 
 export const MarketSummarySkeleton = () => (
