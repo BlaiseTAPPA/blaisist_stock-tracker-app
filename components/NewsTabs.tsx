@@ -52,6 +52,7 @@ const NewsTabs = () => {
       <div id="news-panel" role="tabpanel" aria-labelledby={tabId(activeIndex)}>
         <TradingViewWidget
           key={active.label} // force re-mount on tab change
+          title={`${active.label} news`}
           scriptUrl={`${scriptUrl}timeline.js`}
           config={getNewsWidgetConfig(active.symbol ?? undefined)}
           height={600}

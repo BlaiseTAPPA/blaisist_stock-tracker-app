@@ -11,12 +11,12 @@ import { onTablistKeyDown } from "@/lib/a11y/tablist";
 import { cn } from "@/lib/utils";
 
 const CHARTS = [
-  { id: "candles", label: "Candles", config: CANDLE_CHART_WIDGET_CONFIG },
-  { id: "baseline", label: "Baseline", config: BASELINE_WIDGET_CONFIG },
+  { id: "candles", label: "Candles", kind: "candlestick", config: CANDLE_CHART_WIDGET_CONFIG },
+  { id: "baseline", label: "Baseline", kind: "baseline", config: BASELINE_WIDGET_CONFIG },
 ] as const;
 
 /** One advanced chart at a time: only the active tab's widget is mounted. */
-export default function StockChartTabs({ symbol }: { symbol: string }) {
+export default function StockChartTabs({ symbol, name }: { symbol: string; name: string }) {
   const [active, setActive] = useState(0);
   const chart = CHARTS[active] ?? CHARTS[0];
 
@@ -53,6 +53,7 @@ export default function StockChartTabs({ symbol }: { symbol: string }) {
       <div id="chart-panel" role="tabpanel" aria-labelledby={`chart-tab-${chart.id}`}>
         <TradingViewWidget
           key={chart.id}
+          title={`${name} ${chart.kind} chart`}
           scriptUrl={`${TRADINGVIEW_SCRIPT_BASE_URL}advanced-chart.js`}
           config={chart.config(symbol)}
           className="custom-chart"

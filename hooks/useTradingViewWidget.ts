@@ -13,6 +13,8 @@ export const normalizeHeight = (height: WidgetHeight) =>
     : { base: height.base, md: height.md ?? height.base };
 
 interface Options {
+  /** Accessible name set on the injected iframe (WCAG 4.1.2). */
+  title: string;
   height?: WidgetHeight;
   /** Inject the script only when the container nears the viewport. */
   lazy?: boolean;
@@ -26,7 +28,7 @@ interface Options {
 const useTradingViewWidget = (
   scriptUrl: string,
   config: Record<string, unknown>,
-  { height = 600, lazy = true }: Options = {},
+  { title, height = 600, lazy = true }: Options,
 ) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -67,8 +69,9 @@ const useTradingViewWidget = (
         "height" in widgetConfig ? { ...widgetConfig, height: h } : widgetConfig,
       );
 
-      // Stop the placeholder pulse when the iframe loads, or after a grace
-      // period if the embed never renders (blocked or failing script).
+      // Name the iframe as soon as the embed script injects it (it has no
+      // title of ours otherwise), then stop the placeholder pulse when it
+      // loads, or after a grace period if the embed never renders.
       clearTimeout(giveUp);
       giveUp = setTimeout(() => setLoaded(true), LOAD_TIMEOUT_MS);
       iframeWatcher?.disconnect();
@@ -76,6 +79,7 @@ const useTradingViewWidget = (
         const iframe = node.querySelector("iframe");
         if (!iframe) return;
         iframeWatcher?.disconnect();
+        iframe.title = title;
         iframe.addEventListener("load", () => setLoaded(true), { once: true });
       });
       iframeWatcher.observe(node, { childList: true, subtree: true });
@@ -121,7 +125,7 @@ const useTradingViewWidget = (
       mql.removeEventListener("change", onBreakpoint);
       node.replaceChildren();
     };
-  }, [scriptUrl, configKey, base, md, lazy]);
+  }, [scriptUrl, configKey, base, md, lazy, title]);
 
   return { containerRef, loaded, base, md };
 };
