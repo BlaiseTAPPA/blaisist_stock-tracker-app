@@ -14,7 +14,7 @@ const Header = ({ user }: { user: User }) => {
           <Link href="/" className="inline-flex min-h-11 items-center rounded-sm focus-ring">
             <Image
               src="/assets/icons/logo.svg"
-              alt="FinGenius logo"
+              alt="FinGenius home"
               width={140}
               height={32}
               className="h-8 w-auto cursor-pointer"

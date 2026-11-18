@@ -14,7 +14,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         <Link href="/" className="auth-logo w-fit rounded-sm focus-ring">
           <Image
             src="/assets/icons/logo.svg"
-            alt="FinGenius Logo"
+            alt="FinGenius home"
             width={140}
             height={32}
             className="h-auto w-auto"
@@ -51,7 +51,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         <div className="relative flex-1">
           <Image
             src="/assets/images/dashboard.png"
-            alt="Dashboard Preview"
+            alt="FinGenius dashboard preview"
             width={1440}
             height={1150}
             className="auth-dashboard-preview absolute top-0"

@@ -23,7 +23,7 @@ const VerifyLinkError = () => {
 
   return (
     <p role="alert" className="mb-5 text-sm text-red-500">
-      {VERIFY_LINK_ERRORS[code] ?? "We could not verify your email. Please try again."}
+      {VERIFY_LINK_ERRORS[code] ?? "We couldn't verify your email. Please try again."}
     </p>
   );
 };

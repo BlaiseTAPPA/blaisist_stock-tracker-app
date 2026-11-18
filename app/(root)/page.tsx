@@ -30,12 +30,12 @@ export default function Home() {
       {/* One h1 per page: the panels are h2s and the design has no visible page title. */}
       <h1 className="sr-only">Dashboard</h1>
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <DashboardPanel title="Market Summary">
+        <DashboardPanel title="Market summary">
           <MarketSummarySection />
         </DashboardPanel>
 
         <DashboardPanel
-          title="Your Watchlist"
+          title="Your watchlist"
           action={
             <Link href="/watchlist" className={viewAllLink}>
               View all
@@ -50,7 +50,7 @@ export default function Home() {
 
       <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
         <DashboardPanel
-          title="Today's Top Stocks"
+          title="Popular stocks"
           action={
             <SearchTrigger
               variant="link"
@@ -65,7 +65,7 @@ export default function Home() {
         </DashboardPanel>
 
         <DashboardPanel
-          title="Today's Financial News"
+          title="Financial news"
           action={
             <Link href="/news" className={viewAllLink}>
               View all

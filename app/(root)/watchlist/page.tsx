@@ -23,7 +23,7 @@ export default async function WatchlistPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h1 className="text-2xl font-bold text-gray-100">My Watchlist</h1>
+        <h1 className="text-2xl font-bold text-gray-100">My watchlist</h1>
         {items.length > 0 && (
           <p className="text-sm text-gray-500">
             {`${items.length} ${items.length === 1 ? "stock" : "stocks"}`}

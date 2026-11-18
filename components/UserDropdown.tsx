@@ -62,7 +62,7 @@ const UserDropdown = ({ user }: { user: User }) => {
           className="text-md cursor-pointer font-medium text-gray-100 transition-colors focus:bg-transparent focus:text-yellow-500"
         >
           <LogOut className="mr-2 hidden h-4 w-4 sm:block" />
-          Logout
+          Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

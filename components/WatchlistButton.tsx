@@ -120,7 +120,7 @@ const WatchlistButton = ({
           />
         </svg>
       ) : null}
-      <span>{isPending ? "Saving…" : added ? "Remove from Watchlist" : "Add to Watchlist"}</span>
+      <span>{isPending ? "Saving…" : added ? "Remove from watchlist" : "Add to watchlist"}</span>
     </button>
   );
 };

@@ -28,7 +28,7 @@ export const PREFERRED_INDUSTRIES = [
   { value: "Healthcare", label: "Healthcare" },
   { value: "Finance", label: "Finance" },
   { value: "Energy", label: "Energy" },
-  { value: "Consumer Goods", label: "Consumer Goods" },
+  { value: "Consumer Goods", label: "Consumer goods" },
 ];
 
 // TradingView Charts
@@ -117,7 +117,7 @@ export const HEATMAP_WIDGET_CONFIG = {
 };
 
 export const NEWS_INDUSTRIES = [
-  { label: "All Markets", symbol: null, market: "stock" },
+  { label: "All markets", symbol: null, market: "stock" },
   { label: "Technology", symbol: "NASDAQ:AAPL" },
   { label: "Finance", symbol: "NYSE:JPM" },
   { label: "Healthcare", symbol: "NYSE:JNJ" },

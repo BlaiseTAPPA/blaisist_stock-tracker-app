@@ -26,7 +26,7 @@ export default async function PopularStocksSection() {
               <th className="px-3 py-3 text-left font-medium">Symbol</th>
               <th className="px-3 py-3 text-right font-medium">Price</th>
               <th className="px-3 py-3 text-right font-medium">Change</th>
-              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">Market Cap</th>
+              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">Market cap</th>
               <th className="hidden py-3 pr-4 text-right font-medium lg:table-cell">P/E</th>
             </tr>
           </thead>
