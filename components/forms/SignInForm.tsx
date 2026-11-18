@@ -5,11 +5,11 @@ import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
+import FormError from "@/components/forms/FormError";
 import { signInWithEmail } from "@/lib/actions/auth.actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 // Codes Better Auth appends as `?error=` when a verification link fails.
 const VERIFY_LINK_ERRORS: Record<string, string> = {
@@ -31,6 +31,7 @@ const VerifyLinkError = () => {
 const SignInForm = () => {
   const router = useRouter();
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -44,23 +45,23 @@ const SignInForm = () => {
   });
 
   const onSubmit = async (data: SignInFormData) => {
+    setUnverifiedEmail(null);
+    setFormError(null);
     try {
-      setUnverifiedEmail(null);
       const result = await signInWithEmail(data);
       if (!result.success) {
         if (result.reason === "EMAIL_NOT_VERIFIED") {
           setUnverifiedEmail(data.email);
           return;
         }
-        toast.error(result.error);
+        setFormError(result.error);
         return;
       }
       router.push("/");
     } catch (e) {
+      // Network failure or a server action that threw: no detail to show.
       console.error(e);
-      toast.error("Sign in failed", {
-        description: e instanceof Error ? e.message : "Failed to sign in",
-      });
+      setFormError("Sign in failed. Check your connection, then try again.");
     }
   };
 
@@ -107,6 +108,7 @@ const SignInForm = () => {
           }}
         />
 
+        <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
           {isSubmitting ? "Signing in…" : "Log in"}
         </Button>
