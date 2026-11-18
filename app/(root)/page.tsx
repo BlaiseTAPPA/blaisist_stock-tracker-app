@@ -17,8 +17,9 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-const viewAllLink =
-  "focus-ring rounded-sm text-sm text-gray-500 transition-colors hover:text-yellow-500";
+// 44 px tall hit area (WCAG 2.5.5) around short text links.
+const panelAction = "inline-flex min-h-11 items-center";
+const viewAllLink = `${panelAction} focus-ring rounded-sm text-sm text-gray-500 transition-colors hover:text-yellow-500`;
 
 // Not async: the titles, the market widget and the skeletons go out in the
 // first HTML chunk. Each data section loads its own data (they start in
@@ -55,7 +56,7 @@ export default function Home() {
             <SearchTrigger
               variant="link"
               label="Search all stocks"
-              className="text-sm text-gray-500"
+              className={`${panelAction} text-sm text-gray-500`}
             />
           }
         >

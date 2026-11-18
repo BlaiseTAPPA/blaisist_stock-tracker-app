@@ -39,7 +39,7 @@ export default function StockChartTabs({ symbol, name }: { symbol: string; name:
             tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
             className={cn(
-              "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors sm:min-h-0",
+              "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors",
               active === i
                 ? "bg-yellow-500 text-gray-900"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700",
