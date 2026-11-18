@@ -68,7 +68,7 @@ const SignUpForm = () => {
 
   return (
     <>
-      <h1 className="form-title">Sign Up and Personalize</h1>
+      <h1 className="form-title">Sign up and personalize</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="fullName"
