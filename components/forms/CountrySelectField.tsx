@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fieldA11y } from "@/components/forms/field-a11y";
 import countryList from "react-select-country-list";
 
 // Country options are static: compute them once per module, not per render.
@@ -37,22 +38,29 @@ const FlagImage = ({ countryCode }: { countryCode: string }) => (
   />
 );
 
-const CountrySelect = ({
-  value,
-  onChange,
-}: {
+type CountrySelectProps = {
+  id: string;
   value: string;
   onChange: (value: string) => void;
-}) => {
+  triggerRef: React.Ref<HTMLButtonElement>;
+  /** aria-invalid / aria-describedby / aria-required for the trigger. */
+  controlProps: React.ComponentProps<"button">;
+};
+
+const CountrySelect = ({ id, value, onChange, triggerRef, controlProps }: CountrySelectProps) => {
   const [open, setOpen] = useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className="w-full">
         <Button
+          id={id}
+          ref={triggerRef}
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-haspopup="listbox"
+          {...controlProps}
           className="country-select-trigger w-full justify-between"
         >
           {value ? (
@@ -61,14 +69,14 @@ const CountrySelect = ({
               <span>{countries.find((c) => c.value === value)?.label}</span>
             </span>
           ) : (
-            "Select your country..."
+            "Select your country"
           )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full border-gray-600 !bg-gray-800 p-0" align="start">
         <Command className="border-gray-600 bg-gray-800">
-          <CommandInput placeholder="Search countries..." className="country-select-input" />
+          <CommandInput placeholder="Search countries…" className="country-select-input" />
           <CommandEmpty className="country-select-empty">No country found.</CommandEmpty>
           <CommandList className="scrollbar-hide-default max-h-60 bg-gray-800">
             <CommandGroup className="bg-gray-800">
@@ -109,6 +117,11 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
   error,
   required = false,
 }: CountrySelectFieldProps<TFieldValues>) => {
+  const { errorId, hintId, controlProps } = fieldA11y(name, { error, required, hasHint: true });
+
+  // No `onBlur` wiring: opening the popover moves focus into it, which would
+  // flag the field as invalid while the user is still choosing. The required
+  // rule runs on submit, then again on every change.
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="form-label">
@@ -120,10 +133,24 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
         rules={{
           required: required ? `Please select ${label.toLowerCase()}` : false,
         }}
-        render={({ field }) => <CountrySelect value={field.value} onChange={field.onChange} />}
+        render={({ field }) => (
+          <CountrySelect
+            id={name}
+            value={field.value}
+            onChange={field.onChange}
+            triggerRef={field.ref}
+            controlProps={controlProps}
+          />
+        )}
       />
-      {error && <p className="text-sm text-red-500">{error.message}</p>}
-      <p className="text-xs text-gray-500">Helps us show market data and news relevant to you.</p>
+      {error && (
+        <p id={errorId} role="alert" className="text-sm text-red-500">
+          {error.message}
+        </p>
+      )}
+      <p id={hintId} className="text-xs text-gray-500">
+        Helps us show market data and news relevant to you.
+      </p>
     </div>
   );
 };

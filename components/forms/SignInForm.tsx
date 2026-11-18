@@ -83,27 +83,32 @@ const SignInForm = () => {
         <InputField
           name="email"
           label="Email"
+          type="email"
+          autoComplete="email"
           placeholder="donniedarko@example.com"
           register={register}
           error={errors.email}
           validation={{
             required: "Email is required",
-            minLength: 2,
             pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" },
           }}
         />
         <InputField
           name="password"
           label="Password"
-          placeholder="Enter a strong password"
+          placeholder="Enter your password"
           type="password"
+          autoComplete="current-password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minLength: 8 }}
+          validation={{
+            required: "Password is required",
+            minLength: { value: 8, message: "Password must be at least 8 characters" },
+          }}
         />
 
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
-          {isSubmitting ? "Signing in…" : "Log In"}
+          {isSubmitting ? "Signing in…" : "Log in"}
         </Button>
         <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />
       </form>

@@ -27,7 +27,8 @@ const SignUpForm = () => {
       fullName: "",
       email: "",
       password: "",
-      country: "DE",
+      // No pre-selected country: a hard-coded one was wrong for most users.
+      country: "",
       investmentGoals: "Growth",
       riskTolerance: "Medium",
       preferredIndustry: "Technology",
@@ -71,33 +72,41 @@ const SignUpForm = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="fullName"
-          label="Full Name"
+          label="Full name"
+          autoComplete="name"
           placeholder="John Doe"
           register={register}
           error={errors.fullName}
-          validation={{ required: "Full name is required", minLength: 2 }}
+          validation={{
+            required: "Full name is required",
+            minLength: { value: 2, message: "Full name must be at least 2 characters" },
+          }}
         />
         <InputField
           name="email"
           label="Email"
           type="email"
+          autoComplete="email"
           placeholder="donniedarko@example.com"
           register={register}
           error={errors.email}
           validation={{
             required: "Email is required",
-            minLength: 2,
             pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" },
           }}
         />
         <InputField
           name="password"
           label="Password"
-          placeholder="Enter a strong password"
+          placeholder="At least 8 characters"
           type="password"
+          autoComplete="new-password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minLength: 8 }}
+          validation={{
+            required: "Password is required",
+            minLength: { value: 8, message: "Password must be at least 8 characters" },
+          }}
         />
 
         <CountrySelectField
@@ -110,16 +119,16 @@ const SignUpForm = () => {
 
         <SelectField
           name="investmentGoals"
-          label="Investment Goals"
+          label="Investment goals"
           placeholder="Select your investment goal"
           options={INVESTMENT_GOALS}
           control={control}
-          error={errors.preferredIndustry}
+          error={errors.investmentGoals}
           required
         />
         <SelectField
           name="riskTolerance"
-          label="Risk Tolerance"
+          label="Risk tolerance"
           placeholder="Select your risk level"
           options={RISK_TOLERANCE_OPTIONS}
           control={control}
@@ -128,7 +137,7 @@ const SignUpForm = () => {
         />
         <SelectField
           name="preferredIndustry"
-          label="Preferred Industry"
+          label="Preferred industry"
           placeholder="Select your preferred industry"
           options={PREFERRED_INDUSTRIES}
           control={control}
@@ -137,7 +146,7 @@ const SignUpForm = () => {
         />
 
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
-          {isSubmitting ? "Creating account…" : "Start Your Investing Journey"}
+          {isSubmitting ? "Creating account…" : "Start your investing journey"}
         </Button>
         <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
       </form>
