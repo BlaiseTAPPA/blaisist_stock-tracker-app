@@ -26,7 +26,7 @@ export default async function PopularStocksSection() {
               <th className="px-3 py-3 text-left font-medium">Symbol</th>
               <th className="px-3 py-3 text-right font-medium">Price</th>
               <th className="px-3 py-3 text-right font-medium">Change</th>
-              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">Market Cap</th>
+              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">Market cap</th>
               <th className="hidden py-3 pr-4 text-right font-medium lg:table-cell">P/E</th>
             </tr>
           </thead>
@@ -36,7 +36,7 @@ export default async function PopularStocksSection() {
                 <td className="py-2.5 pl-4 font-medium text-gray-300">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    className="transition-colors hover:text-yellow-500"
+                    className="rounded-sm focus-ring transition-colors hover:text-yellow-500"
                   >
                     <span
                       className="block max-w-[7.5rem] truncate sm:max-w-[14rem]"

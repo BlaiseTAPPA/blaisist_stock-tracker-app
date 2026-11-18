@@ -73,7 +73,7 @@ export default function WatchlistSortableGrid({ items }: { items: SortableWatchl
             id={selectId}
             value={sort}
             onChange={(e) => updateSort(e.target.value)}
-            className="min-h-11 cursor-pointer rounded-md border border-gray-600 bg-gray-800 px-3 text-sm text-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
+            className="min-h-11 cursor-pointer rounded-md border border-gray-600 bg-gray-800 px-3 text-sm text-gray-100 focus-ring"
           >
             {Object.entries(WATCHLIST_SORTS).map(([value, label]) => (
               <option key={value} value={value}>

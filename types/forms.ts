@@ -32,6 +32,8 @@ export type InputFieldProps<TFieldValues extends FieldValues> = {
   label: string;
   placeholder: string;
   type?: string;
+  /** HTML `autocomplete` token, e.g. "email", "current-password". */
+  autoComplete?: string;
   register: UseFormRegister<TFieldValues>;
   error?: FieldError;
   validation?: RegisterOptions<TFieldValues, Path<TFieldValues>>;

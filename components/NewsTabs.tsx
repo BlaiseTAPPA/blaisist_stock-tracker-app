@@ -7,6 +7,10 @@ import {
   getNewsWidgetConfig,
   TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl,
 } from "@/lib/constants";
+import { onTablistKeyDown } from "@/lib/a11y/tablist";
+import { cn } from "@/lib/utils";
+
+const tabId = (i: number) => `news-tab-${i}`;
 
 const NewsTabs = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -14,30 +18,45 @@ const NewsTabs = () => {
 
   return (
     <div>
-      {/* Tabs */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {NEWS_INDUSTRIES.map((industry, i) => (
-          <button
-            key={industry.label}
-            onClick={() => setActiveIndex(i)}
-            className={`min-h-11 rounded-full px-4 py-1.5 text-sm font-medium transition-colors sm:min-h-0 ${
-              activeIndex === i
-                ? "bg-yellow-500 text-black"
-                : "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
-            }`}
-          >
-            {industry.label}
-          </button>
-        ))}
+      <div
+        role="tablist"
+        aria-label="Industry"
+        onKeyDown={onTablistKeyDown}
+        className="mb-6 flex flex-wrap gap-2"
+      >
+        {NEWS_INDUSTRIES.map((industry, i) => {
+          const selected = activeIndex === i;
+          return (
+            <button
+              key={industry.label}
+              id={tabId(i)}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls="news-panel"
+              tabIndex={selected ? 0 : -1}
+              onClick={() => setActiveIndex(i)}
+              className={cn(
+                "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors sm:min-h-0",
+                selected
+                  ? "bg-yellow-500 text-gray-900"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700",
+              )}
+            >
+              {industry.label}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Widget */}
-      <TradingViewWidget
-        key={active.label} // force re-mount on tab change
-        scriptUrl={`${scriptUrl}timeline.js`}
-        config={getNewsWidgetConfig(active.symbol ?? undefined)}
-        height={600}
-      />
+      <div id="news-panel" role="tabpanel" aria-labelledby={tabId(activeIndex)}>
+        <TradingViewWidget
+          key={active.label} // force re-mount on tab change
+          scriptUrl={`${scriptUrl}timeline.js`}
+          config={getNewsWidgetConfig(active.symbol ?? undefined)}
+          height={600}
+        />
+      </div>
     </div>
   );
 };

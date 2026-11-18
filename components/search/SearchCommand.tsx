@@ -100,7 +100,7 @@ function SearchPalette({
           value={query}
           onValueChange={setQuery}
           maxLength={MAX_QUERY_LENGTH}
-          placeholder="Search stocks by name or symbol..."
+          placeholder="Search stocks by name or symbol…"
         />
         {loading && <Loader2 className="search-loader" aria-hidden="true" />}
       </div>

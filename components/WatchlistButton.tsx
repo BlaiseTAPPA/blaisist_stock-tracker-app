@@ -69,7 +69,7 @@ const WatchlistButton = ({
         aria-busy={isPending}
         // 44 px touch target with its own focus ring, distinct from the card's.
         className={cn(
-          "inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-yellow-500 transition-colors hover:bg-gray-700/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 disabled:cursor-wait disabled:opacity-60",
+          "inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-yellow-500 focus-ring transition-colors hover:bg-gray-700/60 disabled:cursor-wait disabled:opacity-60",
           className,
         )}
         onClick={handleClick}
@@ -120,7 +120,7 @@ const WatchlistButton = ({
           />
         </svg>
       ) : null}
-      <span>{isPending ? "Saving…" : added ? "Remove from Watchlist" : "Add to Watchlist"}</span>
+      <span>{isPending ? "Saving…" : added ? "Remove from watchlist" : "Add to watchlist"}</span>
     </button>
   );
 };

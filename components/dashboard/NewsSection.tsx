@@ -17,7 +17,8 @@ export default async function NewsSection() {
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-4 p-4 transition-colors hover:bg-gray-700/50"
+          // Inset ring: the list container clips anything drawn outside the rows.
+          className="flex items-start gap-4 p-4 transition-colors hover:bg-gray-700/50 focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:outline-none focus-visible:ring-inset"
         >
           <div className="min-w-0 flex-1">
             <p className="mb-1 text-xs text-gray-500">
@@ -29,6 +30,7 @@ export default async function NewsSection() {
             </p>
             <p className="line-clamp-2 text-sm leading-snug font-semibold text-gray-100">
               {article.headline}
+              <span className="sr-only"> (opens in a new tab)</span>
             </p>
             {article.related && (
               <span className="mt-1.5 inline-flex items-center gap-1 rounded border border-gray-600 bg-gray-700 px-2 py-0.5 font-mono text-[11px] text-gray-400">

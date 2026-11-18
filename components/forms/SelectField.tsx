@@ -1,5 +1,6 @@
 import { Controller, type FieldValues } from "react-hook-form";
 import type { SelectFieldProps } from "@/types/forms";
+import { fieldA11y } from "@/components/forms/field-a11y";
 import { Label } from "../ui/label";
 
 import {
@@ -19,6 +20,8 @@ const SelectField = <TFieldValues extends FieldValues>({
   error,
   required = false,
 }: SelectFieldProps<TFieldValues>) => {
+  const { errorId, controlProps } = fieldA11y(name, { error, required });
+
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="form-label">
@@ -29,11 +32,13 @@ const SelectField = <TFieldValues extends FieldValues>({
         name={name}
         control={control}
         rules={{
-          required: required ? ` Please select ${label.toLowerCase}` : false,
+          required: required ? `Please select ${label.toLowerCase()}` : false,
         }}
         render={({ field }) => (
-          <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className="select-trigger">
+          <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+            {/* The trigger is the focusable combobox: it carries the id the label points to.
+                No `onBlur`: opening the list moves focus out of the trigger. */}
+            <SelectTrigger id={name} ref={field.ref} className="select-trigger" {...controlProps}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="border-gray-600 bg-gray-800 text-white">
@@ -47,10 +52,15 @@ const SelectField = <TFieldValues extends FieldValues>({
                 </SelectItem>
               ))}
             </SelectContent>
-            {error && <p className="text-sm text-red-500">{error.message}</p>}
           </Select>
         )}
       />
+      {/* Outside the Radix <Select> (which only expects trigger/content children), under the trigger. */}
+      {error && (
+        <p id={errorId} role="alert" className="text-sm text-red-500">
+          {error.message}
+        </p>
+      )}
     </div>
   );
 };

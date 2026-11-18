@@ -44,7 +44,7 @@ export default function SearchTrigger({
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
       className={cn(
-        "cursor-pointer rounded-sm transition-colors hover:text-yellow-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500",
+        "cursor-pointer rounded-sm focus-ring transition-colors hover:text-yellow-500",
         variant === "nav" && "inline-flex items-center gap-2",
         className,
       )}

@@ -28,7 +28,7 @@ const VerifyEmailNotice = ({ email, title, description }: VerifyEmailNoticeProps
       }
     } catch (e) {
       console.error(e);
-      toast.error("Could not send the email. Please try again.");
+      toast.error("Couldn't send the email. Please try again.");
     } finally {
       setIsSending(false);
     }

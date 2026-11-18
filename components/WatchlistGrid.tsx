@@ -35,7 +35,7 @@ const WatchlistGrid = ({ stocks, total }: WatchlistGridProps) => {
       {total > WATCHLIST_GRID_MAX && (
         <Link
           href="/watchlist"
-          className="inline-flex min-h-11 items-center self-end text-sm text-gray-400 transition-colors hover:text-yellow-500"
+          className="inline-flex min-h-11 items-center self-end rounded-sm text-sm text-gray-400 focus-ring transition-colors hover:text-yellow-500"
         >
           View all ({total})
         </Link>

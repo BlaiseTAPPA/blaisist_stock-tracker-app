@@ -17,7 +17,10 @@ export default function SymbolNotFound() {
           label="Search stocks"
           className="yellow-btn inline-flex items-center px-6"
         />
-        <Link href="/" className="text-sm text-gray-500 transition-colors hover:text-yellow-500">
+        <Link
+          href="/"
+          className="rounded-sm text-sm text-gray-500 focus-ring transition-colors hover:text-yellow-500"
+        >
           Back to dashboard
         </Link>
       </div>

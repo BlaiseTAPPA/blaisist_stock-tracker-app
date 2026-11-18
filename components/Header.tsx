@@ -11,10 +11,10 @@ const Header = ({ user }: { user: User }) => {
       <div className="header-wrapper container">
         <div className="flex items-center gap-2">
           <MobileNav />
-          <Link href="/" className="inline-flex min-h-11 items-center">
+          <Link href="/" className="inline-flex min-h-11 items-center rounded-sm focus-ring">
             <Image
               src="/assets/icons/logo.svg"
-              alt="FinGenius logo"
+              alt="FinGenius home"
               width={140}
               height={32}
               className="h-8 w-auto cursor-pointer"
