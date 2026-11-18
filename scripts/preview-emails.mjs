@@ -75,8 +75,12 @@ const news = renderNewsSummaryEmail({
   unsubscribeUrl: UNSUBSCRIBE_URL,
   settingsUrl: SETTINGS_URL,
 });
-const verification = renderVerificationEmail({ name: trappedName, url: RESET_URL });
-const reset = renderPasswordResetEmail({ name: trappedName, url: RESET_URL });
+const verification = renderVerificationEmail({
+  name: trappedName,
+  url: RESET_URL,
+  appUrl: APP_URL,
+});
+const reset = renderPasswordResetEmail({ name: trappedName, url: RESET_URL, appUrl: APP_URL });
 
 const checks = [];
 const check = (label, ok) => checks.push({ label, ok });

@@ -1,4 +1,6 @@
-// {{appUrl}}: public app URL without a trailing slash (lib/app-url.ts).
+// {{appUrl}}: public app URL without a trailing slash (lib/app-url.ts). Every
+// template uses it, at least for the logo and images served from
+// public/assets/images (no third-party image host).
 import { COLORS } from "../design-tokens";
 
 export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
@@ -100,14 +102,14 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
                     <!-- Dashboard Preview Image -->
                     <tr>
                         <td align="center" class="dashboard-preview" style="padding: 40px 40px 0px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/dashboard-preview.png?updatedAt=1756378548102" alt="FinGenius Dashboard Preview" width="100%" style="max-width: 520px; width: 100%; height: auto; border-radius: 12px; border: 1px solid ${COLORS.border};">
+                            <img src="{{appUrl}}/assets/images/dashboard-preview.png" alt="FinGenius Dashboard Preview" width="100%" style="max-width: 520px; width: 100%; height: auto; border-radius: 12px; border: 1px solid ${COLORS.border};">
                         </td>
                     </tr>
                     
@@ -267,7 +269,7 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -426,7 +428,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -635,7 +637,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -835,7 +837,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -1058,7 +1060,7 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -1141,7 +1143,7 @@ export const VERIFY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: ${COLORS.surfaceRaised}; border: 1px solid ${COLORS.border}; border-radius: 8px;">
                     <tr>
                         <td style="padding: 32px 32px 0 32px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     <tr>
@@ -1195,7 +1197,7 @@ export const RESET_PASSWORD_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: ${COLORS.surfaceRaised}; border: 1px solid ${COLORS.border}; border-radius: 8px;">
                     <tr>
                         <td style="padding: 32px 32px 0 32px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     <tr>
