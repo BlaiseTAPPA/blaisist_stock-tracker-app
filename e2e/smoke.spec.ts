@@ -69,7 +69,13 @@ test("sign in, add a stock from the palette, remove it and undo", async ({ page,
   // Stock page: already in the watchlist
   await expect(page).toHaveURL("/stocks/AAPL");
   await expect(page.getByRole("heading", { level: 1, name: "Apple Inc" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Remove from watchlist" })).toBeVisible();
+  // Outline "In watchlist" toggle; hover or keyboard focus reveals "Remove".
+  const toggle = page.getByRole("button", { name: "In watchlist", pressed: true });
+  await expect(toggle).toBeVisible();
+  await toggle.hover();
+  await expect(
+    page.getByRole("button", { name: "Remove from watchlist", pressed: true }),
+  ).toBeVisible();
 
   // /watchlist lists it
   await page.goto("/watchlist");
