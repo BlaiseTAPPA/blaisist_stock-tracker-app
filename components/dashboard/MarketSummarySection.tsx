@@ -8,7 +8,7 @@ import {
 // placeholder, so this section never suspends and is part of the first HTML
 // chunk. A <Suspense> around it would have a fallback that never shows.
 const MarketSummarySection = () => (
-  <div className="overflow-hidden rounded-lg border border-gray-600 bg-gray-800">
+  <div className="overflow-hidden rounded-lg border border-border bg-surface-raised">
     <TradingViewWidget
       title="Market overview chart"
       scriptUrl={`${scriptUrl}market-overview.js`}

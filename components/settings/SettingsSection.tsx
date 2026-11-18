@@ -15,12 +15,12 @@ const SettingsSection = ({
   return (
     <section
       aria-labelledby={headingId}
-      className="rounded-lg border border-gray-700 bg-gray-800 p-5 sm:p-6"
+      className="rounded-lg border border-surface-hover bg-surface-raised p-5 sm:p-6"
     >
-      <h2 id={headingId} className="text-xl font-bold text-gray-100">
+      <h2 id={headingId} className="text-section">
         {title}
       </h2>
-      {description && <p className="mt-1 text-sm text-gray-400">{description}</p>}
+      {description && <p className="mt-1 text-sm text-fg-secondary">{description}</p>}
       <div className="mt-5">{children}</div>
     </section>
   );

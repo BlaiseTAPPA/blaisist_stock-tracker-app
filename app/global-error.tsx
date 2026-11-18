@@ -9,14 +9,14 @@ import "./globals.css";
 export default function GlobalError({ retry }: { error: unknown; retry: () => void }) {
   return (
     <html lang="en" className="dark">
-      <body className="flex min-h-screen flex-col items-center justify-center gap-2 p-10 text-center text-gray-400 antialiased">
+      <body className="flex min-h-screen flex-col items-center justify-center gap-2 p-10 text-center text-fg-secondary antialiased">
         <title>Something went wrong</title>
         <div role="alert" className="flex flex-col items-center">
           <h1 className="empty-title">Something went wrong</h1>
           <p className="empty-description">
             The app couldn&apos;t load. Check your connection, then try again.
           </p>
-          <button type="button" onClick={() => retry()} className="yellow-btn px-6">
+          <button type="button" onClick={() => retry()} className="btn-primary px-6">
             Try again
           </button>
         </div>

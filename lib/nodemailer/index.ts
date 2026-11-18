@@ -72,7 +72,7 @@ export const sendVerificationEmail = async ({
     to: email,
     subject: "Verify your email address for FinGenius",
     text: `Hi ${name},\n\nOpen this link to verify your email address and activate your FinGenius account (it expires in 1 hour):\n${url}\n\nYou did not create a FinGenius account? You can safely ignore this email.`,
-    html: renderVerificationEmail({ name, url }),
+    html: renderVerificationEmail({ name, url, appUrl: getAppUrl() }),
   });
 };
 
@@ -89,7 +89,7 @@ export const sendPasswordResetEmail = async ({
     to: email,
     subject: "Reset your FinGenius password",
     text: `Hi ${name},\n\nOpen this link to choose a new password for your FinGenius account (it expires in 1 hour and works once):\n${url}\n\nYou did not ask for this? You can safely ignore this email: your password stays the same.`,
-    html: renderPasswordResetEmail({ name, url }),
+    html: renderPasswordResetEmail({ name, url, appUrl: getAppUrl() }),
   });
 };
 

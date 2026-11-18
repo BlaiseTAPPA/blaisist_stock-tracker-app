@@ -7,7 +7,7 @@
  */
 const FormError = ({ message }: { message: string | null }) =>
   message ? (
-    <p role="alert" className="text-sm text-red-500">
+    <p role="alert" className="text-sm text-danger">
       {message}
     </p>
   ) : null;

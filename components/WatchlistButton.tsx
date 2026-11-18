@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
 import { cn } from "@/lib/utils";
+import { Check, Loader2 } from "lucide-react";
 import StarIcon from "@/components/StarIcon";
 import type { ToggleWatchlistResult } from "@/types/watchlist";
 
@@ -14,7 +15,6 @@ type WatchlistButtonProps = {
   symbol: string;
   company: string;
   isInWatchlist: boolean;
-  showTrashIcon?: boolean;
   type?: "button" | "icon";
   /** Extra classes for the icon variant (e.g. positioning inside a card). */
   className?: string;
@@ -47,7 +47,6 @@ const WatchlistButton = ({
   symbol,
   company,
   isInWatchlist,
-  showTrashIcon = false,
   type = "button",
   className,
 }: WatchlistButtonProps) => {
@@ -101,7 +100,7 @@ const WatchlistButton = ({
         aria-busy={isPending}
         // 44 px touch target with its own focus ring, distinct from the card's.
         className={cn(
-          "inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-yellow-500 focus-ring transition-colors hover:bg-gray-700/60 disabled:cursor-wait disabled:opacity-60",
+          "inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-brand focus-ring transition-colors hover:bg-surface-hover/60 disabled:cursor-wait disabled:opacity-60",
           className,
         )}
         onClick={handleClick}
@@ -112,33 +111,41 @@ const WatchlistButton = ({
     );
   }
 
+  // Followed: a quiet outline "In watchlist" that reveals "Remove from
+  // watchlist" on hover and keyboard focus (CSS, see `.watchlist-btn`), so the
+  // destructive action isn't the page's loudest element. While saving, the
+  // label already shows the target state (optimistic) with a small spinner.
   return (
     <button
       type="button"
       aria-pressed={added}
       aria-busy={isPending}
-      className={`watchlist-btn ${added ? "watchlist-remove" : ""}`}
+      className="watchlist-btn group"
       onClick={handleClick}
       disabled={isPending}
     >
-      {showTrashIcon && added ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="mr-2 h-5 w-5"
+      {isPending ? (
+        <Loader2 aria-hidden="true" className="size-4 motion-safe:animate-spin" />
+      ) : added ? (
+        <Check
           aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-7 4v6m4-6v6m4-6v6"
-          />
-        </svg>
+          className="size-4 group-hover:hidden group-focus-visible:hidden"
+        />
       ) : null}
-      <span>{isPending ? "Saving…" : added ? "Remove from watchlist" : "Add to watchlist"}</span>
+      {added ? (
+        <>
+          <span className={isPending ? undefined : "group-hover:hidden group-focus-visible:hidden"}>
+            In watchlist
+          </span>
+          {!isPending && (
+            <span className="hidden group-hover:inline group-focus-visible:inline">
+              Remove from watchlist
+            </span>
+          )}
+        </>
+      ) : (
+        <span>Add to watchlist</span>
+      )}
     </button>
   );
 };

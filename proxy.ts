@@ -13,9 +13,11 @@ export function proxy(request: NextRequest) {
 }
 
 // Public pages: auth forms, password reset, and the unsubscribe page reached
-// from an email (signed token, no session needed).
+// from an email (signed token, no session needed). Static files too: the app
+// icons (app/icon.svg, app/apple-icon.png) and public/assets, which emails
+// load without a session.
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|assets|sign-in|sign-up|forgot-password|reset-password|unsubscribe).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|apple-icon.png|assets|sign-in|sign-up|forgot-password|reset-password|unsubscribe).*)",
   ],
 };

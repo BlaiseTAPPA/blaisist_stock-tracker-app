@@ -91,3 +91,20 @@ test("/sign-up works with only name, email and password", async ({ page }) => {
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Check your inbox" })).toBeVisible();
 });
+
+// Emails and the auth pages load these without a session: the proxy must not
+// redirect them to /sign-in.
+for (const path of [
+  "/favicon.ico",
+  "/icon.svg",
+  "/apple-icon.png",
+  "/assets/icons/logo.svg",
+  "/assets/images/logo.png",
+  "/assets/images/dashboard-preview.png",
+]) {
+  test(`${path} is public`, async ({ request }) => {
+    const res = await request.get(path, { maxRedirects: 0 });
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toMatch(/^image\//);
+  });
+}

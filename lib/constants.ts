@@ -1,3 +1,5 @@
+import { COLORS } from "@/lib/design-tokens";
+
 // `search` is not a page: it opens the search palette (SearchTrigger).
 export const NAV_ITEMS: readonly (
   { href: string; label: string } | { action: "search"; label: string }
@@ -46,10 +48,10 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
   largeChartUrl: "", // link to a large chart if needed
   isTransparent: true, // makes background transparent
   showFloatingTooltip: true, // show tooltip on hover
-  plotLineColorGrowing: "#0FEDBE", // line color when price goes up
-  plotLineColorFalling: "#0FEDBE", // line color when price falls
+  plotLineColorGrowing: COLORS.gain, // line color when price goes up
+  plotLineColorFalling: COLORS.loss, // line color when price falls
   gridLineColor: "rgba(240, 243, 250, 0)", // grid line color
-  scaleFontColor: "#DBDBDB", // font color for scale
+  scaleFontColor: COLORS.textSecondary, // font color for scale
   belowLineFillColorGrowing: "rgba(41, 98, 255, 0.12)", // fill under line when growing
   belowLineFillColorFalling: "rgba(41, 98, 255, 0.12)", // fill under line when falling
   belowLineFillColorGrowingBottom: "rgba(41, 98, 255, 0)",
@@ -90,7 +92,7 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
     },
   ],
   support_host: "https://www.tradingview.com", // TradingView host
-  backgroundColor: "#141414", // background color
+  backgroundColor: COLORS.surfaceRaised, // background color
   width: "100%", // full width
   height: 600, // height in px
   showSymbolLogo: true, // show logo next to symbols
@@ -153,8 +155,8 @@ export const CANDLE_CHART_WIDGET_CONFIG = (symbol: string) => ({
   symbol: symbol.toUpperCase(),
   theme: TV_THEME,
   timezone: "Etc/UTC",
-  backgroundColor: "#141414",
-  gridColor: "#141414",
+  backgroundColor: COLORS.surfaceRaised,
+  gridColor: COLORS.surfaceRaised,
   watchlist: [],
   withdateranges: false,
   compareSymbols: [],
@@ -179,8 +181,8 @@ export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
   symbol: symbol.toUpperCase(),
   theme: TV_THEME,
   timezone: "Etc/UTC",
-  backgroundColor: "#141414",
-  gridColor: "#141414",
+  backgroundColor: COLORS.surfaceRaised,
+  gridColor: COLORS.surfaceRaised,
   watchlist: [],
   withdateranges: false,
   compareSymbols: [],

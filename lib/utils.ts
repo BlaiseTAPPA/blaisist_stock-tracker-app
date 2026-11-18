@@ -1,6 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
 import type { RawNewsArticle } from "@/types/news";
+
+// The type scale of globals.css (`text-display`…`text-caption`) is a font
+// size: without this, tailwind-merge reads it as a text colour and `cn()`
+// drops it next to `text-fg-muted`, or the other way round.
+const twMerge = extendTailwindMerge({
+  extend: {
+    theme: { text: ["display", "title", "section", "body", "caption"] },
+  },
+});
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

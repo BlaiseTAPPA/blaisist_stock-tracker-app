@@ -19,7 +19,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-bold text-gray-100">Settings</h1>
+      <h1 className="text-title">Settings</h1>
 
       <SettingsSection title="Profile">
         <ProfileForm name={user.name} email={user.email} />
@@ -42,7 +42,7 @@ export default async function SettingsPage() {
       <SettingsSection title="Email">
         {/* Missing means "on": accounts created before the switch existed. */}
         <DigestSwitch initialEnabled={user.digestEnabled !== false} />
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-4 text-sm text-fg-muted">
           Account emails (verification, password reset) are always sent.
         </p>
       </SettingsSection>

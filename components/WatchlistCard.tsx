@@ -18,20 +18,20 @@ type WatchlistCardProps = {
  * overlay with `z-10`. Each control has its own focus ring.
  */
 const WatchlistCard = ({ stock }: WatchlistCardProps) => (
-  <article className="relative flex h-full min-h-[130px] flex-col gap-2 rounded-lg border border-gray-600 bg-gray-800 p-3 transition-colors hover:border-yellow-500/40">
+  <article className="relative flex h-full min-h-[130px] flex-col gap-2 rounded-lg border border-border bg-surface-raised p-3 transition-colors hover:border-brand/40">
     <StockLogo symbol={stock.symbol} />
 
     <Link
       href={`/stocks/${stock.symbol}`}
-      className="min-w-0 rounded-sm after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-yellow-500"
+      className="min-w-0 rounded-sm after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-brand"
     >
-      <span className="block truncate text-xs font-medium text-gray-300" title={stock.company}>
+      <span className="block truncate text-xs font-medium text-fg-secondary" title={stock.company}>
         {stock.company}
       </span>
-      <span className="block font-mono text-[11px] text-gray-500">{stock.symbol}</span>
+      <span className="block font-mono text-[11px] text-fg-muted">{stock.symbol}</span>
     </Link>
 
-    <p className="text-base font-bold text-gray-100 tabular-nums">
+    <p className="text-base font-bold text-fg tabular-nums">
       {formatPrice(stock.currentPrice, stock.currency)}
     </p>
     <PriceChange value={stock.changePercent} className="text-xs font-medium" />

@@ -55,14 +55,14 @@ const InputField = <TFieldValues extends FieldValues>({
             aria-pressed={showPassword}
             aria-controls={name}
             disabled={disabled}
-            className="absolute top-1/2 right-1 inline-flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-500 focus-ring transition-colors hover:text-gray-300"
+            className="absolute top-1/2 right-1 inline-flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-fg-muted focus-ring transition-colors hover:text-fg-secondary"
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>
         )}
       </div>
       {error && (
-        <p id={errorId} role="alert" className="text-sm text-red-500">
+        <p id={errorId} role="alert" className="text-sm text-danger">
           {error.message}
         </p>
       )}

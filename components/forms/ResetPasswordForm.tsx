@@ -15,12 +15,12 @@ import { resetPassword } from "@/lib/actions/auth.actions";
 export const InvalidResetLink = () => (
   <>
     <h1 className="form-title">Reset link expired</h1>
-    <p role="alert" className="mb-6 text-sm text-red-500">
+    <p role="alert" className="mb-6 text-sm text-danger">
       This reset link is invalid or has expired. Links work once, for 1 hour.
     </p>
     <Link
       href="/forgot-password"
-      className="yellow-btn inline-flex w-full items-center justify-center"
+      className="btn-primary inline-flex w-full items-center justify-center"
     >
       Request a new link
     </Link>
@@ -90,10 +90,10 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
           }}
         />
         <FormError message={formError} />
-        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
+        <Button type="submit" disabled={isSubmitting} className="btn-primary mt-5 w-full">
           {isSubmitting ? "Saving…" : "Change password"}
         </Button>
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-fg-muted">
           You&apos;ll be signed out on every device.
         </p>
       </form>

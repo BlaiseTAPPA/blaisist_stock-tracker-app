@@ -40,10 +40,10 @@ const DigestSwitch = ({ initialEnabled }: { initialEnabled: boolean }) => {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <p id={labelId} className="font-medium text-gray-100">
+        <p id={labelId} className="font-medium text-fg">
           Daily news digest
         </p>
-        <p id={descriptionId} className="mt-1 text-sm text-gray-400">
+        <p id={descriptionId} className="mt-1 text-sm text-fg-secondary">
           One email a day with a summary of the news for the stocks in your watchlist.
         </p>
       </div>
@@ -62,13 +62,13 @@ const DigestSwitch = ({ initialEnabled }: { initialEnabled: boolean }) => {
           aria-hidden="true"
           className={cn(
             "relative inline-flex h-7 w-12 items-center rounded-full border transition-colors motion-reduce:transition-none",
-            enabled ? "border-yellow-500 bg-yellow-500" : "border-control-border bg-gray-700",
+            enabled ? "border-brand bg-brand" : "border-control-border bg-surface-hover",
           )}
         >
           <span
             className={cn(
               "inline-block size-5 rounded-full shadow transition-transform motion-reduce:transition-none",
-              enabled ? "translate-x-6 bg-gray-900" : "translate-x-1 bg-gray-300",
+              enabled ? "translate-x-6 bg-surface" : "translate-x-1 bg-fg-secondary",
             )}
           />
         </span>

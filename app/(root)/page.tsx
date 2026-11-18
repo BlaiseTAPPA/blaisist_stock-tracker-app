@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 // 44 px tall hit area (WCAG 2.5.5) around short text links.
 const panelAction = "inline-flex min-h-11 items-center";
-const viewAllLink = `${panelAction} focus-ring rounded-sm text-sm text-gray-500 transition-colors hover:text-yellow-500`;
+const viewAllLink = `${panelAction} focus-ring rounded-sm text-sm text-fg-muted transition-colors hover:text-brand`;
 
 // Not async: the titles, the market widget and the skeletons go out in the
 // first HTML chunk. Each data section loads its own data (they start in
@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col gap-10">
       <div className="-mb-4 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <h1 className="text-2xl font-bold text-gray-100">Dashboard</h1>
+        <h1 className="text-title">Dashboard</h1>
         {/* Applies to the whole page. Its own boundary: a slow market-status
             call never holds the heading or any section. */}
         <Suspense fallback={null}>
@@ -73,7 +73,7 @@ export default function Home() {
             <SearchTrigger
               variant="link"
               label="Search all stocks"
-              className={`${panelAction} text-sm text-gray-500`}
+              className={`${panelAction} text-sm text-fg-muted`}
             />
           }
         >

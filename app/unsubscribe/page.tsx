@@ -17,7 +17,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps<"/unsu
   const valid = typeof token === "string" && verifyUnsubscribeToken(token) !== null;
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gray-900 px-4 py-10 sm:py-16">
+    <main className="flex min-h-screen flex-col items-center bg-surface px-4 py-10 sm:py-16">
       <Link href="/" className="mb-10 rounded-sm focus-ring">
         <Image
           src="/assets/icons/logo.svg"
@@ -27,13 +27,13 @@ export default async function UnsubscribePage({ searchParams }: PageProps<"/unsu
           className="h-8 w-auto"
         />
       </Link>
-      <div className="w-full max-w-md rounded-lg border border-gray-700 bg-gray-800 p-6 sm:p-8">
+      <div className="w-full max-w-md rounded-lg border border-surface-hover bg-surface-raised p-6 sm:p-8">
         {valid ? (
           <UnsubscribeConfirm token={token} />
         ) : (
           <div className="space-y-4">
-            <h1 className="text-2xl font-bold text-gray-100">This link doesn&apos;t work</h1>
-            <p role="alert" className="text-gray-400">
+            <h1 className="text-title">This link doesn&apos;t work</h1>
+            <p role="alert" className="text-fg-secondary">
               The unsubscribe link is incomplete or invalid. Sign in and turn the daily digest off
               in your settings.
             </p>

@@ -44,7 +44,7 @@ export default function SearchTrigger({
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
       className={cn(
-        "cursor-pointer rounded-sm focus-ring transition-colors hover:text-yellow-500",
+        "cursor-pointer rounded-sm focus-ring transition-colors hover:text-brand",
         variant === "nav" && "inline-flex items-center gap-2",
         className,
       )}
@@ -53,7 +53,7 @@ export default function SearchTrigger({
       {variant === "nav" && isApple !== null && (
         <kbd
           aria-hidden="true"
-          className="rounded border border-gray-600 px-1.5 py-0.5 font-sans text-[10px] leading-none text-gray-500"
+          className="rounded border border-border px-1.5 py-0.5 font-sans text-[10px] leading-none text-fg-muted"
         >
           {isApple ? "⌘K" : "Ctrl K"}
         </kbd>

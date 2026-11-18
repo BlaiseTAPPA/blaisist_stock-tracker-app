@@ -41,12 +41,12 @@ const SelectField = <TFieldValues extends FieldValues>({
             <SelectTrigger id={name} ref={field.ref} className="select-trigger" {...controlProps}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent className="border-gray-600 bg-gray-800 text-white">
+            <SelectContent className="border-border bg-surface-raised text-fg">
               {options.map((option) => (
                 <SelectItem
                   value={option.value}
                   key={option.value}
-                  className="focus:bg-gray-600 focus:text-white"
+                  className="focus:bg-border focus:text-fg"
                 >
                   {option.label}
                 </SelectItem>
@@ -57,7 +57,7 @@ const SelectField = <TFieldValues extends FieldValues>({
       />
       {/* Outside the Radix <Select> (which only expects trigger/content children), under the trigger. */}
       {error && (
-        <p id={errorId} role="alert" className="text-sm text-red-500">
+        <p id={errorId} role="alert" className="text-sm text-danger">
           {error.message}
         </p>
       )}

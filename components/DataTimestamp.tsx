@@ -25,7 +25,7 @@ export default function DataTimestamp({ time, className }: DataTimestampProps) {
     <time
       dateTime={date.toISOString()}
       title={now === null ? undefined : formatFullDate(date)}
-      className={cn("text-xs text-gray-500 tabular-nums", className)}
+      className={cn("text-xs text-fg-muted tabular-nums", className)}
     >
       {now === null ? null : `As of ${formatAsOf(date, new Date(now))}`}
     </time>

@@ -1,4 +1,8 @@
-// {{appUrl}}: public app URL without a trailing slash (lib/app-url.ts).
+// {{appUrl}}: public app URL without a trailing slash (lib/app-url.ts). Every
+// template uses it, at least for the logo and images served from
+// public/assets/images (no third-party image host).
+import { COLORS } from "../design-tokens";
+
 export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,11 +25,11 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -37,7 +41,7 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
         }
         
@@ -89,23 +93,23 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
                     <!-- Dashboard Preview Image -->
                     <tr>
                         <td align="center" class="dashboard-preview" style="padding: 40px 40px 0px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/dashboard-preview.png?updatedAt=1756378548102" alt="FinGenius Dashboard Preview" width="100%" style="max-width: 520px; width: 100%; height: auto; border-radius: 12px; border: 1px solid #30333A;">
+                            <img src="{{appUrl}}/assets/images/dashboard-preview.png" alt="FinGenius Dashboard Preview" width="100%" style="max-width: 520px; width: 100%; height: auto; border-radius: 12px; border: 1px solid ${COLORS.border};">
                         </td>
                     </tr>
                     
@@ -122,19 +126,19 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             {{intro}}  
                             
                             <!-- Feature List Label -->
-                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 15px 0; font-size: 16px; line-height: 1.6; color: #CCDADC; font-weight: 600;">
+                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 15px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary}; font-weight: 600;">
                                 Here's what you can do right now:
                             </p>
                             
                             <!-- Feature List -->
-                            <ul class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; padding-left: 20px; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <ul class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; padding-left: 20px; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 <li style="margin-bottom: 12px;">Set up your watchlist to follow your favorite stocks</li>
                                 <li style="margin-bottom: 12px;">Open interactive TradingView charts, company profiles and financials</li>
                                 <li style="margin-bottom: 12px;">Explore the dashboard for trends and the latest market news</li>
                             </ul>
                             
                             <!-- Additional Text -->
-                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 40px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 40px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 Every day, we'll email you a digest of the market news for the stocks in your watchlist.
                             </p>
                             
@@ -154,10 +158,10 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.
                             </p>
                             <!-- Footer Text -->
-                            <p class="mobile-text dark-text-muted" style="margin: 20px 0 0 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important; text-align: center;">
+                            <p class="mobile-text dark-text-muted" style="margin: 20px 0 0 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important; text-align: center;">
                                FinGenius HQ, Germersheim, GER 76726, Deutshland <br>
-                                <a href="{{settingsUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Email settings</a> | 
-                                <a href="{{appUrl}}/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a><br>
+                                <a href="{{settingsUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Email settings</a> | 
+                                <a href="{{appUrl}}/" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a><br>
                                 © 2026 FinGenius
                             </p>
                         </td>
@@ -192,11 +196,11 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -208,7 +212,7 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
             .dark-cta {
                 background-color: #1f2937 !important;
@@ -256,16 +260,16 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -292,15 +296,15 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <p class="mobile-text dark-text-muted" style="margin: 0 0 20px 0; font-size: 12px; line-height: 1.5; color: #9095A1 !important; text-align: center;">
                                     This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     You're receiving this because the daily news digest is turned on for your FinGenius account.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe from the daily digest</a> | 
-                                    <a href="{{settingsUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Email settings</a> | 
-                                    <a href="{{appUrl}}/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
+                                    <a href="{{unsubscribeUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Unsubscribe from the daily digest</a> | 
+                                    <a href="{{settingsUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Email settings</a> | 
+                                    <a href="{{appUrl}}/" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
-                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     © 2025 FinGenius
                                 </p>
                             </div>
@@ -340,11 +344,11 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -356,7 +360,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
             .dark-info-box {
                 background-color: #1f2937 !important;
@@ -415,16 +419,16 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -451,7 +455,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                         <td class="mobile-padding" style="padding: 0 40px 40px 40px;">
                             
                             <!-- Stock Info -->
-                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: #212328; border-radius: 8px; margin-bottom: 10px;">
+                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: ${COLORS.surfaceHover}; border-radius: 8px; margin-bottom: 10px;">
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
@@ -471,7 +475,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </div>
                             
                             <!-- Alert Details -->
-                            <div class="dark-info-box" style="background-color: #212328; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div class="dark-info-box" style="background-color: ${COLORS.surfaceHover}; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
                                     Alert Details
                                 </h3>
@@ -484,11 +488,11 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </div>
                             
                             <!-- Success Message -->
-                            <div style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div style="background-color: ${COLORS.surface}; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Opportunity Alert!
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary};">
                                     {{symbol}} has reached your target price! This could be a good time to review your position and consider taking profits or adjusting your strategy.
                                 </p>
                             </div>
@@ -506,14 +510,14 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
 
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
-                                    <a href="{{appUrl}}/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
+                                    <a href="{{unsubscribeUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{appUrl}}/" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
-                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     © 2025 FinGenius
                                 </p>
                             </div>
@@ -549,11 +553,11 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -565,7 +569,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
             .dark-info-box {
                 background-color: #1f2937 !important;
@@ -624,16 +628,16 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -660,7 +664,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                         <td class="mobile-padding" style="padding: 0 40px 40px 40px;">
                             
                             <!-- Stock Info -->
-                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: #212328; border-radius: 8px; margin-bottom: 10px;">
+                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: ${COLORS.surfaceHover}; border-radius: 8px; margin-bottom: 10px;">
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
@@ -680,7 +684,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </div>
                             
                             <!-- Alert Details -->
-                            <div class="dark-info-box" style="background-color: #212328; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div class="dark-info-box" style="background-color: ${COLORS.surfaceHover}; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
                                     Alert Details
                                 </h3>
@@ -693,11 +697,11 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </div>
                             
                             <!-- Opportunity Message -->
-                            <div style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div style="background-color: ${COLORS.surface}; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Price Dropped
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary};">
                                     {{symbol}} dropped below your target price. This might be a good time to buy.
                                 </p>
                             </div>
@@ -715,14 +719,14 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
-                                    <a href="{{appUrl}}/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
+                                    <a href="{{unsubscribeUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{appUrl}}/" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
-                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     © 2025 FinGenius
                                 </p>
                             </div>
@@ -758,11 +762,11 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -774,7 +778,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
             .dark-info-box {
                 background-color: #1f2937 !important;
@@ -824,16 +828,16 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -860,7 +864,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                         <td class="mobile-padding" style="padding: 0 40px 40px 40px;">
                             
                             <!-- Stock Info -->
-                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: #050505; border-radius: 8px; margin-bottom: 30px;">
+                            <div class="dark-bg" style="text-align: center; padding: 30px 20px; background-color: ${COLORS.surface}; border-radius: 8px; margin-bottom: 30px;">
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
@@ -879,7 +883,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 </div>
                                 
                                 <!-- Current Price (smaller) -->
-                                <div class="dark-border" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #30333A;">
+                                <div class="dark-border" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid ${COLORS.border};">
                                     <p class="dark-text-secondary" style="margin: 0 0 5px 0; font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px;">
                                         Current Price
                                     </p>
@@ -935,14 +939,14 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
-                                    <a href="{{appUrl}}/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
+                                    <a href="{{unsubscribeUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{appUrl}}/" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
-                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     © 2025 FinGenius
                                 </p>
                             </div>
@@ -978,11 +982,11 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             .email-container {
-                background-color: #141414 !important;
-                border: 1px solid #30333A !important;
+                background-color: ${COLORS.surfaceRaised} !important;
+                border: 1px solid ${COLORS.border} !important;
             }
             .dark-bg {
-                background-color: #050505 !important;
+                background-color: ${COLORS.surface} !important;
             }
             .dark-text {
                 color: #ffffff !important;
@@ -994,7 +998,7 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 color: #6b7280 !important;
             }
             .dark-border {
-                border-color: #30333A !important;
+                border-color: ${COLORS.border} !important;
             }
             .dark-info-box {
                 background-color: #1f2937 !important;
@@ -1047,16 +1051,16 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" class="mobile-outer-padding" style="padding: 40px 20px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: #141414; border-radius: 8px; border: 1px solid #30333A;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container" style="max-width: 600px; background-color: ${COLORS.surfaceRaised}; border-radius: 8px; border: 1px solid ${COLORS.border};">
                     
                     <!-- Header with Logo -->
                     <tr>
                         <td align="left" class="mobile-header-padding" style="padding: 40px 40px 20px 40px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius Logo" width="150" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     
@@ -1070,22 +1074,22 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </h1>
                             
                             <!-- Main Message -->
-                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 We noticed you haven't visited FinGenius in a while. The markets have been moving, and there might be some opportunities you don't want to miss!
                             </p>
 
                             <!-- Additional Motivation -->
-                            <div class="dark-info-box" style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div class="dark-info-box" style="background-color: ${COLORS.surface}; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Market Update
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary};">
                                     Markets have been active lately! Major indices have seen significant movements, and there might be opportunities in your tracked stocks that you don't want to miss.
                                 </p>
                             </div>
                             
                             <!-- Encouragement Message -->
-                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 40px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <p class="mobile-text dark-text-secondary" style="margin: 0 0 40px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 Your watchlists are still active and ready to help you stay on top of your investments. Don't let market opportunities pass you by!
                             </p>
                             
@@ -1102,14 +1106,14 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             
                             <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     Questions? Reply to this email or contact our support team.
                                 </p>
-                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
-                                    <a href="{{dashboardUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
+                                <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
+                                    <a href="{{unsubscribeUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{dashboardUrl}}" style="color: ${COLORS.textSecondary} !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
-                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
+                                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: ${COLORS.textSecondary} !important;">
                                     © 2025 FinGenius
                                 </p>
                             </div>
@@ -1132,14 +1136,14 @@ export const VERIFY_EMAIL_TEMPLATE = `<!DOCTYPE html>
     <meta name="x-apple-disable-message-reformatting">
     <title>Verify your email address</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" style="padding: 40px 16px;">
-                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: #141414; border: 1px solid #30333A; border-radius: 8px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: ${COLORS.surfaceRaised}; border: 1px solid ${COLORS.border}; border-radius: 8px;">
                     <tr>
                         <td style="padding: 32px 32px 0 32px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     <tr>
@@ -1147,7 +1151,7 @@ export const VERIFY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <h1 style="margin: 0 0 20px 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #FDD458;">
                                 Confirm your email address
                             </h1>
-                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 Hi {{name}}, click the button below to verify your email address and activate your FinGenius account. The link expires in 1 hour.
                             </p>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
@@ -1186,14 +1190,14 @@ export const RESET_PASSWORD_EMAIL_TEMPLATE = `<!DOCTYPE html>
     <meta name="x-apple-disable-message-reformatting">
     <title>Reset your password</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #050505;">
+<body style="margin: 0; padding: 0; background-color: ${COLORS.surface}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: ${COLORS.surface};">
         <tr>
             <td align="center" style="padding: 40px 16px;">
-                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: #141414; border: 1px solid #30333A; border-radius: 8px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: ${COLORS.surfaceRaised}; border: 1px solid ${COLORS.border}; border-radius: 8px;">
                     <tr>
                         <td style="padding: 32px 32px 0 32px;">
-                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
+                            <img src="{{appUrl}}/assets/images/logo.png" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
                         </td>
                     </tr>
                     <tr>
@@ -1201,7 +1205,7 @@ export const RESET_PASSWORD_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <h1 style="margin: 0 0 20px 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #FDD458;">
                                 Reset your password
                             </h1>
-                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
                                 Hi {{name}}, we received a request to reset the password of your FinGenius account. Click the button below to choose a new one. The link expires in 1 hour and works once.
                             </p>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">

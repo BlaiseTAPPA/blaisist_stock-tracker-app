@@ -3,7 +3,7 @@
 import type { StockSearchResult } from "@/types/stock";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, TrendingUp } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Command,
   CommandDialog,
@@ -236,11 +236,14 @@ function SearchPalette({
                   onSelect={() => handleSelect(stock.symbol)}
                   className="search-item cursor-pointer"
                 >
-                  <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />
                   <div className="min-w-0 flex-1">
                     <div className="search-item-name truncate">{stock.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {[stock.symbol, stock.exchange, stock.type].filter(Boolean).join(" · ")}
+                    <div className="text-sm text-fg-muted">
+                      <span className="font-mono">{stock.symbol}</span>
+                      {[stock.exchange, stock.type]
+                        .filter(Boolean)
+                        .map((part) => ` · ${part}`)
+                        .join("")}
                       {isFollowed && <span className="sr-only">, in your watchlist</span>}
                     </div>
                   </div>
@@ -286,7 +289,7 @@ function SearchPalette({
             <kbd>{shortcut}</kbd> Add to / remove from watchlist
           </span>
         )}
-        {announcement && <span className="ml-auto text-gray-300">{announcement}</span>}
+        {announcement && <span className="ml-auto text-fg-secondary">{announcement}</span>}
       </div>
     </Command>
   );

@@ -4,7 +4,7 @@
 
 import { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
 
-const pulse = "motion-safe:animate-pulse rounded-lg border border-gray-600 bg-gray-800";
+const pulse = "motion-safe:animate-pulse rounded-lg border border-border bg-surface-raised";
 
 /** Announced once per skeleton; the visual blocks are hidden from screen readers. */
 const Busy = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -14,9 +14,9 @@ const Busy = ({ label, children }: { label: string; children: React.ReactNode })
   </div>
 );
 
-/** Matches the `text-2xl` page `h1`. */
+/** Matches the `text-title` page `h1` (2 rem line height). */
 export const PageTitleSkeleton = () => (
-  <div aria-hidden="true" className="h-8 w-56 rounded bg-gray-700 motion-safe:animate-pulse" />
+  <div aria-hidden="true" className="h-8 w-56 rounded bg-surface-hover motion-safe:animate-pulse" />
 );
 
 /** Generic page: a title and one block, for routes without their own skeleton. */
@@ -46,21 +46,21 @@ export const StockPageSkeleton = () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
-          <div className="size-10 shrink-0 rounded-lg bg-gray-700 motion-safe:animate-pulse" />
+          <div className="size-10 shrink-0 rounded-lg bg-surface-hover motion-safe:animate-pulse" />
           <div className="flex flex-col gap-2">
-            <div className="h-7 w-48 rounded bg-gray-700 motion-safe:animate-pulse" />
-            <div className="h-4 w-24 rounded bg-gray-700 motion-safe:animate-pulse" />
+            <div className="h-7 w-48 rounded bg-surface-hover motion-safe:animate-pulse" />
+            <div className="h-4 w-24 rounded bg-surface-hover motion-safe:animate-pulse" />
           </div>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <div className="h-12 w-40 rounded bg-gray-700 motion-safe:animate-pulse" />
-          <div className="h-11 w-full rounded bg-gray-700 motion-safe:animate-pulse sm:w-60" />
+          <div className="h-12 w-40 rounded bg-surface-hover motion-safe:animate-pulse" />
+          <div className="h-11 w-full rounded bg-surface-hover motion-safe:animate-pulse sm:w-60" />
         </div>
       </div>
       <div className="flex flex-col gap-3">
         <div className="flex gap-2">
-          <div className="h-11 w-24 rounded-full bg-gray-700 motion-safe:animate-pulse" />
-          <div className="h-11 w-24 rounded-full bg-gray-700 motion-safe:animate-pulse" />
+          <div className="h-11 w-24 rounded-full bg-surface-hover motion-safe:animate-pulse" />
+          <div className="h-11 w-24 rounded-full bg-surface-hover motion-safe:animate-pulse" />
         </div>
         <div className={`${pulse} h-[380px] md:h-[600px]`} />
       </div>

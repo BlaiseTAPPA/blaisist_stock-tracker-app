@@ -24,7 +24,7 @@ const NavItems = ({ variant = "bar", onNavigate }: NavItemsProps) => {
 
   const isSheet = variant === "sheet";
   const itemClass = isSheet
-    ? "flex min-h-11 w-full items-center rounded-md px-3 text-base hover:bg-gray-700/50"
+    ? "flex min-h-11 w-full items-center rounded-md px-3 text-base hover:bg-surface-hover/50"
     : "";
 
   return (
@@ -54,11 +54,10 @@ const NavItems = ({ variant = "bar", onNavigate }: NavItemsProps) => {
               aria-current={active ? "page" : undefined}
               onClick={() => onNavigate?.("link")}
               className={cn(
-                "rounded-sm focus-ring transition-colors hover:text-yellow-500",
+                "rounded-sm focus-ring transition-colors hover:text-brand",
                 itemClass,
                 // Not only lighter: a 2 px underline marks the current page (1.4.1).
-                active &&
-                  "text-gray-100 underline decoration-yellow-500 decoration-2 underline-offset-8",
+                active && "text-fg underline decoration-brand decoration-2 underline-offset-8",
               )}
             >
               {item.label}

@@ -36,9 +36,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <Image
             src="/assets/icons/logo.svg"
             alt="FinGenius home"
-            width={140}
-            height={32}
-            className="h-auto w-auto"
+            width={175}
+            height={96}
+            className="h-24 w-auto"
           />
         </Link>
         <div className="flex-1 pb-6 lg:pb-8">
@@ -52,9 +52,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <ul className="auth-features">
             {FEATURES.map(({ icon: Icon, title, text }) => (
               <li key={title} className="flex gap-3">
-                <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-yellow-500" />
+                <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
                 <p>
-                  <span className="font-semibold text-gray-100">{title}.</span> {text}
+                  <span className="font-semibold text-fg">{title}.</span> {text}
                 </p>
               </li>
             ))}
@@ -65,8 +65,8 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <Image
             src="/assets/images/dashboard.png"
             alt="FinGenius dashboard preview"
-            width={1440}
-            height={1150}
+            width={1877}
+            height={875}
             className="auth-dashboard-preview absolute top-0"
           />
         </div>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const HeatMapPage = () => {
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-gray-100">Stock heatmap</h1>
+      <h1 className="text-title">Stock heatmap</h1>
       <TradingViewWidget
         title="Stock market heatmap by sector and market capitalization"
         scriptUrl={`${scriptUrl}stock-heatmap.js`}

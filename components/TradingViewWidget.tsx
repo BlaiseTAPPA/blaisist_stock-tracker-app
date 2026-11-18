@@ -45,7 +45,7 @@ const TradingViewWidget = ({
         {!loaded && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-lg bg-gray-800 motion-safe:animate-pulse"
+            className="pointer-events-none absolute inset-0 rounded-lg bg-surface-raised motion-safe:animate-pulse"
           />
         )}
       </div>

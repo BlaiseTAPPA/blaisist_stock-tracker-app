@@ -70,14 +70,34 @@ export const renderNewsSummaryEmail = ({
     newsContent: sanitizeEmailHtml(newsContent, { allowedUrls }),
   });
 
-export const renderVerificationEmail = ({ name, url }: { name: string; url: string }): string =>
+export const renderVerificationEmail = ({
+  name,
+  url,
+  appUrl,
+}: {
+  name: string;
+  url: string;
+  /** Public app URL, without a trailing slash (logo). */
+  appUrl: string;
+}): string =>
   fillTemplate(VERIFY_EMAIL_TEMPLATE, {
     name: escapeHtml(name),
     url: escapeHtml(url),
+    appUrl: escapeHtml(appUrl),
   });
 
-export const renderPasswordResetEmail = ({ name, url }: { name: string; url: string }): string =>
+export const renderPasswordResetEmail = ({
+  name,
+  url,
+  appUrl,
+}: {
+  name: string;
+  url: string;
+  /** Public app URL, without a trailing slash (logo). */
+  appUrl: string;
+}): string =>
   fillTemplate(RESET_PASSWORD_EMAIL_TEMPLATE, {
     name: escapeHtml(name),
     url: escapeHtml(url),
+    appUrl: escapeHtml(appUrl),
   });

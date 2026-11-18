@@ -15,7 +15,7 @@ const Header = ({ user }: { user: User }) => {
             <Image
               src="/assets/icons/logo.svg"
               alt="FinGenius home"
-              width={140}
+              width={58}
               height={32}
               className="h-8 w-auto cursor-pointer"
             />

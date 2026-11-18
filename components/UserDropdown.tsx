@@ -44,37 +44,37 @@ const UserDropdown = ({ user }: { user: User }) => {
             name is visually hidden but still read. */}
         <Button
           variant="ghost"
-          className="flex h-11 items-center gap-3 text-gray-400 hover:text-yellow-500"
+          className="flex h-11 items-center gap-3 text-fg-secondary hover:text-brand"
         >
           <Avatar className="h-8 w-8" aria-hidden="true">
-            <AvatarFallback className="bg-yellow-500 text-sm font-bold text-yellow-900">
+            <AvatarFallback className="bg-brand text-sm font-bold text-on-brand">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <span className="text-base font-medium text-gray-400 max-lg:sr-only">
+          <span className="text-base font-medium text-fg-secondary max-lg:sr-only">
             {user.name || user.email}
           </span>
           <span className="sr-only">, account menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 text-gray-400">
+      <DropdownMenuContent className="w-64 text-fg-secondary">
         <DropdownMenuLabel>
           <div className="relative flex items-center gap-3 py-2">
             <Avatar className="h-10 w-10" aria-hidden="true">
-              <AvatarFallback className="bg-yellow-500 text-sm font-bold text-yellow-900">
+              <AvatarFallback className="bg-brand text-sm font-bold text-on-brand">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <span className="text-base font-medium text-gray-400">{user.name}</span>
-              <span className="text-sm break-all text-gray-500">{user.email}</span>
+              <span className="text-base font-medium text-fg-secondary">{user.name}</span>
+              <span className="text-sm break-all text-fg-muted">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-gray-600" />
+        <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuItem
           asChild
-          className="text-md cursor-pointer font-medium text-gray-100 transition-colors focus:bg-gray-700 focus:text-yellow-500"
+          className="text-md cursor-pointer font-medium text-fg transition-colors focus:bg-surface-hover focus:text-brand"
         >
           <Link href="/settings">
             <Settings className="mr-2 hidden h-4 w-4 sm:block" />
@@ -83,7 +83,7 @@ const UserDropdown = ({ user }: { user: User }) => {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSignout}
-          className="text-md cursor-pointer font-medium text-gray-100 transition-colors focus:bg-gray-700 focus:text-yellow-500"
+          className="text-md cursor-pointer font-medium text-fg transition-colors focus:bg-surface-hover focus:text-brand"
         >
           <LogOut className="mr-2 hidden h-4 w-4 sm:block" />
           Sign out

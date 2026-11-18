@@ -47,10 +47,10 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
         <div className="flex min-w-0 items-center gap-3">
           <StockLogo symbol={sym} />
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-bold text-gray-100" title={name ?? sym}>
+            <h1 className="truncate text-title" title={name ?? sym}>
               {name ?? sym}
             </h1>
-            <p className="truncate text-sm text-gray-500">
+            <p className="truncate text-sm text-fg-muted">
               <span className="font-mono">{sym}</span>
               {exchange && <> · {exchange}</>}
             </p>
@@ -60,7 +60,7 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <div className="flex flex-col gap-0.5">
             <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-semibold text-gray-100 tabular-nums">
+              <span className="text-2xl font-semibold text-fg tabular-nums">
                 {formatPrice(price, currency)}
               </span>
               <PriceChange value={changePercent} className="text-sm font-medium" />
