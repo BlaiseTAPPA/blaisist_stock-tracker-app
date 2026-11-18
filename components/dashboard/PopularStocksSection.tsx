@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { getTopStocksData, oldestQuoteTime } from "@/lib/finnhub/client";
 import { POPULAR_STOCKS } from "@/lib/constants";
 import PriceChange from "@/components/PriceChange";
 import MarketDataUnavailable from "@/components/dashboard/MarketDataUnavailable";
-import MarketStatusBadge from "@/components/dashboard/MarketStatusBadge";
 import DataTimestamp from "@/components/DataTimestamp";
 import { formatMarketCap, formatPrice, formatRatio } from "@/lib/format";
 
@@ -35,11 +33,14 @@ export default async function PopularStocksSection() {
           </thead>
           <tbody>
             {topStocks.map((stock) => (
-              <tr key={stock.symbol} className="table-row">
+              // The whole row is clickable through the link's `::after` overlay
+              // (as on `WatchlistCard`): one link per row, the focus ring is
+              // drawn around the row, inset because the container clips.
+              <tr key={stock.symbol} className="group relative table-row">
                 <td className="py-2.5 pl-4 font-medium text-gray-300">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    className="rounded-sm focus-ring transition-colors hover:text-yellow-500"
+                    className="transition-colors group-hover:text-yellow-500 after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-yellow-500"
                   >
                     <span
                       className="block max-w-[7.5rem] truncate sm:max-w-[14rem]"
@@ -70,13 +71,7 @@ export default async function PopularStocksSection() {
       {unavailable ? (
         <MarketDataUnavailable />
       ) : (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <DataTimestamp time={oldestQuoteTime(topStocks)} />
-          {/* Its own boundary: a slow market-status call never holds the table. */}
-          <Suspense fallback={null}>
-            <MarketStatusBadge />
-          </Suspense>
-        </div>
+        <DataTimestamp time={oldestQuoteTime(topStocks)} />
       )}
     </>
   );

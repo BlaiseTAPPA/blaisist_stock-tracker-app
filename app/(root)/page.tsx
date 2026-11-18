@@ -4,7 +4,8 @@ import Link from "next/link";
 import SearchTrigger from "@/components/search/SearchTrigger";
 import DashboardPanel from "@/components/dashboard/DashboardPanel";
 import MarketSummarySection from "@/components/dashboard/MarketSummarySection";
-import WatchlistSection from "@/components/dashboard/WatchlistSection";
+import WatchlistSection, { WatchlistViewAllLink } from "@/components/dashboard/WatchlistSection";
+import MarketStatusBadge from "@/components/dashboard/MarketStatusBadge";
 import PopularStocksSection from "@/components/dashboard/PopularStocksSection";
 import NewsSection from "@/components/dashboard/NewsSection";
 import {
@@ -28,24 +29,40 @@ const viewAllLink = `${panelAction} focus-ring rounded-sm text-sm text-gray-500 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col gap-10">
-      {/* One h1 per page: the panels are h2s and the design has no visible page title. */}
-      <h1 className="sr-only">Dashboard</h1>
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <DashboardPanel title="Market summary">
-          <MarketSummarySection />
-        </DashboardPanel>
+      <div className="-mb-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <h1 className="text-2xl font-bold text-gray-100">Dashboard</h1>
+        {/* Applies to the whole page. Its own boundary: a slow market-status
+            call never holds the heading or any section. */}
+        <Suspense fallback={null}>
+          <MarketStatusBadge />
+        </Suspense>
+      </div>
 
+      {/* The user's watchlist comes first in the DOM, so it is the first block
+          on a phone and first in reading and tab order; from xl up the market
+          summary sits beside it. */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <DashboardPanel
           title="Your watchlist"
           action={
-            <Link href="/watchlist" className={viewAllLink}>
-              View all
-            </Link>
+            <Suspense
+              fallback={
+                <Link href="/watchlist" className={viewAllLink}>
+                  View all
+                </Link>
+              }
+            >
+              <WatchlistViewAllLink className={viewAllLink} />
+            </Suspense>
           }
         >
           <Suspense fallback={<WatchlistSkeleton />}>
             <WatchlistSection />
           </Suspense>
+        </DashboardPanel>
+
+        <DashboardPanel title="Market summary">
+          <MarketSummarySection />
         </DashboardPanel>
       </div>
 

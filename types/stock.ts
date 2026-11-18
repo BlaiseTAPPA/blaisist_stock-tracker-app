@@ -6,10 +6,8 @@ export type Stock = {
   type: string;
 };
 
-/** A search palette entry. */
-export type StockSearchResult = Stock & {
-  isInWatchlist: boolean;
-};
+/** A search palette entry. Its watchlist state is read by the palette itself. */
+export type StockSearchResult = Stock;
 
 /** `unavailable`: no usable quote (Finnhub error, timeout, 429 or unknown symbol). */
 export type StockDataStatus = "ok" | "unavailable";

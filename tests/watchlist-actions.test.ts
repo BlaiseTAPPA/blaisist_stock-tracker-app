@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import type { User } from "@/types/user";
-import type { toggleWatchlist as ToggleWatchlist } from "@/lib/actions/watchlist.actions";
+import type {
+  getWatchlistSymbolsAction as GetWatchlistSymbolsAction,
+  toggleWatchlist as ToggleWatchlist,
+} from "@/lib/actions/watchlist.actions";
 import type { Watchlist as WatchlistModel } from "@/database/models/watchlist.model";
 
 // Integration test against a throwaway in-memory MongoDB: never the user's.
@@ -17,6 +20,7 @@ const ADA: User = { id: "user-ada", name: "Ada", email: "ada@example.com" };
 
 let mongo: MongoMemoryServer;
 let toggleWatchlist: typeof ToggleWatchlist;
+let getWatchlistSymbolsAction: typeof GetWatchlistSymbolsAction;
 let Watchlist: typeof WatchlistModel;
 let revalidatePath: ReturnType<typeof vi.fn>;
 
@@ -26,7 +30,8 @@ beforeAll(async () => {
   // Read when lib/db/mongo-client.ts is first imported, hence the dynamic imports.
   process.env.MONGODB_URI = mongo.getUri("fingenius-test");
 
-  ({ toggleWatchlist } = await import("@/lib/actions/watchlist.actions"));
+  ({ toggleWatchlist, getWatchlistSymbolsAction } =
+    await import("@/lib/actions/watchlist.actions"));
   ({ Watchlist } = await import("@/database/models/watchlist.model"));
   revalidatePath = vi.mocked((await import("next/cache")).revalidatePath);
 
@@ -73,14 +78,45 @@ describe("toggleWatchlist", () => {
     ]);
   });
 
-  it("removes a symbol already in the watchlist", async () => {
-    await toggleWatchlist("AAPL", "Apple Inc.");
+  it("removes a symbol already in the watchlist and returns its original date", async () => {
+    const addedAt = new Date("2026-01-02T03:04:05.000Z");
+    await Watchlist.create({ userId: ADA.id, symbol: "AAPL", company: "Apple Inc.", addedAt });
 
     await expect(toggleWatchlist("AAPL", "Apple Inc.")).resolves.toEqual({
       ok: true,
       added: false,
+      addedAt: addedAt.toISOString(),
     });
     expect(await symbolsOf(ADA.id)).toEqual([]);
+  });
+
+  it("undoes a removal with the original date, and never removes on undo", async () => {
+    const addedAt = "2026-01-02T03:04:05.000Z";
+
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: true,
+      added: true,
+    });
+    const doc = await Watchlist.findOne({ userId: ADA.id, symbol: "AAPL" }).lean();
+    expect(doc?.addedAt.toISOString()).toBe(addedAt);
+
+    // A second undo (double click) leaves it in the watchlist.
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: true,
+      added: true,
+    });
+    expect(await symbolsOf(ADA.id)).toEqual(["AAPL"]);
+  });
+
+  it.each([
+    ["a malformed date", "yesterday"],
+    ["a date in the future", "2999-01-01T00:00:00.000Z"],
+  ])("rejects an undo with %s", async (_label, addedAt) => {
+    await expect(toggleWatchlist("AAPL", "Apple Inc.", { addedAt })).resolves.toEqual({
+      ok: false,
+      reason: "invalid",
+    });
+    expect(await Watchlist.countDocuments()).toBe(0);
   });
 
   it("only touches the signed-in user's watchlist", async () => {
@@ -125,5 +161,34 @@ describe("toggleWatchlist", () => {
       reason: "invalid",
     });
     expect(await Watchlist.countDocuments()).toBe(0);
+  });
+});
+
+describe("getWatchlistSymbolsAction", () => {
+  it("returns the signed-in user's symbols only", async () => {
+    await Watchlist.create({ userId: "someone-else", symbol: "TSLA", company: "Tesla" });
+    await toggleWatchlist("AAPL", "Apple Inc.");
+    await toggleWatchlist("MSFT", "Microsoft");
+
+    const result = await getWatchlistSymbolsAction();
+    expect(result.ok).toBe(true);
+    expect(result.ok && [...result.symbols].sort()).toEqual(["AAPL", "MSFT"]);
+  });
+
+  it("refuses an unauthenticated call", async () => {
+    session.user = null;
+    await expect(getWatchlistSymbolsAction()).resolves.toEqual({
+      ok: false,
+      reason: "unauthenticated",
+    });
+  });
+
+  it("throttles a client that calls it in a loop", async () => {
+    session.user = { ...ADA, id: "user-loop" };
+    const results = [];
+    for (let i = 0; i < 31; i++) results.push(await getWatchlistSymbolsAction());
+
+    expect(results.slice(0, 30).every((r) => r.ok)).toBe(true);
+    expect(results[30]).toEqual({ ok: false, reason: "throttled" });
   });
 });

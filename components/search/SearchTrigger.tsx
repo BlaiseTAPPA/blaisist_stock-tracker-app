@@ -8,7 +8,7 @@ const noopSubscribe = () => () => {};
 
 // `null` on the server and during hydration, the real value afterwards: React
 // re-renders with the client snapshot once hydrated, so there is no mismatch.
-function useIsApplePlatform(): boolean | null {
+export function useIsApplePlatform(): boolean | null {
   return useSyncExternalStore(
     noopSubscribe,
     () => /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent),

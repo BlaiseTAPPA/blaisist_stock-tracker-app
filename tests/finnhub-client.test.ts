@@ -243,6 +243,20 @@ describe("getNews", () => {
     expect(news.map((n) => n.headline)).toEqual([1, 2, 3, 4, 5, 6].map((i) => `Headline ${i}`));
   });
 
+  it("returns up to `limit` general news (capped at 20) from the same URL", async () => {
+    const fetchMock = routeFetch({
+      "/news": () => json(Array.from({ length: 30 }, (_, i) => article(i + 1))),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await getNews(undefined, { limit: 20 })).toHaveLength(20);
+    expect(await getNews(undefined, { limit: 50 })).toHaveLength(20);
+    // One URL for every limit, so the dashboard and /news share a cache entry.
+    expect(new Set(fetchMock.mock.calls.map(([input]) => String(input)))).toEqual(
+      new Set(["https://finnhub.io/api/v1/news?category=general&token=test-token"]),
+    );
+  });
+
   it("returns [] when Finnhub fails", async () => {
     vi.stubGlobal("fetch", routeFetch({ "/news": () => new Response("no", { status: 429 }) }));
     await expect(getNews()).resolves.toEqual([]);
@@ -270,12 +284,11 @@ describe("searchStocks", () => {
     const found = await searchStocks(" apple ");
 
     expect(found).toHaveLength(15);
-    expect(found[0]).toEqual({ symbol: "SYM0", name: "SYM0", type: "Stock", isInWatchlist: false });
+    expect(found[0]).toEqual({ symbol: "SYM0", name: "SYM0", type: "Stock" });
     expect(found[1]).toEqual({
       symbol: "SYM1",
       name: "Company 1",
       type: "Common Stock",
-      isInWatchlist: false,
     });
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/search?q=apple&token=");
   });

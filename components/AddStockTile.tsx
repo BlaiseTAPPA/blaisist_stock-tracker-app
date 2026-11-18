@@ -3,8 +3,8 @@
 import { Plus } from "lucide-react";
 import { useSearch } from "@/components/search/SearchProvider";
 
-// Last tile of the dashboard watchlist grid: opens the search palette, where
-// a stock can be opened and added from its page.
+// Last tile of the watchlist grids (dashboard and `/watchlist`): opens the
+// search palette, where a stock is added with its star (or Control/Command+Enter).
 export default function AddStockTile() {
   const { open } = useSearch();
 

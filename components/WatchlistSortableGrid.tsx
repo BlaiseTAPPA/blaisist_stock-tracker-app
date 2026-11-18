@@ -46,7 +46,14 @@ function sortItems(items: SortableWatchlistItem[], sort: WatchlistSort): Sortabl
  * updated with `history.replaceState`: Next syncs `useSearchParams` with it
  * and no server round trip happens (the quotes are already on the page).
  */
-export default function WatchlistSortableGrid({ items }: { items: SortableWatchlistItem[] }) {
+export default function WatchlistSortableGrid({
+  items,
+  trailing,
+}: {
+  items: SortableWatchlistItem[];
+  /** Last cell, never sorted (the "Add stock" tile). */
+  trailing?: React.ReactNode;
+}) {
   const selectId = useId();
   const searchParams = useSearchParams();
   const param = searchParams.get("sort");
@@ -90,6 +97,7 @@ export default function WatchlistSortableGrid({ items }: { items: SortableWatchl
             {item.card}
           </li>
         ))}
+        {trailing && <li className="min-w-0">{trailing}</li>}
       </ul>
     </div>
   );

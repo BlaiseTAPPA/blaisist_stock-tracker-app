@@ -137,15 +137,6 @@ export const getNewsWidgetConfig = (symbol?: string) => ({
   height: "600",
 });
 
-export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
-  symbol: symbol.toUpperCase(),
-  colorTheme: TV_THEME,
-  isTransparent: true,
-  locale: "en",
-  width: "100%",
-  height: 170,
-});
-
 export const CANDLE_CHART_WIDGET_CONFIG = (symbol: string) => ({
   allow_symbol_change: false,
   calendar: false,
