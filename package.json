@@ -13,7 +13,8 @@
     "preview:emails": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON ./scripts/preview-emails.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "better-auth": "^1.7.25",
