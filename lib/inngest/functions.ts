@@ -2,6 +2,7 @@ import { cron } from "inngest";
 import { inngest } from "@/lib/inngest/client";
 import { dailyNewsRequested, newsDigestRequested, userVerified } from "@/lib/inngest/events";
 import {
+  formatUserProfile,
   NEWS_SUMMARY_EMAIL_PROMPT,
   PERSONALIZED_WELCOME_EMAIL_PROMPT,
 } from "@/lib/inngest/prompts";
@@ -37,14 +38,9 @@ export const sendSignUpEmail = inngest.createFunction(
   async ({ event, step }) => {
     const { email, name, country, investmentGoals, riskTolerance, preferredIndustry } = event.data;
 
-    const userProfile = `
-            - Country: ${country}
-            - Investment goals: ${investmentGoals}
-            - Risk tolerance: ${riskTolerance}
-            - Preferred industry: ${preferredIndustry}
-        `;
-
-    const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace("{{userProfile}}", () => userProfile);
+    const prompt = PERSONALIZED_WELCOME_EMAIL_PROMPT.replace("{{userProfile}}", () =>
+      formatUserProfile({ country, investmentGoals, riskTolerance, preferredIndustry }),
+    );
 
     const response = await step.ai.infer("generate-welcome-intro", {
       model: step.ai.models.gemini({ model: GEMINI_MODEL }),
@@ -115,7 +111,7 @@ export const newsDigestForUser = inngest.createFunction(
     concurrency: { limit: 5 },
   },
   async ({ event, step }) => {
-    const { email, symbols, date } = event.data;
+    const { userId, email, symbols, date } = event.data;
 
     // getNews falls back to general market news when the symbols have none.
     const articles = await step.run("fetch-news", async () => (await getNews(symbols)).slice(0, 6));
@@ -136,6 +132,7 @@ export const newsDigestForUser = inngest.createFunction(
 
     await step.run("send-email", async () => {
       await sendNewsSummaryEmail({
+        userId,
         email,
         date: getFormattedTodayDate(new Date(`${date}T00:00:00Z`)),
         newsContent,

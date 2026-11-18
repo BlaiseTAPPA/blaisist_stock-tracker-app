@@ -155,7 +155,7 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <!-- Footer Text -->
                             <p class="mobile-text dark-text-muted" style="margin: 20px 0 0 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important; text-align: center;">
                                FinGenius HQ, Germersheim, GER 76726, Deutshland <br>
-                                <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
+                                <a href="{{settingsUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Email settings</a> | 
                                 <a href="https://blaisist_stock-tracker-app.vercel.app/" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a><br>
                                 © 2026 FinGenius
                             </p>
@@ -292,10 +292,11 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                     This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    You're receiving this because you subscribed to FinGenius news updates.
+                                    You're receiving this because the daily news digest is turned on for your FinGenius account.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe from the daily digest</a> | 
+                                    <a href="{{settingsUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Email settings</a> | 
                                     <a href="https://blaisist_stock-tracker-app.vercel.app" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
                                 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
@@ -312,6 +313,9 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
 </body>
 </html>`;
 
+// The three alert templates and the inactive-user reminder below are not sent
+// yet (price alerts are a future feature). Their {{unsubscribeUrl}} must be a
+// signed link (lib/email/unsubscribe-token.ts), never "#".
 export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -504,7 +508,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
                                     <a href="https://blaisist_stock-tracker-app.vercel.app" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
                                 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
@@ -713,7 +717,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
                                     <a href="https://blaisist_stock-tracker-app.vercel.app" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
                                 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
@@ -933,7 +937,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                     You're receiving this because you subscribed to FinGenius news updates.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
+                                    <a href="{{unsubscribeUrl}}" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
                                     <a href="https://blaisist_stock-tracker-app.vercel.app" style="color: #CCDADC !important; text-decoration: underline;">Visit FinGenius</a>
                                 </p>
                                 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
@@ -1161,6 +1165,60 @@ export const VERIFY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </p>
                             <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6b7280;">
                                 You did not create a FinGenius account? You can safely ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
+// Placeholders: {{name}} and {{url}}. Both must be HTML-escaped by the caller.
+export const RESET_PASSWORD_EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Reset your password</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #050505;">
+        <tr>
+            <td align="center" style="padding: 40px 16px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: #141414; border: 1px solid #30333A; border-radius: 8px;">
+                    <tr>
+                        <td style="padding: 32px 32px 0 32px;">
+                            <img src="https://ik.imagekit.io/a6fkjou7d/logo.png?updatedAt=1756378431634" alt="FinGenius" width="130" style="max-width: 100%; height: auto;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 32px;">
+                            <h1 style="margin: 0 0 20px 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #FDD458;">
+                                Reset your password
+                            </h1>
+                            <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+                                Hi {{name}}, we received a request to reset the password of your FinGenius account. Click the button below to choose a new one. The link expires in 1 hour and works once.
+                            </p>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+                                <tr>
+                                    <td style="border-radius: 8px; background-color: #FDD458;">
+                                        <a href="{{url}}" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 500; color: #000000; text-decoration: none;">
+                                            Choose a new password
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin: 0 0 8px 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
+                                If the button does not work, copy this link into your browser:
+                            </p>
+                            <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.5; color: #9ca3af; word-break: break-all;">
+                                {{url}}
+                            </p>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6b7280;">
+                                You did not ask for this? You can safely ignore this email: your password stays the same.
                             </p>
                         </td>
                     </tr>
