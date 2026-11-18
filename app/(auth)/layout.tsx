@@ -3,6 +3,27 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ChartCandlestick, Mail, Star } from "lucide-react";
+import Disclaimer from "@/components/Disclaimer";
+
+// What the app does today, nothing more: no testimonial, no promised feature.
+const FEATURES = [
+  {
+    icon: Star,
+    title: "Personal watchlist",
+    text: "Keep the stocks you follow in one place, with their latest price and daily change.",
+  },
+  {
+    icon: ChartCandlestick,
+    title: "TradingView charts",
+    text: "Interactive charts, technical analysis, company profiles and financials for each stock.",
+  },
+  {
+    icon: Mail,
+    title: "Daily email digest",
+    text: "A summary of the market news for the stocks in your watchlist, once a day.",
+  },
+] as const;
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -20,32 +41,24 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
             className="h-auto w-auto"
           />
         </Link>
-        <div className="flex-1 pb-6 lg:pb-8">{children}</div>
+        <div className="flex-1 pb-6 lg:pb-8">
+          {children}
+          <Disclaimer className="mt-8" />
+        </div>
       </section>
       <section className="auth-right-section">
         <div className="relative z-10 lg:mt-4 lg:mb-16">
-          <blockquote className="auth-blockquote">
-            FinGenius turned my watchlist into a winning list. The alerts are spot-on, and I feel
-            more confident making moves in the market
-          </blockquote>
-          <div className="flex items-center justify-between">
-            <div>
-              <cite className="auth-testimonial-author">- Blaise TAPPA</cite>
-              <p className="text-gray-500 max-md:text-xs">Trusted Investor</p>
-            </div>{" "}
-            <div role="img" aria-label="5 out of 5 stars" className="flex items-center gap-0.5">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Image
-                  src="/assets/icons/star.svg"
-                  alt=""
-                  key={star}
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-              ))}
-            </div>
-          </div>
+          <h2 className="auth-tagline">Follow the market, your way.</h2>
+          <ul className="auth-features">
+            {FEATURES.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="flex gap-3">
+                <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-yellow-500" />
+                <p>
+                  <span className="font-semibold text-gray-100">{title}.</span> {text}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="relative flex-1">

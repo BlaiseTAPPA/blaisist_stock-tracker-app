@@ -128,13 +128,13 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <!-- Feature List -->
                             <ul class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; padding-left: 20px; font-size: 16px; line-height: 1.6; color: #CCDADC;">
                                 <li style="margin-bottom: 12px;">Set up your watchlist to follow your favorite stocks</li>
-                                <li style="margin-bottom: 12px;">Create price and volume alerts so you never miss a move</li>
+                                <li style="margin-bottom: 12px;">Open interactive TradingView charts, company profiles and financials</li>
                                 <li style="margin-bottom: 12px;">Explore the dashboard for trends and the latest market news</li>
                             </ul>
                             
                             <!-- Additional Text -->
                             <p class="mobile-text dark-text-secondary" style="margin: 0 0 40px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
-                                We'll keep you informed with timely updates, insights, and alerts — so you can focus on making the right calls.
+                                Every day, we'll email you a digest of the market news for the stocks in your watchlist.
                             </p>
                             
                             <!-- CTA Button -->
