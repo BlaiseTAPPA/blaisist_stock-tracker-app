@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 type DashboardPanelProps = {
   title: string;
   /** Link or button shown next to the title. */
@@ -7,16 +9,23 @@ type DashboardPanelProps = {
 
 /**
  * Dashboard column: the title and its action are static, so they are part of
- * the first HTML chunk; `children` is usually a `<Suspense>` boundary.
+ * the first HTML chunk; `children` is usually a `<Suspense>` boundary. The
+ * section is named by its visible heading, so the name is defined once.
  */
-const DashboardPanel = ({ title, action, children }: DashboardPanelProps) => (
-  <section className="flex flex-col gap-4" aria-label={title}>
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="text-xl font-bold text-gray-100">{title}</h2>
-      {action}
-    </div>
-    {children}
-  </section>
-);
+const DashboardPanel = ({ title, action, children }: DashboardPanelProps) => {
+  const headingId = useId();
+
+  return (
+    <section className="flex flex-col gap-4" aria-labelledby={headingId}>
+      <div className="flex items-center justify-between gap-4">
+        <h2 id={headingId} className="text-xl font-bold text-gray-100">
+          {title}
+        </h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+};
 
 export default DashboardPanel;
