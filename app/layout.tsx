@@ -13,10 +13,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Absolute base for URL-based metadata (Open Graph, canonical). An unset or
+// malformed variable must not break every page: fall back to the dev server.
+function getMetadataBase(): URL {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "");
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  title: "FinGenius - Your Stock Market Companion",
+  metadataBase: getMetadataBase(),
+  title: { default: "Signalist", template: "%s | Signalist" },
   description:
-    "Track real-time stock prices, get personalized alerts and explore detailed company insights with FinGenius, your ultimate stock market companion.",
+    "Follow stock prices and charts, keep a personal watchlist, explore company profiles and financials, and get a daily market news digest by email.",
 };
 
 export default function RootLayout({
