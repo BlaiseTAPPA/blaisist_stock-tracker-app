@@ -7,6 +7,7 @@ import {
   CANDLE_CHART_WIDGET_CONFIG,
   TRADINGVIEW_SCRIPT_BASE_URL,
 } from "@/lib/constants";
+import { onTablistKeyDown } from "@/lib/a11y/tablist";
 import { cn } from "@/lib/utils";
 
 const CHARTS = [
@@ -21,7 +22,12 @@ export default function StockChartTabs({ symbol }: { symbol: string }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div role="tablist" aria-label="Chart type" className="flex gap-2">
+      <div
+        role="tablist"
+        aria-label="Chart type"
+        onKeyDown={onTablistKeyDown}
+        className="flex gap-2"
+      >
         {CHARTS.map((c, i) => (
           <button
             key={c.id}
@@ -30,11 +36,12 @@ export default function StockChartTabs({ symbol }: { symbol: string }) {
             role="tab"
             aria-selected={active === i}
             aria-controls="chart-panel"
+            tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
             className={cn(
-              "min-h-11 rounded-full px-4 py-1.5 text-sm font-medium transition-colors sm:min-h-0",
+              "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors sm:min-h-0",
               active === i
-                ? "bg-yellow-500 text-black"
+                ? "bg-yellow-500 text-gray-900"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700",
             )}
           >

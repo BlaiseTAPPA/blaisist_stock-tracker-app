@@ -11,7 +11,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="auth-layout">
       <section className="auth-left-section scrollbar-hide-default">
-        <Link href="/" className="auth-logo">
+        <Link href="/" className="auth-logo w-fit rounded-sm focus-ring">
           <Image
             src="/assets/icons/logo.svg"
             alt="FinGenius Logo"
@@ -33,11 +33,11 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
               <cite className="auth-testimonial-author">- Blaise TAPPA</cite>
               <p className="text-gray-500 max-md:text-xs">Trusted Investor</p>
             </div>{" "}
-            <div className="flex items-center gap-0.5">
+            <div role="img" aria-label="5 out of 5 stars" className="flex items-center gap-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Image
                   src="/assets/icons/star.svg"
-                  alt="Star"
+                  alt=""
                   key={star}
                   width={20}
                   height={20}

@@ -29,11 +29,19 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SearchProvider initialStocks={initialStocks}>
-      <main className="min-h-screen text-gray-400">
-        {/* Header */}
+      <div className="min-h-screen text-gray-400">
+        <a
+          href="#main-content"
+          className="sr-only z-[60] rounded-md bg-yellow-500 px-4 py-2 font-semibold text-gray-900 focus-ring focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to content
+        </a>
+        {/* The header is a banner landmark next to <main>, not inside it. */}
         <Header user={user} />
-        <div className="container py-10">{children}</div>
-      </main>
+        <main id="main-content" tabIndex={-1} className="container py-10 outline-none">
+          {children}
+        </main>
+      </div>
     </SearchProvider>
   );
 };
