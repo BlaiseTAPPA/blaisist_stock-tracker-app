@@ -11,7 +11,6 @@ import { getSessionUser } from "@/lib/auth/session";
 import { getStockPageData } from "@/lib/stocks/stock-page";
 import { formatPrice } from "@/lib/format";
 import {
-  SYMBOL_INFO_WIDGET_CONFIG,
   TECHNICAL_ANALYSIS_WIDGET_CONFIG,
   COMPANY_PROFILE_WIDGET_CONFIG,
   COMPANY_FINANCIALS_WIDGET_CONFIG,
@@ -75,15 +74,9 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
         </div>
       </header>
 
-      {/* Above the fold, loaded eagerly: symbol info and a single chart. */}
-      <TradingViewWidget
-        title={`${label} price summary`}
-        scriptUrl={`${scriptUrl}symbol-info.js`}
-        config={SYMBOL_INFO_WIDGET_CONFIG(sym)}
-        height={170}
-        lazy={false}
-      />
-
+      {/* Above the fold, loaded eagerly: a single chart. The price, change and
+          quote time are in the header only (Finnhub), never repeated by a
+          TradingView widget that could show a different value. */}
       <StockChartTabs symbol={sym} name={label} />
 
       {/* Below the fold: mounted only as they approach the viewport. */}
