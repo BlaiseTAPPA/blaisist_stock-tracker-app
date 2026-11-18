@@ -11,7 +11,7 @@ type DataTimestampProps = {
 };
 
 /**
- * "As of 3:42 PM" in the viewer's time zone and language. The server render
+ * "As of 3:42 PM EST": US English, in the viewer's time zone. The server render
  * and the hydration pass only output the ISO `dateTime` attribute (the text
  * depends on the browser's clock and zone), then the text fills in.
  * Renders nothing without a timestamp.
