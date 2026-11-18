@@ -36,9 +36,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <Image
             src="/assets/icons/logo.svg"
             alt="FinGenius home"
-            width={140}
-            height={32}
-            className="h-auto w-auto"
+            width={175}
+            height={96}
+            className="h-24 w-auto"
           />
         </Link>
         <div className="flex-1 pb-6 lg:pb-8">
