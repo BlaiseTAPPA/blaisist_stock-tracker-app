@@ -83,7 +83,7 @@ function SearchPalette({
   let status: string;
   if (!isSearchMode) status = `${stocks.length} popular stocks`;
   else if (loading) status = "Loading…";
-  else if (results?.failed) status = "Search is unavailable right now. Please try again.";
+  else if (results?.failed) status = "Search is unavailable right now. Try again in a few seconds.";
   else if (stocks.length === 0) status = `No results for “${trimmed}”`;
   else status = `${stocks.length} result${stocks.length === 1 ? "" : "s"}`;
 
