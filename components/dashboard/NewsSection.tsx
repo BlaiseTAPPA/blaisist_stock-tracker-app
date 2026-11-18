@@ -1,4 +1,5 @@
 import { getNews } from "@/lib/finnhub/client";
+import RelativeTime from "@/components/RelativeTime";
 
 /** General market news (5 latest). `getNews` never throws. */
 export default async function NewsSection() {
@@ -22,11 +23,7 @@ export default async function NewsSection() {
         >
           <div className="min-w-0 flex-1">
             <p className="mb-1 text-xs text-gray-500">
-              {article.source} ·{" "}
-              {new Date(article.datetime * 1000).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {article.source} · <RelativeTime time={article.datetime} />
             </p>
             <p className="line-clamp-2 text-sm leading-snug font-semibold text-gray-100">
               {article.headline}
