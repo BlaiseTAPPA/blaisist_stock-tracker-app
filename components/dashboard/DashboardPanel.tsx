@@ -17,7 +17,8 @@ const DashboardPanel = ({ title, action, children }: DashboardPanelProps) => {
 
   return (
     <section className="flex flex-col gap-4" aria-labelledby={headingId}>
-      <div className="flex items-center justify-between gap-4">
+      {/* `min-h-11`: same height with or without a 44 px action, so headings align. */}
+      <div className="flex min-h-11 items-center justify-between gap-4">
         <h2 id={headingId} className="text-xl font-bold text-gray-100">
           {title}
         </h2>

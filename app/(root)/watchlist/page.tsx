@@ -5,6 +5,7 @@ import { getTopStocksData, oldestQuoteTime } from "@/lib/finnhub/client";
 import WatchlistEmptyState from "@/components/WatchlistEmptyState";
 import WatchlistCard from "@/components/WatchlistCard";
 import WatchlistSortableGrid from "@/components/WatchlistSortableGrid";
+import AddStockTile from "@/components/AddStockTile";
 import MarketDataUnavailable from "@/components/dashboard/MarketDataUnavailable";
 import DataTimestamp from "@/components/DataTimestamp";
 
@@ -48,6 +49,7 @@ export default async function WatchlistPage() {
               changePercent: stock.changePercent,
               card: <WatchlistCard stock={stock} />,
             }))}
+            trailing={<AddStockTile />}
           />
         </>
       )}
