@@ -54,7 +54,7 @@ const NavItems = ({ variant = "bar", onNavigate }: NavItemsProps) => {
               aria-current={active ? "page" : undefined}
               onClick={() => onNavigate?.("link")}
               className={cn(
-                "transition-colors hover:text-yellow-500",
+                "rounded-sm focus-ring transition-colors hover:text-yellow-500",
                 itemClass,
                 active && "text-gray-100",
               )}

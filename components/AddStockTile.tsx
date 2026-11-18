@@ -13,7 +13,7 @@ export default function AddStockTile() {
       type="button"
       onClick={open}
       aria-haspopup="dialog"
-      className="flex h-full min-h-[130px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-gray-600 bg-gray-800/30 p-3 text-sm font-medium text-gray-400 transition-colors hover:border-yellow-500/40 hover:text-yellow-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
+      className="flex h-full min-h-[130px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-gray-600 bg-gray-800/30 p-3 text-sm font-medium text-gray-400 focus-ring transition-colors hover:border-yellow-500/40 hover:text-yellow-500"
     >
       <Plus className="size-5" aria-hidden="true" />
       Add stock

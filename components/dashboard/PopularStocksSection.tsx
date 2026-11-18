@@ -36,7 +36,7 @@ export default async function PopularStocksSection() {
                 <td className="py-2.5 pl-4 font-medium text-gray-300">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    className="transition-colors hover:text-yellow-500"
+                    className="rounded-sm focus-ring transition-colors hover:text-yellow-500"
                   >
                     <span
                       className="block max-w-[7.5rem] truncate sm:max-w-[14rem]"

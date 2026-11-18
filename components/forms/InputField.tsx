@@ -55,7 +55,7 @@ const InputField = <TFieldValues extends FieldValues>({
             aria-pressed={showPassword}
             aria-controls={name}
             disabled={disabled}
-            className="focus-ring absolute top-1/2 right-1 inline-flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-500 transition-colors hover:text-gray-300"
+            className="absolute top-1/2 right-1 inline-flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-500 focus-ring transition-colors hover:text-gray-300"
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>
