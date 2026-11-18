@@ -65,8 +65,8 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <Image
             src="/assets/images/dashboard.png"
             alt="FinGenius dashboard preview"
-            width={1440}
-            height={1150}
+            width={1877}
+            height={875}
             className="auth-dashboard-preview absolute top-0"
           />
         </div>
