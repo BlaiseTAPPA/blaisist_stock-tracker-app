@@ -1,12 +1,15 @@
-import "dotenv/config";
+// Checks that MONGODB_URI is reachable: `npm run test:db`.
+// Reads MONGODB_URI from .env.local, then .env, or from the shell, like the app.
+
+import { config } from "dotenv";
 import mongoose from "mongoose";
+
+config({ path: [".env.local", ".env"], quiet: true });
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  console.error(
-    "Error: MONGODB_URI must be set before running this script.\nEither add it to a .env file or export it in the shell.",
-  );
+  console.error("Error: MONGODB_URI must be set (in .env.local, .env or the shell).");
   process.exit(1);
 }
 
