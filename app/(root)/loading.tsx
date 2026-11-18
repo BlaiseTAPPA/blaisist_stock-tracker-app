@@ -1,34 +1,11 @@
-// Navigation fallback for (root) pages while their server component renders.
-// The layout (session check + Header) stays visible above it. On the dashboard
-// the page itself streams section by section, so this only shows until its
-// static shell arrives.
+// Navigation fallback for (root) pages that have no `loading.tsx` of their own
+// (news, heatmap…). The layout (session check + Header) stays visible above
+// it. Neutral on purpose: a page title and one block, never the shape of a
+// specific page. The dashboard streams its own sections, the stock page and
+// `/watchlist` have their own skeletons.
 
-import {
-  MarketSummarySkeleton,
-  NewsSkeleton,
-  PopularStocksSkeleton,
-  SectionTitleSkeleton,
-  WatchlistSkeleton,
-} from "@/components/dashboard/skeletons";
+import { PageSkeleton } from "@/components/dashboard/skeletons";
 
 export default function Loading() {
-  return (
-    <div className="flex flex-col gap-10">
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <SectionTitleSkeleton />
-          <MarketSummarySkeleton />
-        </div>
-        <div className="flex flex-col gap-4">
-          <SectionTitleSkeleton />
-          <WatchlistSkeleton />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <PopularStocksSkeleton />
-        <NewsSkeleton />
-      </div>
-    </div>
-  );
+  return <PageSkeleton />;
 }
