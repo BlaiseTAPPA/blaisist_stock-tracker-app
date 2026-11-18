@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import TradingViewWidget from "@/components/TradingViewWidget";
@@ -7,6 +8,10 @@ import {
 } from "@/lib/constants";
 import Link from "next/link";
 import SearchTrigger from "@/components/search/SearchTrigger";
+
+export const metadata: Metadata = {
+  title: "Watchlist",
+};
 
 export default async function WatchlistPage() {
   const user = await getSessionUser();
