@@ -1,20 +1,13 @@
 "use server";
 
 import type { StockSearchResult } from "@/types/stock";
-import { z } from "zod";
 import { requireUser, UnauthenticatedError } from "@/lib/auth/session";
 import { searchStocks } from "@/lib/finnhub/client";
+import { searchQuerySchema } from "@/lib/validation/search";
 
 // Every export of a "use server" file is a public POST endpoint: keep this file
 // to authenticated, validated actions. Finnhub access lives in
 // `lib/finnhub/client.ts` (server-only).
-
-const searchQuery = z
-  .string()
-  .trim()
-  .min(1)
-  .max(32)
-  .regex(/^[\p{L}\p{N} .\-&]+$/u);
 
 // Simple per-user sliding-window throttle, kept in memory.
 //
@@ -58,7 +51,7 @@ export async function searchStocksAction(query: string): Promise<StockSearchResu
     throw e;
   }
 
-  const parsed = searchQuery.safeParse(query);
+  const parsed = searchQuerySchema.safeParse(query);
   if (!parsed.success) return [];
 
   if (isThrottled(userId)) return [];
