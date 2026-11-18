@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { signOut } from "@/lib/actions/auth.actions";
 
 /** "Ada Lovelace" → "AL", "ada" → "AD", "" → "?". */
@@ -38,21 +39,22 @@ const UserDropdown = ({ user }: { user: User }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
+        {/* Named by its content, so the visible name is part of the accessible
+            name (WCAG 2.5.3): "Ada Lovelace, account menu". Below `lg` the
+            name is visually hidden but still read. */}
         <Button
           variant="ghost"
-          // The name is hidden below `lg`: without a label the button would be
-          // announced as its initials only.
-          aria-label={`Account menu: ${user.name || user.email}`}
           className="flex h-11 items-center gap-3 text-gray-400 hover:text-yellow-500"
         >
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8" aria-hidden="true">
             <AvatarFallback className="bg-yellow-500 text-sm font-bold text-yellow-900">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="hidden flex-col items-start lg:flex">
-            <span className="text-base font-medium text-gray-400">{user.name}</span>
-          </div>
+          <span className="text-base font-medium text-gray-400 max-lg:sr-only">
+            {user.name || user.email}
+          </span>
+          <span className="sr-only">, account menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64 text-gray-400">
@@ -70,6 +72,15 @@ const UserDropdown = ({ user }: { user: User }) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-gray-600" />
+        <DropdownMenuItem
+          asChild
+          className="text-md cursor-pointer font-medium text-gray-100 transition-colors focus:bg-gray-700 focus:text-yellow-500"
+        >
+          <Link href="/settings">
+            <Settings className="mr-2 hidden h-4 w-4 sm:block" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSignout}
           className="text-md cursor-pointer font-medium text-gray-100 transition-colors focus:bg-gray-700 focus:text-yellow-500"

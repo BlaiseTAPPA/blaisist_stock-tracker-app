@@ -12,14 +12,32 @@ export type SignInFormData = {
   password: string;
 };
 
-export type SignUpFormData = {
-  fullName: string;
-  email: string;
-  password: string;
+/** Optional preferences: "" means "not chosen". */
+export type PreferencesFormData = {
   country: string;
   investmentGoals: string;
   riskTolerance: string;
   preferredIndustry: string;
+};
+
+export type SignUpFormData = PreferencesFormData & {
+  fullName: string;
+  email: string;
+  password: string;
+};
+
+export type ForgotPasswordFormData = {
+  email: string;
+};
+
+export type ResetPasswordFormData = {
+  token: string;
+  password: string;
+  confirmPassword: string;
+};
+
+export type ProfileFormData = {
+  fullName: string;
 };
 
 export type Option = {
@@ -57,6 +75,8 @@ export type CountrySelectFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>;
   error?: FieldError;
   required?: boolean;
+  /** Help text under the field; none when omitted. */
+  hint?: string;
 };
 
 export type FooterLinkProps = {

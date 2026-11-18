@@ -25,6 +25,7 @@ export default defineConfig({
         "lib/security/**",
         "lib/validation/**",
         "lib/finnhub/client.ts",
+        "lib/email/unsubscribe-token.ts",
       ],
       reporter: ["text", "html"],
       thresholds: { lines: 70, functions: 70, branches: 70, statements: 70 },

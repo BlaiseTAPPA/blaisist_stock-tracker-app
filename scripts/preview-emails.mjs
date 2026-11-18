@@ -1,4 +1,5 @@
-// Renders the welcome and news emails with hostile input, checks the output,
+// Renders the welcome, news, verification and password reset emails with
+// hostile input, checks the output (escaping, sanitizing, unsubscribe links),
 // and writes it to a temporary folder outside the repo for a visual check.
 // Nothing is sent and no network or database access happens.
 //
@@ -26,7 +27,13 @@ registerHooks({
   },
 });
 
-const { renderWelcomeEmail, renderNewsSummaryEmail } = await import("../lib/nodemailer/render.ts");
+const {
+  renderWelcomeEmail,
+  renderNewsSummaryEmail,
+  renderVerificationEmail,
+  renderPasswordResetEmail,
+} = await import("../lib/nodemailer/render.ts");
+const templates = await import("../lib/nodemailer/templates.ts");
 
 const DISCLAIMER =
   "This email is for informational purposes only and does not constitute financial advice. Market data may be delayed.";
@@ -47,12 +54,29 @@ const trappedAiHtml = `\`\`\`html
 <p onmouseover="alert(1)">$' $& kept as text</p>
 \`\`\``;
 
-const welcome = renderWelcomeEmail({ name: trappedName, intro: trappedAiHtml });
+const APP_URL = "https://app.example.com";
+const SETTINGS_URL = `${APP_URL}/settings`;
+// A token with characters that must be escaped in an attribute.
+const UNSUBSCRIBE_URL = 'https://app.example.com/unsubscribe?token=abc"<x>&y=1';
+const RESET_URL =
+  "https://app.example.com/api/auth/reset-password/tok?callbackURL=%2Freset-password&a=1";
+
+const welcome = renderWelcomeEmail({
+  name: trappedName,
+  intro: trappedAiHtml,
+  appUrl: APP_URL,
+  settingsUrl: SETTINGS_URL,
+});
 const news = renderNewsSummaryEmail({
   date: "Tuesday, November 17, 2026",
   newsContent: trappedAiHtml,
   allowedUrls: [ALLOWED_URL],
+  appUrl: APP_URL,
+  unsubscribeUrl: UNSUBSCRIBE_URL,
+  settingsUrl: SETTINGS_URL,
 });
+const verification = renderVerificationEmail({ name: trappedName, url: RESET_URL });
+const reset = renderPasswordResetEmail({ name: trappedName, url: RESET_URL });
 
 const checks = [];
 const check = (label, ok) => checks.push({ label, ok });
@@ -79,6 +103,51 @@ for (const [email, html] of [
   );
 }
 
+// Unsubscribe and settings links (FLOW-03).
+for (const [name, template] of Object.entries(templates)) {
+  check(`template ${name}: no href="#"`, !template.includes('href="#"'));
+}
+for (const [email, html] of [
+  ["welcome", welcome],
+  ["news", news],
+  ["verification", verification],
+  ["reset", reset],
+]) {
+  check(`${email}: no href="#"`, !html.includes('href="#"'));
+  check(`${email}: no placeholder left in a link`, !/href="\{\{/.test(html));
+}
+check(
+  "news: unsubscribe link present and escaped",
+  news.includes('href="https://app.example.com/unsubscribe?token=abc&quot;&lt;x&gt;&amp;y=1"'),
+);
+for (const [email, html] of [
+  ["welcome", welcome],
+  ["news", news],
+]) {
+  check(`${email}: app links use the configured URL`, html.includes(`href="${APP_URL}/"`));
+  check(`${email}: no hardcoded app domain`, !html.includes("vercel.app"));
+}
+check("news: settings link present", news.includes(`href="${SETTINGS_URL}"`));
+check(
+  "welcome: transactional, links to settings and has no unsubscribe",
+  welcome.includes(`href="${SETTINGS_URL}"`) && !/unsubscribe/i.test(welcome),
+);
+for (const [email, html] of [
+  ["verification", verification],
+  ["reset", reset],
+]) {
+  check(`${email}: no unsubscribe link`, !/unsubscribe/i.test(html));
+  check(
+    `${email}: name escaped`,
+    html.includes("Hi &lt;img src=x onerror=alert(1)&gt; $&#39; $&amp; {{intro}}"),
+  );
+  check(
+    `${email}: link escaped`,
+    html.includes(`href="${RESET_URL.replaceAll("&", "&amp;")}"`) && !html.includes("&a=1"),
+  );
+}
+check("reset: one-time link wording", reset.includes("works once"));
+
 check(
   "welcome: name escaped, `$` patterns and `{{intro}}` not interpreted",
   welcome.includes("Welcome aboard &lt;img src=x onerror=alert(1)&gt; $&#39; $&amp; {{intro}}"),
@@ -95,6 +164,8 @@ const outDir = join(tmpdir(), "fingenius-email-preview");
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, "welcome.html"), welcome);
 writeFileSync(join(outDir, "news.html"), news);
+writeFileSync(join(outDir, "verification.html"), verification);
+writeFileSync(join(outDir, "reset-password.html"), reset);
 
 for (const { label, ok } of checks) console.log(`${ok ? "PASS" : "FAIL"}  ${label}`);
 console.log(`\nPreview written to ${outDir}`);

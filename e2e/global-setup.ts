@@ -1,7 +1,8 @@
+import { rm } from "node:fs/promises";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { startFinnhubMock } from "./mocks/finnhub-server";
 import { assertTestDatabase, seedDatabase } from "./seed";
-import { E2E_MONGODB_URI, FINNHUB_MOCK_PORT, MEMORY_MONGO_PORT } from "./env";
+import { E2E_MONGODB_URI, EMAIL_OUTBOX_DIR, FINNHUB_MOCK_PORT, MEMORY_MONGO_PORT } from "./env";
 
 // Starts the Finnhub mock and, unless E2E_MONGODB_URI is set (CI service),
 // an in-memory MongoDB, then seeds the verified test user. The Next.js server
@@ -18,6 +19,7 @@ export default async function globalSetup() {
 
   const finnhub = await startFinnhubMock(FINNHUB_MOCK_PORT);
   await seedDatabase(E2E_MONGODB_URI);
+  await rm(EMAIL_OUTBOX_DIR, { recursive: true, force: true });
 
   return async () => {
     await finnhub.close();

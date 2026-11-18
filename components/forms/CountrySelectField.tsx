@@ -116,8 +116,9 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
   control,
   error,
   required = false,
+  hint,
 }: CountrySelectFieldProps<TFieldValues>) => {
-  const { errorId, hintId, controlProps } = fieldA11y(name, { error, required, hasHint: true });
+  const { errorId, hintId, controlProps } = fieldA11y(name, { error, required, hasHint: !!hint });
 
   // No `onBlur` wiring: opening the popover moves focus into it, which would
   // flag the field as invalid while the user is still choosing. The required
@@ -148,9 +149,11 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
           {error.message}
         </p>
       )}
-      <p id={hintId} className="text-xs text-gray-500">
-        Helps us show market data and news relevant to you.
-      </p>
+      {hint && (
+        <p id={hintId} className="text-xs text-gray-500">
+          {hint}
+        </p>
+      )}
     </div>
   );
 };

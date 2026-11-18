@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
 import FormError from "@/components/forms/FormError";
 import { signInWithEmail } from "@/lib/actions/auth.actions";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,15 +18,30 @@ const VERIFY_LINK_ERRORS: Record<string, string> = {
   INVALID_TOKEN: "This verification link is invalid. Sign in to get a new one.",
 };
 
-const VerifyLinkError = () => {
-  const code = useSearchParams().get("error");
-  if (!code) return null;
+/** Outcome of a link that lands here: a failed verification or a password reset. */
+const LinkNotice = () => {
+  const params = useSearchParams();
+  const code = params.get("error");
 
-  return (
-    <p role="alert" className="mb-5 text-sm text-red-500">
-      {VERIFY_LINK_ERRORS[code] ?? "Your email couldn't be verified. Sign in to get a new link."}
-    </p>
-  );
+  if (code) {
+    return (
+      <p role="alert" className="mb-5 text-sm text-red-500">
+        {VERIFY_LINK_ERRORS[code] ?? "Your email couldn't be verified. Sign in to get a new link."}
+      </p>
+    );
+  }
+  if (params.get("reset") === "success") {
+    return (
+      <p
+        role="status"
+        className="mb-5 rounded-lg border border-gray-600 bg-gray-800 p-4 text-sm text-gray-100"
+      >
+        Your password has been changed and you were signed out everywhere. Sign in with your new
+        password.
+      </p>
+    );
+  }
+  return null;
 };
 
 const SignInForm = () => {
@@ -69,7 +85,7 @@ const SignInForm = () => {
     <>
       <h1 className="form-title">Sign in to FinGenius</h1>
       <Suspense fallback={null}>
-        <VerifyLinkError />
+        <LinkNotice />
       </Suspense>
       {unverifiedEmail && (
         <div className="mb-5">
@@ -108,6 +124,14 @@ const SignInForm = () => {
             required: "Enter your password",
           }}
         />
+        <p className="-mt-2 text-right text-sm">
+          <Link
+            href="/forgot-password"
+            className="inline-flex min-h-11 items-center rounded-sm text-gray-400 underline-offset-4 focus-ring hover:text-yellow-500 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </p>
 
         <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">

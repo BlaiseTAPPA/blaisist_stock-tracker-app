@@ -3,7 +3,12 @@ import type { Page } from "@playwright/test";
 // Playwright compiles specs to CommonJS, so `require.resolve` is available.
 const axePath = require.resolve("axe-core/axe.min.js");
 
-type AxeViolation = { id: string; impact: string | null; help: string; nodes: unknown[] };
+type AxeViolation = {
+  id: string;
+  impact: string | null;
+  help: string;
+  nodes: { target: string[] }[];
+};
 
 /** axe-core (WCAG 2.1 A/AA rules) on `selector`, serious and critical violations only. */
 export async function seriousViolations(page: Page, selector = "html") {
@@ -19,7 +24,8 @@ export async function seriousViolations(page: Page, selector = "html") {
       id,
       impact,
       help,
-      nodes: nodes.length,
+      // Selectors of the failing elements, so a failure says where to look.
+      targets: nodes.map((node) => node.target.join(" ")),
     }));
   }, selector);
   return violations.filter((v) => v.impact === "serious" || v.impact === "critical");

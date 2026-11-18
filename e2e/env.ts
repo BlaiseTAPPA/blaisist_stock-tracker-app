@@ -1,3 +1,6 @@
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
 // Ports and URLs shared by playwright.config.ts and the global setup.
 
 export const APP_PORT = 3100;
@@ -15,3 +18,12 @@ export const MEMORY_MONGO_PORT = 27018;
  */
 export const E2E_MONGODB_URI =
   process.env.E2E_MONGODB_URI || `mongodb://127.0.0.1:${MEMORY_MONGO_PORT}/fingenius-e2e`;
+
+/**
+ * The app writes emails here instead of sending them (EMAIL_OUTBOX_DIR in
+ * lib/nodemailer/index.ts), so the tests can follow the links they contain.
+ */
+export const EMAIL_OUTBOX_DIR = join(tmpdir(), "fingenius-e2e-outbox");
+
+/** Same dummy secret as playwright.config.ts: the tests sign unsubscribe links with it. */
+export const E2E_AUTH_SECRET = "e2e-only-not-a-secret-0123456789abcdef";

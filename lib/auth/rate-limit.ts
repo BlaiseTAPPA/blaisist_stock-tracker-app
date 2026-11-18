@@ -19,7 +19,8 @@ import { mongoClient } from "@/lib/db/mongo-client";
 type RateLimitDoc = { _id: string; count: number; expiresAt: Date };
 type Rule = { window: number; max: number };
 
-export type AuthRateLimitAction = "sign-in" | "sign-up" | "resend-verification";
+export type AuthRateLimitAction =
+  "sign-in" | "sign-up" | "resend-verification" | "request-password-reset" | "reset-password";
 
 // `window` is in seconds. Every attempt counts, successful or not.
 const RULES: Record<AuthRateLimitAction, { ip: Rule; email: Rule }> = {
@@ -29,6 +30,16 @@ const RULES: Record<AuthRateLimitAction, { ip: Rule; email: Rule }> = {
   "resend-verification": {
     ip: { window: 60, max: 3 },
     email: { window: 3600, max: 3 },
+  },
+  // Same reasoning: each request can send an email.
+  "request-password-reset": {
+    ip: { window: 60, max: 3 },
+    email: { window: 3600, max: 3 },
+  },
+  // Keyed by the reset token instead of an email (the form has none).
+  "reset-password": {
+    ip: { window: 60, max: 10 },
+    email: { window: 3600, max: 5 },
   },
 };
 
@@ -93,7 +104,8 @@ const formatWait = (seconds: number) =>
     : `${Math.ceil(seconds / 60)} minutes`;
 
 /**
- * Counts an attempt of `action` for the current request's IP and for `email`.
+ * Counts an attempt of `action` for the current request's IP and for `email`
+ * (any per-account key: the reset form passes its token).
  * Returns an error message to show the user when a limit is exceeded, or
  * `null` when the attempt may proceed.
  */

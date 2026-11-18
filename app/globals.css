@@ -176,14 +176,17 @@
   .header-wrapper {
     @apply flex items-center justify-between px-6 py-4 text-gray-500;
   }
+  /* Below lg the page itself scrolls (form first, features panel under it):
+     no inner scroll area, which broke at 360 px and 200 % zoom (WCAG 1.4.10).
+     From lg, two full-height columns, the form column scrolling on its own. */
   .auth-layout {
-    @apply relative flex h-screen flex-col justify-between overflow-hidden bg-gray-900 lg:flex-row;
+    @apply relative flex min-h-screen flex-col bg-gray-900 lg:h-screen lg:flex-row lg:justify-between lg:overflow-hidden;
   }
   .auth-logo {
     @apply mb-8 pt-6 lg:mb-12 lg:pt-8;
   }
   .auth-left-section {
-    @apply flex w-full flex-col overflow-y-auto px-6 lg:h-screen lg:w-[45%] lg:px-16;
+    @apply flex w-full flex-col px-6 lg:h-screen lg:w-[45%] lg:overflow-y-auto lg:px-16;
   }
   .auth-right-section {
     @apply flex w-full flex-col justify-start bg-gray-800 px-6 py-4 max-lg:border-t max-lg:border-gray-600 md:p-6 lg:h-screen lg:w-[55%] lg:px-18 lg:py-12;
