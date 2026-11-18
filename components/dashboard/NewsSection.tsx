@@ -1,58 +1,21 @@
 import { getNews } from "@/lib/finnhub/client";
-import RelativeTime from "@/components/RelativeTime";
+import NewsList from "@/components/NewsList";
+
+// Headlines on the dashboard panel, and on the "Top headlines" tab of `/news`.
+const DASHBOARD_NEWS_COUNT = 5;
+const NEWS_PAGE_COUNT = 20;
 
 /** General market news (5 latest). `getNews` never throws. */
 export default async function NewsSection() {
-  const news = await getNews();
+  const news = await getNews(undefined, { limit: DASHBOARD_NEWS_COUNT });
+  return <NewsList articles={news} />;
+}
 
-  return (
-    <div className="flex flex-col divide-y divide-gray-700 overflow-hidden rounded-lg border border-gray-600 bg-gray-800">
-      {news.length === 0 && (
-        <p role="status" className="p-10 text-center text-sm text-gray-500">
-          No news at the moment.
-        </p>
-      )}
-      {news.slice(0, 5).map((article, index) => (
-        <a
-          key={`${article.id}-${index}`}
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          // Inset ring: the list container clips anything drawn outside the rows.
-          className="flex items-start gap-4 p-4 transition-colors hover:bg-gray-700/50 focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:outline-none focus-visible:ring-inset"
-        >
-          <div className="min-w-0 flex-1">
-            <p className="mb-1 text-xs text-gray-500">
-              {article.source} · <RelativeTime time={article.datetime} />
-            </p>
-            <p className="line-clamp-2 text-sm leading-snug font-semibold text-gray-100">
-              {article.headline}
-              <span className="sr-only"> (opens in a new tab)</span>
-            </p>
-            {article.related && (
-              <span className="mt-1.5 inline-flex items-center gap-1 rounded border border-gray-600 bg-gray-700 px-2 py-0.5 font-mono text-[11px] text-gray-400">
-                {article.related}
-              </span>
-            )}
-          </div>
-          {article.image && (
-            // Thumbnails come from arbitrary publisher domains, which can't all
-            // be listed in `images.remotePatterns`: a plain <img>, sized, lazy,
-            // and sending no Referer to the publisher.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={article.image}
-              alt=""
-              width={56}
-              height={56}
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              className="h-14 w-14 shrink-0 rounded-md border border-gray-600 object-cover"
-            />
-          )}
-        </a>
-      ))}
-    </div>
-  );
+/**
+ * The same Finnhub feed on `/news`, longer. Same URL and Data Cache entry as
+ * the dashboard panel: no extra Finnhub call within the 5 min cache.
+ */
+export async function TopHeadlines() {
+  const news = await getNews(undefined, { limit: NEWS_PAGE_COUNT });
+  return <NewsList articles={news} />;
 }

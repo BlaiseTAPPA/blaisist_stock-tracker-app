@@ -12,23 +12,28 @@ import { cn } from "@/lib/utils";
 
 const tabId = (i: number) => `news-tab-${i}`;
 
-const NewsTabs = () => {
+// Tab 0 is the Finnhub feed of the dashboard panel ("View all" lands on it);
+// the next tabs are TradingView timelines by industry.
+const TABS = ["Top headlines", ...NEWS_INDUSTRIES.map((industry) => industry.label)];
+
+/** `headlines`: the server-rendered "Top headlines" list (inside its own Suspense). */
+const NewsTabs = ({ headlines }: { headlines: React.ReactNode }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const active = NEWS_INDUSTRIES[activeIndex] ?? NEWS_INDUSTRIES[0];
+  const industry = activeIndex > 0 ? NEWS_INDUSTRIES[activeIndex - 1] : undefined;
 
   return (
     <div>
       <div
         role="tablist"
-        aria-label="Industry"
+        aria-label="News feed"
         onKeyDown={onTablistKeyDown}
         className="mb-6 flex flex-wrap gap-2"
       >
-        {NEWS_INDUSTRIES.map((industry, i) => {
+        {TABS.map((label, i) => {
           const selected = activeIndex === i;
           return (
             <button
-              key={industry.label}
+              key={label}
               id={tabId(i)}
               type="button"
               role="tab"
@@ -43,20 +48,24 @@ const NewsTabs = () => {
                   : "bg-gray-800 text-gray-300 hover:bg-gray-700",
               )}
             >
-              {industry.label}
+              {label}
             </button>
           );
         })}
       </div>
 
       <div id="news-panel" role="tabpanel" aria-labelledby={tabId(activeIndex)}>
-        <TradingViewWidget
-          key={active.label} // force re-mount on tab change
-          title={`${active.label} news`}
-          scriptUrl={`${scriptUrl}timeline.js`}
-          config={getNewsWidgetConfig(active.symbol ?? undefined)}
-          height={600}
-        />
+        {industry ? (
+          <TradingViewWidget
+            key={industry.label} // force re-mount on tab change
+            title={`${industry.label} news`}
+            scriptUrl={`${scriptUrl}timeline.js`}
+            config={getNewsWidgetConfig(industry.symbol ?? undefined)}
+            height={600}
+          />
+        ) : (
+          headlines
+        )}
       </div>
     </div>
   );

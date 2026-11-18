@@ -251,14 +251,25 @@ export function oldestQuoteTime(rows: readonly StockQuoteRow[]): number | undefi
 }
 
 /** Never throws: returns `[]` when Finnhub is unavailable. */
-export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
+/** General news are de-duplicated and capped at this many before slicing. */
+const MAX_GENERAL_NEWS = 20;
+
+/**
+ * `limit` (default 6, at most 20): number of articles returned. General news
+ * always come from the same `/news?category=general` URL and 5 min Data Cache
+ * entry, whatever the limit: the dashboard (5) and `/news` (20) share it.
+ */
+export async function getNews(
+  symbols?: string[],
+  { limit = 6 }: { limit?: number } = {},
+): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5);
     const cleanSymbols = (symbols || [])
       .map((s) => s?.trim().toUpperCase())
       .filter((s): s is string => Boolean(s));
 
-    const maxArticles = 6;
+    const maxArticles = Math.min(Math.max(1, Math.floor(limit)), MAX_GENERAL_NEWS);
 
     // If we have symbols, try to fetch company news per symbol and round-robin select
     if (cleanSymbols.length > 0) {
@@ -278,7 +289,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       );
 
       const collected: MarketNewsArticle[] = [];
-      // Round-robin up to 6 picks
+      // Round-robin up to `maxArticles` picks
       for (let round = 0; round < maxArticles; round++) {
         for (const sym of cleanSymbols) {
           const list = perSymbolArticles[sym] || [];
@@ -310,7 +321,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       if (seen.has(key)) continue;
       seen.add(key);
       unique.push(art);
-      if (unique.length >= 20) break; // cap early before final slicing
+      if (unique.length >= MAX_GENERAL_NEWS) break; // cap early before final slicing
     }
 
     const formatted = unique
