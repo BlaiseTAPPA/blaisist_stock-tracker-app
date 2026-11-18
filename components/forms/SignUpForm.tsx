@@ -69,13 +69,13 @@ const SignUpForm = () => {
 
   return (
     <>
-      <h1 className="form-title">Sign up and personalize</h1>
+      <h1 className="form-title">Create your account</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="fullName"
           label="Full name"
           autoComplete="name"
-          placeholder="John Doe"
+          placeholder="Your name"
           register={register}
           error={errors.fullName}
           validation={{
@@ -88,7 +88,7 @@ const SignUpForm = () => {
           label="Email"
           type="email"
           autoComplete="email"
-          placeholder="donniedarko@example.com"
+          placeholder="you@example.com"
           register={register}
           error={errors.email}
           validation={{
@@ -148,7 +148,7 @@ const SignUpForm = () => {
 
         <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
-          {isSubmitting ? "Creating account…" : "Start your investing journey"}
+          {isSubmitting ? "Creating account…" : "Create account"}
         </Button>
         <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
       </form>
