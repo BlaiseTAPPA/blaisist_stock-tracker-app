@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
-import { getTopStocksData } from "@/lib/finnhub/client";
+import { getTopStocksData, oldestQuoteTime } from "@/lib/finnhub/client";
 import SearchTrigger from "@/components/search/SearchTrigger";
 import WatchlistCard from "@/components/WatchlistCard";
 import WatchlistSortableGrid from "@/components/WatchlistSortableGrid";
 import MarketDataUnavailable from "@/components/dashboard/MarketDataUnavailable";
+import DataTimestamp from "@/components/DataTimestamp";
 
 export const metadata: Metadata = {
   title: "Watchlist",
@@ -45,7 +46,11 @@ export default async function WatchlistPage() {
         </div>
       ) : (
         <>
-          {unavailable && <MarketDataUnavailable />}
+          {unavailable ? (
+            <MarketDataUnavailable />
+          ) : (
+            <DataTimestamp time={oldestQuoteTime(stocks)} />
+          )}
           <WatchlistSortableGrid
             items={stocks.map((stock) => ({
               symbol: stock.symbol,

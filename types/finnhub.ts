@@ -46,6 +46,19 @@ export type MetricResponse = {
   metric?: Record<string, number | null>;
 };
 
+/** `/stock/market-status?exchange=US`. */
+export type MarketStatusResponse = {
+  exchange: string;
+  /** Holiday name when the exchange is closed for one, else `null`. */
+  holiday: string | null;
+  isOpen: boolean;
+  /** `"pre-market"`, `"regular"`, `"post-market"`, or `null` when closed. */
+  session: string | null;
+  timezone: string;
+  /** Unix timestamp (seconds). */
+  t: number;
+};
+
 /** One entry of `/search`. */
 export type SearchResultItem = {
   symbol: string;

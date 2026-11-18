@@ -5,6 +5,7 @@ import StockChartTabs from "@/components/StockChartTabs";
 import StockLogo from "@/components/StockLogo";
 import PriceChange from "@/components/PriceChange";
 import WatchlistButton from "@/components/WatchlistButton";
+import DataTimestamp from "@/components/DataTimestamp";
 import { isSymbolInWatchlist } from "@/lib/data/watchlist";
 import { getSessionUser } from "@/lib/auth/session";
 import { getStockPageData } from "@/lib/stocks/stock-page";
@@ -37,7 +38,7 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
   const [stock, user] = await Promise.all([getStockPageData(symbol), getSessionUser()]);
   if (!stock) notFound();
 
-  const { symbol: sym, name, exchange, currency, price, changePercent } = stock;
+  const { symbol: sym, name, exchange, currency, price, changePercent, quoteTime } = stock;
   const inWatchlist = user ? await isSymbolInWatchlist(user.id, sym) : false;
 
   return (
@@ -57,11 +58,14 @@ export default async function StockDetails({ params }: PageProps<"/stocks/[symbo
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <div className="flex items-baseline gap-3">
-            <span className="text-2xl font-semibold text-gray-100 tabular-nums">
-              {formatPrice(price, currency)}
-            </span>
-            <PriceChange value={changePercent} className="text-sm font-medium" />
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-baseline gap-3">
+              <span className="text-2xl font-semibold text-gray-100 tabular-nums">
+                {formatPrice(price, currency)}
+              </span>
+              <PriceChange value={changePercent} className="text-sm font-medium" />
+            </div>
+            <DataTimestamp time={quoteTime} />
           </div>
           {/* `.watchlist-btn` is `w-full`: give it a fixed width from `sm` up. */}
           <div className="w-full sm:w-60 sm:shrink-0">

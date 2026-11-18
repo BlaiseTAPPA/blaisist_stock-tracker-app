@@ -5,6 +5,7 @@ import { mapWithConcurrency } from "@/lib/map-with-concurrency";
 import { FinnhubError, FinnhubRateLimitError } from "@/lib/finnhub/errors";
 import { enableFinnhubCallCounter } from "@/lib/finnhub/debug";
 import type {
+  MarketStatusResponse,
   MetricResponse,
   ProfileResponse,
   QuoteResponse,
@@ -25,6 +26,7 @@ const REVALIDATE = {
   metric: 86_400,
   news: 300,
   search: 1_800,
+  marketStatus: 60,
 } as const;
 
 const REQUEST_TIMEOUT_MS = 5_000;
@@ -144,6 +146,23 @@ export async function getStockFinancials(symbol: string): Promise<MetricResponse
   );
 }
 
+/**
+ * US market state (open, pre-market, after hours, closed, holiday): one call
+ * per minute at most (60 s Data Cache), shared by every viewer. Never throws:
+ * returns `null` when Finnhub is unavailable, so the badge is just left out.
+ */
+export async function getMarketStatus(): Promise<MarketStatusResponse | null> {
+  try {
+    const status = await fetchJSON<MarketStatusResponse>(
+      "/stock/market-status?exchange=US",
+      REVALIDATE.marketStatus,
+    );
+    return typeof status?.isOpen === "boolean" ? status : null;
+  } catch {
+    return null;
+  }
+}
+
 const MAX_CONCURRENT_SYMBOLS = 5;
 
 /**
@@ -200,6 +219,7 @@ export async function getTopStocksData(
           currency: currency ?? (profile?.currency || DEFAULT_CURRENCY),
           currentPrice: quote.c,
           changePercent: quote.dp ?? undefined,
+          quoteTime: quote.t || undefined,
           marketCapMillions: nonZeroOrUndefined(financials?.metric?.["marketCapitalization"]),
           peRatio: nonZeroOrUndefined(financials?.metric?.["peBasicExclExtraTTM"]),
           status: "ok",
@@ -214,6 +234,15 @@ export async function getTopStocksData(
       }
     },
   );
+}
+
+/**
+ * Oldest quote time (Unix seconds) among the rows that have a quote: the
+ * "as of" of a block of prices is only as fresh as its stalest price.
+ */
+export function oldestQuoteTime(rows: readonly StockQuoteRow[]): number | undefined {
+  const times = rows.flatMap((row) => (row.quoteTime ? [row.quoteTime] : []));
+  return times.length > 0 ? Math.min(...times) : undefined;
 }
 
 /** Never throws: returns `[]` when Finnhub is unavailable. */
