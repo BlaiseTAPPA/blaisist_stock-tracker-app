@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Controller, type FieldValues } from "react-hook-form";
 import type { CountrySelectFieldProps } from "@/types/forms";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -21,12 +22,17 @@ import countryList from "react-select-country-list";
 // Country options are static: compute them once per module, not per render.
 const countries = countryList().getData();
 
+// `unoptimized`: flagcdn already serves 20×15 PNGs of about 500 bytes, which the
+// Image Optimization API can't shrink further; routing ~250 of them through
+// `/_next/image` would only add server work. `next/image` keeps the fixed size
+// (no layout shift) and lazy loading for the long list.
 const FlagImage = ({ countryCode }: { countryCode: string }) => (
-  <img
+  <Image
     src={`https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`}
-    alt={countryCode}
+    alt=""
     width={20}
     height={15}
+    unoptimized
     className="inline-block"
   />
 );
