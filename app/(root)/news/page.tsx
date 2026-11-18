@@ -1,45 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import NewsTabs from "@/components/NewsTabs";
 
-import { useState } from "react";
-import TradingViewWidget from "@/components/TradingViewWidget";
-import {
-  NEWS_INDUSTRIES,
-  getNewsWidgetConfig,
-  TRADINGVIEW_SCRIPT_BASE_URL as scriptUrl,
-} from "@/lib/constants";
-
-const NewsPage = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const active = NEWS_INDUSTRIES[activeIndex] ?? NEWS_INDUSTRIES[0];
-
-  return (
-    <main className="p-6">
-      {/* Tabs */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {NEWS_INDUSTRIES.map((industry, i) => (
-          <button
-            key={industry.label}
-            onClick={() => setActiveIndex(i)}
-            className={`min-h-11 rounded-full px-4 py-1.5 text-sm font-medium transition-colors sm:min-h-0 ${
-              activeIndex === i
-                ? "bg-yellow-500 text-black"
-                : "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
-            }`}
-          >
-            {industry.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Widget */}
-      <TradingViewWidget
-        key={active.label} // force re-mount on tab change
-        scriptUrl={`${scriptUrl}timeline.js`}
-        config={getNewsWidgetConfig(active.symbol ?? undefined)}
-        height={600}
-      />
-    </main>
-  );
+export const metadata: Metadata = {
+  title: "News",
+  description: "Market news by industry: technology, finance, energy, healthcare and more.",
 };
 
-export default NewsPage;
+export default function NewsPage() {
+  return (
+    <section className="flex flex-col gap-6">
+      <h1 className="text-2xl font-bold text-gray-100">Market News</h1>
+      <NewsTabs />
+    </section>
+  );
+}
