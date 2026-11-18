@@ -4,6 +4,7 @@ import React, { useOptimistic, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
+import { cn } from "@/lib/utils";
 
 type WatchlistButtonProps = {
   symbol: string;
@@ -11,6 +12,8 @@ type WatchlistButtonProps = {
   isInWatchlist: boolean;
   showTrashIcon?: boolean;
   type?: "button" | "icon";
+  /** Extra classes for the icon variant (e.g. positioning inside a card). */
+  className?: string;
 };
 
 const WatchlistButton = ({
@@ -19,6 +22,7 @@ const WatchlistButton = ({
   isInWatchlist,
   showTrashIcon = false,
   type = "button",
+  className,
 }: WatchlistButtonProps) => {
   const router = useRouter();
   // Confirmed server state, updated from each action result.
@@ -63,17 +67,21 @@ const WatchlistButton = ({
         aria-label={iconLabel}
         aria-pressed={added}
         aria-busy={isPending}
-        className={`watchlist-icon-btn ${added ? "watchlist-icon-added" : ""}`}
+        // 44 px touch target with its own focus ring, distinct from the card's.
+        className={cn(
+          "inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-yellow-500 transition-colors hover:bg-gray-700/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 disabled:cursor-wait disabled:opacity-60",
+          className,
+        )}
         onClick={handleClick}
         disabled={isPending}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          fill={added ? "#FACC15" : "none"}
-          stroke="#FACC15"
+          fill={added ? "currentColor" : "none"}
+          stroke="currentColor"
           strokeWidth="1.5"
-          className="watchlist-star"
+          className="size-5"
           aria-hidden="true"
         >
           <path
