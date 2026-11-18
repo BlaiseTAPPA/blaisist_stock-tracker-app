@@ -17,7 +17,12 @@ import type { StockQuoteRow, StockSearchResult } from "@/types/stock";
 
 export { FinnhubError, FinnhubRateLimitError };
 
-const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
+const DEFAULT_FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
+
+// Overridable so the end-to-end tests can point the app at a local mock
+// server instead of spending the real quota. Read on every call, like the token.
+const getFinnhubBaseUrl = () =>
+  (process.env.FINNHUB_BASE_URL || DEFAULT_FINNHUB_BASE_URL).replace(/\/+$/, "");
 
 // Data Cache lifetimes, in seconds.
 const REVALIDATE = {
@@ -104,7 +109,7 @@ const inFlight = new Map<string, Promise<unknown>>();
 // token is appended here.
 async function fetchJSON<T>(path: string, revalidateSeconds: number): Promise<T> {
   const separator = path.includes("?") ? "&" : "?";
-  const url = `${FINNHUB_BASE_URL}${path}${separator}token=${getFinnhubToken()}`;
+  const url = `${getFinnhubBaseUrl()}${path}${separator}token=${getFinnhubToken()}`;
   const [endpoint = path] = path.split("?");
 
   const pending = inFlight.get(url);
