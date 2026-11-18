@@ -12,7 +12,7 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
-for (const path of ["/sign-in", "/sign-up"]) {
+for (const path of ["/sign-in", "/sign-up", "/forgot-password"]) {
   test(`${path} has no serious or critical axe violation`, async ({ page }) => {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -32,4 +32,62 @@ test("a failed sign-in shows an inline alert that stays on screen", async ({ pag
   await page.waitForTimeout(10_000);
   await expect(alert).toBeVisible();
   expect(await seriousViolations(page)).toEqual([]);
+});
+
+// FLOW-10: below `lg` the page itself scrolls; no inner scroll area around
+// the form. 640 × 360 is what a 1280 × 720 window shows at 200 % zoom.
+for (const viewport of [
+  { width: 360, height: 640 },
+  { width: 640, height: 360 },
+]) {
+  test(`/sign-up at ${viewport.width}×${viewport.height} scrolls as one page`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/sign-up");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const scrollers = [...document.querySelectorAll<HTMLElement>("body *")].filter((el) => {
+        const { overflowY } = getComputedStyle(el);
+        return (
+          (overflowY === "auto" || overflowY === "scroll") && el.scrollHeight > el.clientHeight + 1
+        );
+      });
+      const root = document.scrollingElement!;
+      return {
+        nestedScrollers: scrollers.map((el) => el.className),
+        pageScrolls: root.scrollHeight > root.clientHeight,
+        horizontalOverflow: root.scrollWidth > root.clientWidth,
+      };
+    });
+
+    expect(layout.nestedScrollers).toEqual([]);
+    expect(layout.pageScrolls).toBe(true);
+    expect(layout.horizontalOverflow).toBe(false);
+
+    // The submit button is reachable by scrolling the page.
+    const submit = page.getByRole("button", { name: "Create account" });
+    await submit.scrollIntoViewIfNeeded();
+    await expect(submit).toBeInViewport();
+  });
+}
+
+test("/sign-up works with only name, email and password", async ({ page }) => {
+  await page.goto("/sign-up");
+  // The optional preferences are collapsed and nothing is pre-selected.
+  await expect(page.getByLabel("Risk tolerance")).toBeHidden();
+  await page.getByText("Personalize your welcome email (optional)").click();
+  await expect(page.getByRole("combobox", { name: "Risk tolerance" })).toHaveText(
+    "Select your risk level",
+  );
+  await expect(page.getByRole("combobox", { name: "Investment goals" })).toHaveText(
+    "Select your investment goal",
+  );
+  expect(await seriousViolations(page)).toEqual([]);
+
+  // Three fields are enough to create the account.
+  await page.getByLabel("Full name").fill("Short Form");
+  await page.getByLabel("Email").fill("short-form@fingenius.test");
+  await page.getByLabel("Password", { exact: true }).fill("short-form-password");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Check your inbox" })).toBeVisible();
 });

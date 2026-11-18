@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient, ObjectId, type Db } from "mongodb";
 import { hashPassword } from "better-auth/crypto";
 
 // Creates the end-to-end test user directly in the test database, already
@@ -9,6 +9,17 @@ export const E2E_USER = {
   name: "E2E Tester",
   email: "e2e@fingenius.test",
   password: "e2e-password-123",
+} as const;
+
+/**
+ * Second user for the account tests (password reset, settings, unsubscribe):
+ * its password changes during the run, so the smoke test keeps its own user.
+ * No preferences, like an account created with the short sign-up form.
+ */
+export const E2E_ACCOUNT_USER = {
+  name: "Account Tester",
+  email: "account@fingenius.test",
+  password: "account-password-123",
 } as const;
 
 /**
@@ -26,6 +37,38 @@ export function assertTestDatabase(uri: string): void {
   }
 }
 
+// Same shape as Better Auth's MongoDB adapter: `user` and `account`
+// collections, `userId` stored as an ObjectId, the password hash on the
+// credential account.
+async function insertUser(
+  db: Db,
+  user: { name: string; email: string; password: string },
+  profile: Record<string, string> = {},
+): Promise<void> {
+  const now = new Date();
+  const userId = new ObjectId();
+
+  await db.collection("user").insertOne({
+    _id: userId,
+    name: user.name,
+    email: user.email,
+    emailVerified: true,
+    image: null,
+    ...profile,
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.collection("account").insertOne({
+    _id: new ObjectId(),
+    accountId: userId.toHexString(),
+    providerId: "credential",
+    userId,
+    password: await hashPassword(user.password),
+    createdAt: now,
+    updatedAt: now,
+  });
+}
+
 export async function seedDatabase(uri: string): Promise<void> {
   assertTestDatabase(uri);
 
@@ -35,34 +78,13 @@ export async function seedDatabase(uri: string): Promise<void> {
     const db = client.db();
     await db.dropDatabase(); // fresh state: no watchlist, no rate-limit entries
 
-    const now = new Date();
-    const userId = new ObjectId();
-
-    // Same shape as Better Auth's MongoDB adapter: `user` and `account`
-    // collections, `userId` stored as an ObjectId, the password hash on the
-    // credential account.
-    await db.collection("user").insertOne({
-      _id: userId,
-      name: E2E_USER.name,
-      email: E2E_USER.email,
-      emailVerified: true,
-      image: null,
+    await insertUser(db, E2E_USER, {
       country: "US",
       investmentGoals: "Growth",
       riskTolerance: "Medium",
       preferredIndustry: "Technology",
-      createdAt: now,
-      updatedAt: now,
     });
-    await db.collection("account").insertOne({
-      _id: new ObjectId(),
-      accountId: userId.toHexString(),
-      providerId: "credential",
-      userId,
-      password: await hashPassword(E2E_USER.password),
-      createdAt: now,
-      updatedAt: now,
-    });
+    await insertUser(db, E2E_ACCOUNT_USER);
   } finally {
     await client.close();
   }
