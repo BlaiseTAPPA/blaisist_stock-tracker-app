@@ -13,5 +13,6 @@ test-results/
 
 # Local, untracked docs
 AUDIT.md
+AUDIT-UX-UI.md
 docs/
 .vercel/
