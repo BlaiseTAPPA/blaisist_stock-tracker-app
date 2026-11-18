@@ -117,7 +117,7 @@ export const checkAuthRateLimit = async (
     for (const [key, rule] of checks) {
       const retryAfter = await hit(key, rule);
       if (retryAfter !== null) {
-        return `Too many attempts. Please wait ${formatWait(retryAfter)} and try again.`;
+        return `Too many attempts. Wait ${formatWait(retryAfter)}, then try again.`;
       }
     }
     return null;

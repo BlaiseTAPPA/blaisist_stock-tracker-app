@@ -32,7 +32,7 @@ const SelectField = <TFieldValues extends FieldValues>({
         name={name}
         control={control}
         rules={{
-          required: required ? `Please select ${label.toLowerCase()}` : false,
+          required: required ? `Select your ${label.toLowerCase()}` : false,
         }}
         render={({ field }) => (
           <Select name={field.name} value={field.value} onValueChange={field.onChange}>
