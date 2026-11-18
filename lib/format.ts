@@ -74,6 +74,9 @@ export function formatMarketCap(millions: Numeric, currency = "USD", locale = "e
   if (!isFiniteNumber(millions) || millions <= 0) return PLACEHOLDER;
   return currencyFormatter(locale, currency, {
     notation: "compact",
+    // Explicit minimum: with a currency, older ICU versions (Node 22, some
+    // browsers) default it to 2 and print "$3.10T" instead of "$3.1T".
+    minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(millions * 1_000_000);
 }
