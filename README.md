@@ -94,7 +94,7 @@ The test builds the app and serves it on port 3100 with its own environment, set
 - MongoDB is an in-memory server on port 27018, or `E2E_MONGODB_URI` if set (the CI uses a MongoDB service). [`e2e/seed.ts`](e2e/seed.ts) drops it and creates an already verified user. It refuses any database that isn't local or whose name doesn't contain `e2e`;
 - the browser blocks every third-party request (TradingView widgets, logos, images).
 
-The e2e build overwrites `.next/`. Run `npm run build` again before `npm start`.
+The e2e build goes to `.next-e2e/` (`NEXT_DIST_DIR`), so it never replaces the `.next/` build used by `npm start`.
 
 ## Project structure
 

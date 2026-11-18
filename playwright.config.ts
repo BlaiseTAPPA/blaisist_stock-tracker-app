@@ -8,6 +8,8 @@ import { APP_PORT, APP_URL, E2E_MONGODB_URI, FINNHUB_MOCK_URL } from "./e2e/env"
 // the test database, the Finnhub mock and dummy credentials, never real ones.
 const appEnv = {
   NEXT_TELEMETRY_DISABLED: "1",
+  // Separate build directory: the e2e build never replaces `.next`.
+  NEXT_DIST_DIR: ".next-e2e",
   MONGODB_URI: E2E_MONGODB_URI,
   BETTER_AUTH_SECRET: "e2e-only-not-a-secret-0123456789abcdef",
   BETTER_AUTH_URL: APP_URL,
