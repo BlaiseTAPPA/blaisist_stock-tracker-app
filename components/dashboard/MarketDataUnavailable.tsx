@@ -1,7 +1,11 @@
+import RetryButton from "@/components/dashboard/RetryButton";
+
+// Server component: only the Retry button ships to the client.
 const MarketDataUnavailable = () => (
-  <p role="status" className="text-xs text-gray-500">
-    Market data unavailable, please try again in a minute.
-  </p>
+  <div className="flex flex-wrap items-center gap-x-3 text-xs text-gray-500">
+    <p role="status">Prices are unavailable right now.</p>
+    <RetryButton />
+  </div>
 );
 
 export default MarketDataUnavailable;

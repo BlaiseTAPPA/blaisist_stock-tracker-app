@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function DashboardError({ error, retry }: { error: unknown; retry: () => void }) {
+export default function RootError({ error, retry }: { error: unknown; retry: () => void }) {
   useEffect(() => {
     // In production, Server Component errors arrive with a generic message and
     // a `digest` that matches the server log entry.
@@ -14,9 +14,12 @@ export default function DashboardError({ error, retry }: { error: unknown; retry
       role="alert"
       className="flex flex-col items-center justify-center rounded-lg border border-gray-600 bg-gray-800 p-10 text-center"
     >
-      <h2 className="empty-title">Market data is temporarily unavailable</h2>
+      {/* Neutral title: this boundary catches every error under (root),
+          database and session failures included, not only market data. */}
+      <h2 className="empty-title">This page didn&apos;t load</h2>
       <p className="empty-description">
-        We couldn&apos;t load this page. Please try again in a moment.
+        Check your connection, then try again. If it keeps failing, market data may be briefly
+        unavailable.
       </p>
       <button type="button" onClick={() => retry()} className="yellow-btn px-6">
         Try again
