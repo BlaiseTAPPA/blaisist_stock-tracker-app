@@ -3,26 +3,51 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
+import { after } from "next/server";
+import { z } from "zod";
 import { mongoClient } from "@/lib/db/mongo-client";
 import { inngest } from "@/lib/inngest/client";
 import { userVerified } from "@/lib/inngest/events";
-import { sendVerificationEmail } from "@/lib/nodemailer";
+import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/nodemailer";
 import {
   countrySchema,
   investmentGoalsSchema,
   preferredIndustrySchema,
   riskToleranceSchema,
 } from "@/lib/validation/signup";
-import type { z } from "zod";
 
 /** Where the verification link lands, on success (signed in) or on error (`?error=CODE`). */
 export const VERIFY_EMAIL_CALLBACK_URL = "/sign-in";
+
+/** Where the reset link lands: `?token=…` when valid, `?error=INVALID_TOKEN` otherwise. */
+export const RESET_PASSWORD_CALLBACK_URL = "/reset-password";
 
 type UserProfile = {
   country?: string | null;
   investmentGoals?: string | null;
   riskTolerance?: string | null;
   preferredIndustry?: string | null;
+};
+
+/**
+ * Runs `task` after the response is sent, so a reset request answers in the
+ * same time whether or not the account exists (no email is sent for an
+ * unknown address). Outside a Next.js request (scripts, tests) `after` throws:
+ * the task then runs inline.
+ */
+const runAfterResponse = async (task: () => Promise<void>, label: string) => {
+  const safeTask = async () => {
+    try {
+      await task();
+    } catch (e) {
+      console.error(`${label} failed`, e);
+    }
+  };
+  try {
+    after(safeTask);
+  } catch {
+    await safeTask();
+  }
 };
 
 // The validators also cover requests sent straight to the HTTP handler
@@ -44,13 +69,22 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
   user: {
-    // Stored at sign-up so the welcome email, sent only after verification,
-    // can still be personalised.
+    // Optional preferences, given at sign-up or later in /settings. Stored so
+    // the welcome email, sent only after verification, can be personalised.
     additionalFields: {
       country: profileField(countrySchema),
       investmentGoals: profileField(investmentGoalsSchema),
       riskTolerance: profileField(riskToleranceSchema),
       preferredIndustry: profileField(preferredIndustrySchema),
+      // Daily news digest switch (/settings, unsubscribe links). No default:
+      // a missing value means "on", so existing accounts need no migration
+      // (see `getNewsDigestRecipients` in lib/data/users.ts).
+      digestEnabled: {
+        type: "boolean",
+        required: false,
+        input: true,
+        validator: { input: z.boolean() },
+      },
     },
   },
   emailAndPassword: {
@@ -60,6 +94,17 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 128,
     autoSignIn: true,
+    resetPasswordTokenExpiresIn: 60 * 60,
+    // A reset signs every device out: whoever knew the old password loses access.
+    revokeSessionsOnPasswordReset: true,
+    // Better Auth answers the same way for an unknown address and never
+    // calls this for one; sending after the response keeps the timing equal.
+    sendResetPassword: async ({ user, url }) => {
+      await runAfterResponse(
+        () => sendPasswordResetEmail({ email: user.email, name: user.name, url }),
+        "Password reset email",
+      );
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
@@ -100,6 +145,8 @@ export const auth = betterAuth({
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
       "/sign-up/email": { window: 3600, max: 5 },
+      "/request-password-reset": { window: 60, max: 3 },
+      "/reset-password": { window: 60, max: 10 },
     },
   },
   plugins: [nextCookies()],

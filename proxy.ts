@@ -12,6 +12,10 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Public pages: auth forms, password reset, and the unsubscribe page reached
+// from an email (signed token, no session needed).
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|assets|sign-in|sign-up).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|assets|sign-in|sign-up|forgot-password|reset-password|unsubscribe).*)",
+  ],
 };

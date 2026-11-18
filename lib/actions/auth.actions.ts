@@ -1,17 +1,18 @@
 "use server";
 
-import type { SignInFormData, SignUpFormData } from "@/types/forms";
+import type { ResetPasswordFormData, SignInFormData, SignUpFormData } from "@/types/forms";
 import { headers } from "next/headers";
 import { isAPIError } from "better-auth/api";
-import { auth, VERIFY_EMAIL_CALLBACK_URL } from "../better-auth/auth";
+import { auth, RESET_PASSWORD_CALLBACK_URL, VERIFY_EMAIL_CALLBACK_URL } from "../better-auth/auth";
 import { checkAuthRateLimit } from "../auth/rate-limit";
-import { signUpSchema } from "../validation/signup";
+import { forgotPasswordSchema, resetPasswordSchema, signUpSchema } from "../validation/signup";
 
 type AuthResult =
   { success: true } | { success: false; error: string; reason?: "EMAIL_NOT_VERIFIED" };
 
 const GENERIC_ERROR = "Something went wrong. Try again in a moment.";
 const INVALID_FORM_ERROR = "Check the form, then try again.";
+const INVALID_RESET_LINK_ERROR = "This reset link is invalid or has expired. Request a new one.";
 const EMAIL_NOT_VERIFIED_ERROR =
   "Verify your email address: check your inbox to activate your account.";
 
@@ -28,6 +29,12 @@ const toAuthError = (e: unknown): string => {
       return "An account with this email already exists.";
     case "EMAIL_NOT_VERIFIED":
       return EMAIL_NOT_VERIFIED_ERROR;
+    case "INVALID_TOKEN":
+      return INVALID_RESET_LINK_ERROR;
+    case "PASSWORD_TOO_SHORT":
+      return "Password must be at least 8 characters.";
+    case "PASSWORD_TOO_LONG":
+      return "Password is too long.";
     default:
       return GENERIC_ERROR;
   }
@@ -114,6 +121,54 @@ export const resendVerificationEmail = async (email: string): Promise<AuthResult
   } catch (e) {
     console.error("Resend verification email failed", e);
     return { success: false, error: GENERIC_ERROR };
+  }
+};
+
+/**
+ * Emails a password reset link. The answer is the same whether or not the
+ * address has an account (the email itself is sent after the response, see
+ * `sendResetPassword` in lib/better-auth/auth.ts), so it can't be used to
+ * probe which addresses are registered.
+ */
+export const requestPasswordReset = async (email: string): Promise<AuthResult> => {
+  const parsed = forgotPasswordSchema.safeParse({ email });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? INVALID_FORM_ERROR };
+  }
+
+  const limited = await checkAuthRateLimit("request-password-reset", parsed.data.email);
+  if (limited) return { success: false, error: limited };
+
+  try {
+    await auth.api.requestPasswordReset({
+      body: { email: parsed.data.email, redirectTo: RESET_PASSWORD_CALLBACK_URL },
+    });
+    return { success: true };
+  } catch (e) {
+    console.error("Password reset request failed", e);
+    return { success: false, error: GENERIC_ERROR };
+  }
+};
+
+/** Sets a new password from a reset link; every session of the account is revoked. */
+export const resetPassword = async (data: ResetPasswordFormData): Promise<AuthResult> => {
+  const parsed = resetPasswordSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? INVALID_FORM_ERROR };
+  }
+  const { token, password } = parsed.data;
+
+  const limited = await checkAuthRateLimit("reset-password", token);
+  if (limited) return { success: false, error: limited };
+
+  try {
+    await auth.api.resetPassword({ body: { token, newPassword: password } });
+    return { success: true };
+  } catch (e) {
+    if (!(isAPIError(e) && e.body?.code === "INVALID_TOKEN")) {
+      console.error("Password reset failed", e);
+    }
+    return { success: false, error: toAuthError(e) };
   }
 };
 
