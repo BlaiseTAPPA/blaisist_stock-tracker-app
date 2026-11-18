@@ -17,7 +17,7 @@ export type NewsDigestRecipient = {
 export const MAX_DIGEST_SYMBOLS = 3;
 
 /**
- * Verified users with their latest watchlist symbols, in a single query
+ * Verified users who did not turn the digest off, with their latest watchlist symbols, in a single query
  * (no per-user lookup). It starts from the `user` collection, which Better
  * Auth owns, so users with an empty watchlist are kept: they get general news.
  * The join uses the `userId` index of the watchlist collection.
@@ -33,6 +33,10 @@ export const getNewsDigestRecipients = async (): Promise<NewsDigestRecipient[]> 
       {
         $match: {
           emailVerified: true,
+          // Opted out in /settings or through an unsubscribe link. A missing
+          // field means "on": accounts created before the switch existed
+          // keep their digest without a migration.
+          digestEnabled: { $ne: false },
           email: { $type: "string", $ne: "" },
           name: { $type: "string", $ne: "" },
         },
