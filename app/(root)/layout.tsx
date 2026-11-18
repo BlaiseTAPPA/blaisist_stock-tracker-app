@@ -1,5 +1,6 @@
 import type { StockSearchResult } from "@/types/stock";
 import Header from "@/components/Header";
+import Disclaimer from "@/components/Disclaimer";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { POPULAR_STOCKS } from "@/lib/constants";
 import { auth } from "@/lib/better-auth/auth";
@@ -29,7 +30,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SearchProvider initialStocks={initialStocks}>
-      <div className="min-h-screen text-gray-400">
+      <div className="flex min-h-screen flex-col text-gray-400">
         <a
           href="#main-content"
           className="sr-only z-[60] rounded-md bg-yellow-500 px-4 py-2 font-semibold text-gray-900 focus-ring focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
@@ -38,9 +39,12 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         </a>
         {/* The header is a banner landmark next to <main>, not inside it. */}
         <Header user={user} />
-        <main id="main-content" tabIndex={-1} className="container py-10 outline-none">
+        <main id="main-content" tabIndex={-1} className="container flex-1 py-10 outline-none">
           {children}
         </main>
+        <footer className="border-t border-gray-700">
+          <Disclaimer className="container py-6 text-center" />
+        </footer>
       </div>
     </SearchProvider>
   );
