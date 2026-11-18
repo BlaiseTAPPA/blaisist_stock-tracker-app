@@ -33,11 +33,14 @@ export default async function PopularStocksSection() {
           </thead>
           <tbody>
             {topStocks.map((stock) => (
-              <tr key={stock.symbol} className="table-row">
+              // The whole row is clickable through the link's `::after` overlay
+              // (as on `WatchlistCard`): one link per row, the focus ring is
+              // drawn around the row, inset because the container clips.
+              <tr key={stock.symbol} className="group relative table-row">
                 <td className="py-2.5 pl-4 font-medium text-gray-300">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    className="rounded-sm focus-ring transition-colors hover:text-yellow-500"
+                    className="transition-colors group-hover:text-yellow-500 after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-yellow-500"
                   >
                     <span
                       className="block max-w-[7.5rem] truncate sm:max-w-[14rem]"
