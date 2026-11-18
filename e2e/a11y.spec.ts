@@ -1,31 +1,8 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { seriousViolations } from "./axe";
 
 // Accessibility checks on the public pages: axe-core (WCAG 2.1 A/AA rules)
 // and the inline sign-in error (A11Y-02).
-
-// Playwright compiles specs to CommonJS, so `require.resolve` is available.
-const axePath = require.resolve("axe-core/axe.min.js");
-
-type AxeViolation = { id: string; impact: string | null; help: string; nodes: unknown[] };
-
-async function seriousViolations(page: Page) {
-  await page.addScriptTag({ path: axePath });
-  const violations = await page.evaluate(async () => {
-    // Injected by the script tag above.
-    const axe = (window as unknown as { axe: { run: (...args: unknown[]) => Promise<unknown> } })
-      .axe;
-    const result = (await axe.run(document, {
-      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
-    })) as { violations: AxeViolation[] };
-    return result.violations.map(({ id, impact, help, nodes }) => ({
-      id,
-      impact,
-      help,
-      nodes: nodes.length,
-    }));
-  });
-  return violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-}
 
 test.beforeEach(async ({ context }) => {
   // Same isolation as the smoke test: no third-party requests.

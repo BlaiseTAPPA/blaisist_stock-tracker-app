@@ -358,7 +358,6 @@ export async function searchStocks(query: string): Promise<StockSearchResult[]> 
           symbol: upper,
           name,
           type,
-          isInWatchlist: false,
         };
         return item;
       })

@@ -9,12 +9,13 @@ import { redirect } from "next/navigation";
 
 // Default search results: a static list, so rendering the layout costs no
 // Finnhub call (the Header used to fetch 10 /stock/profile2 on every page).
+// The watchlist state of each result is read by the palette when it opens:
+// the layout never waits for the database.
 const initialStocks: StockSearchResult[] = POPULAR_STOCKS.map((s) => ({
   symbol: s.symbol,
   name: s.name,
   exchange: s.exchange,
   type: "Common Stock",
-  isInWatchlist: false,
 }));
 
 const layout = async ({ children }: { children: React.ReactNode }) => {

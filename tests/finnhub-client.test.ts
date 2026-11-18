@@ -284,12 +284,11 @@ describe("searchStocks", () => {
     const found = await searchStocks(" apple ");
 
     expect(found).toHaveLength(15);
-    expect(found[0]).toEqual({ symbol: "SYM0", name: "SYM0", type: "Stock", isInWatchlist: false });
+    expect(found[0]).toEqual({ symbol: "SYM0", name: "SYM0", type: "Stock" });
     expect(found[1]).toEqual({
       symbol: "SYM1",
       name: "Company 1",
       type: "Common Stock",
-      isInWatchlist: false,
     });
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/search?q=apple&token=");
   });

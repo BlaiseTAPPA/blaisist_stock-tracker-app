@@ -5,8 +5,10 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/database/mongoose";
 import { Watchlist } from "@/database/models/watchlist.model";
 import { getSessionUser } from "@/lib/auth/session";
+import { getWatchlistForUser } from "@/lib/data/watchlist";
 import { isDuplicateKeyError } from "@/lib/db/errors";
-import type { ToggleWatchlistResult } from "@/types/watchlist";
+import { createThrottle } from "@/lib/security/throttle";
+import type { ToggleWatchlistResult, WatchlistSymbolsResult } from "@/types/watchlist";
 
 // Every export of a "use server" file is a public POST endpoint: keep this file
 // to authenticated, validated actions. Reads live in `lib/data/watchlist.ts`.
@@ -86,6 +88,29 @@ export async function toggleWatchlist(
     return { ok: true, added: true };
   } catch (e) {
     console.error("toggleWatchlist error:", e);
+    return { ok: false, reason: "error" };
+  }
+}
+
+// The palette asks once per opening; 30 / min per user is far above that.
+const isSymbolsReadThrottled = createThrottle({ windowMs: 60_000, max: 30 });
+
+/**
+ * The signed-in user's watchlist symbols, read when the search palette opens
+ * (the layout never waits for the database). Never throws to the client.
+ */
+export async function getWatchlistSymbolsAction(): Promise<WatchlistSymbolsResult> {
+  try {
+    const user = await getSessionUser();
+    if (!user) return { ok: false, reason: "unauthenticated" };
+    if (isSymbolsReadThrottled(user.id)) return { ok: false, reason: "throttled" };
+
+    // Not `getWatchlistSymbolsByUserId`, which turns a database error into
+    // `[]`: the palette would then show every stock as not followed.
+    const items = await getWatchlistForUser(user.id);
+    return { ok: true, symbols: items.map((item) => item.symbol) };
+  } catch (e) {
+    console.error("getWatchlistSymbolsAction error:", e);
     return { ok: false, reason: "error" };
   }
 }

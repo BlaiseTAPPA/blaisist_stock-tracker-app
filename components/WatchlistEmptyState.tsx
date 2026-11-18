@@ -2,8 +2,8 @@ import SearchTrigger from "@/components/search/SearchTrigger";
 
 /**
  * Empty watchlist, shared by the dashboard panel and `/watchlist` so the same
- * state reads the same everywhere. The CTA says "Search stocks" because it
- * opens the search palette: stocks are added from their page for now.
+ * state reads the same everywhere. The CTA opens the search palette, where a
+ * stock is added with its star (or Control/Command+Enter).
  */
 export default function WatchlistEmptyState() {
   return (
@@ -14,7 +14,7 @@ export default function WatchlistEmptyState() {
       </p>
       <SearchTrigger
         variant="link"
-        label="Search stocks"
+        label="Add stocks"
         className="inline-flex min-h-11 items-center rounded-md bg-yellow-500 px-4 text-sm font-semibold text-gray-900 hover:bg-yellow-400 hover:text-gray-900"
       />
     </div>
