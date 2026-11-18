@@ -14,7 +14,7 @@ const Header = ({ user }: { user: User }) => {
           <Link href="/" className="inline-flex min-h-11 items-center">
             <Image
               src="/assets/icons/logo.svg"
-              alt="Signalist logo"
+              alt="FinGenius logo"
               width={140}
               height={32}
               className="h-8 w-auto cursor-pointer"

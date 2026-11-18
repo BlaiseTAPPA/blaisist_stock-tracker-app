@@ -28,7 +28,7 @@ IMPORTANT: Do NOT start the personalized content with "Welcome" since the email 
    - Their country, only if it fits naturally
    Do not assume anything else about the user (experience, age, timeline, holdings, companies they follow).
 
-2. **Connect their profile to what Signalist offers**, described factually:
+2. **Connect their profile to what FinGenius offers**, described factually:
    - A watchlist to follow the stocks they choose
    - Stock pages with charts, company profile and financials
    - Market news, and a daily news summary email based on their watchlist
@@ -43,7 +43,7 @@ FORMATTING REQUIREMENTS:
 - DO NOT include "Here's what you can do right now:" as this is already in the template
 
 Example outputs (format and tone only):
-<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Thanks for joining Signalist! You told us you are interested in <strong>technology</strong> with a <strong>growth</strong> goal, so you can add the technology companies you follow to your watchlist and see their charts, profiles and financials in one place. Your daily summary will cover news about those stocks.</p>
+<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Thanks for joining FinGenius! You told us you are interested in <strong>technology</strong> with a <strong>growth</strong> goal, so you can add the technology companies you follow to your watchlist and see their charts, profiles and financials in one place. Your daily summary will cover news about those stocks.</p>
 
 <p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Great to have you aboard! With an <strong>income</strong> goal and a <strong>low</strong> risk tolerance in mind, you can follow the <strong>energy</strong> companies you choose from your watchlist. The sector heatmap and the daily news summary show how the market moved, without the noise.</p>
 

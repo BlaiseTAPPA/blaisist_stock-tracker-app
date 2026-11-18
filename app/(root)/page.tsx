@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { getTopStocksData, getNews } from "@/lib/finnhub/client";
@@ -12,6 +13,10 @@ import {
 import WatchlistGrid, { WATCHLIST_GRID_MAX } from "@/components/WatchlistGrid";
 import PriceChange from "@/components/PriceChange";
 import { formatMarketCap, formatPrice, formatRatio } from "@/lib/format";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 const TOP_STOCKS = POPULAR_STOCKS.map(({ symbol, name, currency }) => ({
   symbol,

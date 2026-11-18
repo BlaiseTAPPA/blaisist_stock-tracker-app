@@ -15,15 +15,15 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-/** Display name plus address: a bare `"Signalist"` is not a valid sender. */
-const FROM = `"Signalist" <${process.env.NODEMAILER_EMAIL}>`;
+/** Display name plus address: a bare `"FinGenius"` is not a valid sender. */
+const FROM = `"FinGenius" <${process.env.NODEMAILER_EMAIL}>`;
 
 export const sendWelcomeEmail = async ({ email, name, intro }: WelcomeEmailData) => {
   await transporter.sendMail({
     from: FROM,
     to: email,
-    subject: "Welcome to Signalist - Your stock market toolkit is ready!",
-    text: "Thanks for joining Signalist",
+    subject: "Welcome to FinGenius - Your stock market toolkit is ready!",
+    text: "Thanks for joining FinGenius",
     html: renderWelcomeEmail({ name, intro }),
   });
 };
@@ -40,8 +40,8 @@ export const sendVerificationEmail = async ({
   await transporter.sendMail({
     from: FROM,
     to: email,
-    subject: "Verify your email address for Signalist",
-    text: `Hi ${name},\n\nOpen this link to verify your email address and activate your Signalist account (it expires in 1 hour):\n${url}\n\nYou did not create a Signalist account? You can safely ignore this email.`,
+    subject: "Verify your email address for FinGenius",
+    text: `Hi ${name},\n\nOpen this link to verify your email address and activate your FinGenius account (it expires in 1 hour):\n${url}\n\nYou did not create a FinGenius account? You can safely ignore this email.`,
     html: renderVerificationEmail({ name, url }),
   });
 };
@@ -62,7 +62,7 @@ export const sendNewsSummaryEmail = async ({
     from: FROM,
     to: email,
     subject: `📈 Market News Summary Today - ${date}`,
-    text: `Today's market news summary from Signalist`,
+    text: `Today's market news summary from FinGenius`,
     html: renderNewsSummaryEmail({ date, newsContent, allowedUrls }),
   });
 };

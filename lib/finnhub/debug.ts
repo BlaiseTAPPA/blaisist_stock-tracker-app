@@ -14,7 +14,7 @@ import diagnosticsChannel from "node:diagnostics_channel";
 type UndiciRequestMessage = { request: { origin?: string | URL; path?: string } };
 
 const FINNHUB_ORIGIN = "https://finnhub.io";
-const SUBSCRIBED = Symbol.for("signalist.finnhub.debugCounter");
+const SUBSCRIBED = Symbol.for("fingenius.finnhub.debugCounter");
 
 export function enableFinnhubCallCounter(): void {
   if (process.env.FINNHUB_DEBUG !== "1") return;

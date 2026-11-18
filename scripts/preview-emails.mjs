@@ -91,7 +91,7 @@ check(
   ),
 );
 
-const outDir = join(tmpdir(), "signalist-email-preview");
+const outDir = join(tmpdir(), "fingenius-email-preview");
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, "welcome.html"), welcome);
 writeFileSync(join(outDir, "news.html"), news);
