@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import type { SignUpFormData } from "@/types/forms";
 import { toast } from "sonner";
 
-const SignUp = () => {
+const SignUpForm = () => {
   // Set once the account is created: the user must verify their email
   // before they can sign in.
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
@@ -145,4 +145,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUpForm;

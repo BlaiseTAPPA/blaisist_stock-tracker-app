@@ -28,7 +28,7 @@ const VerifyLinkError = () => {
   );
 };
 
-const SignIn = () => {
+const SignInForm = () => {
   const router = useRouter();
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const {
@@ -111,4 +111,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInForm;
