@@ -1,14 +1,13 @@
 "use client";
 
-import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
-import SelectField from "@/components/forms/SelectField";
+import PreferenceFields from "@/components/forms/PreferenceFields";
 import VerifyEmailNotice from "@/components/forms/VerifyEmailNotice";
 import FormError from "@/components/forms/FormError";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
-import { INVESTMENT_GOALS, RISK_TOLERANCE_OPTIONS, PREFERRED_INDUSTRIES } from "@/lib/constants";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SignUpFormData } from "@/types/forms";
@@ -28,11 +27,12 @@ const SignUpForm = () => {
       fullName: "",
       email: "",
       password: "",
-      // No pre-selected country: a hard-coded one was wrong for most users.
+      // Optional and never chosen in advance: a pre-selected value would be
+      // stored as if the user had picked it.
       country: "",
-      investmentGoals: "Growth",
-      riskTolerance: "Medium",
-      preferredIndustry: "Technology",
+      investmentGoals: "",
+      riskTolerance: "",
+      preferredIndustry: "",
     },
     mode: "onBlur",
   });
@@ -110,41 +110,29 @@ const SignUpForm = () => {
           }}
         />
 
-        <CountrySelectField
-          name="country"
-          label="Country"
-          control={control}
-          error={errors.country}
-          required
-        />
-
-        <SelectField
-          name="investmentGoals"
-          label="Investment goals"
-          placeholder="Select your investment goal"
-          options={INVESTMENT_GOALS}
-          control={control}
-          error={errors.investmentGoals}
-          required
-        />
-        <SelectField
-          name="riskTolerance"
-          label="Risk tolerance"
-          placeholder="Select your risk level"
-          options={RISK_TOLERANCE_OPTIONS}
-          control={control}
-          error={errors.riskTolerance}
-          required
-        />
-        <SelectField
-          name="preferredIndustry"
-          label="Preferred industry"
-          placeholder="Select your preferred industry"
-          options={PREFERRED_INDUSTRIES}
-          control={control}
-          error={errors.preferredIndustry}
-          required
-        />
+        {/* Native disclosure: keyboard and screen reader support for free. */}
+        <details className="group rounded-lg border border-gray-700">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-100 focus-ring [&::-webkit-details-marker]:hidden">
+            <span>
+              Personalize your welcome email{" "}
+              <span className="font-normal text-gray-500">(optional)</span>
+            </span>
+            <ChevronDown
+              aria-hidden="true"
+              className="size-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180"
+            />
+          </summary>
+          <div className="space-y-5 px-4 pt-1 pb-4">
+            <p className="text-xs text-gray-500">
+              Skip this if you like: you can add or change it later in Settings.
+            </p>
+            <PreferenceFields
+              control={control}
+              errors={errors}
+              countryHint="Used to personalize your welcome email."
+            />
+          </div>
+        </details>
 
         <FormError message={formError} />
         <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">

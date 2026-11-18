@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { signUpSchema } from "@/lib/validation/signup";
+import { preferencesSchema, resetPasswordSchema, signUpSchema } from "@/lib/validation/signup";
 import { searchQuerySchema } from "@/lib/validation/search";
 
 const valid = {
@@ -31,7 +31,6 @@ describe("signUpSchema", () => {
     ["a 7-character password", { password: "1234567" }, "Password must be at least 8 characters."],
     ["a 129-character password", { password: "a".repeat(129) }, "Password is too long."],
     ["an unknown country", { country: "XX" }, "Select a valid country."],
-    ["an empty country", { country: "" }, "Select a valid country."],
     ["an unknown goal", { investmentGoals: "Yolo" }, "Select a valid investment goal."],
     ["an unknown risk level", { riskTolerance: "Extreme" }, "Select a valid risk tolerance."],
     ["an unknown industry", { preferredIndustry: "<script>" }, "Select a valid industry."],
@@ -44,10 +43,78 @@ describe("signUpSchema", () => {
     expect(signUpSchema.safeParse({ ...valid, password: "a".repeat(128) }).success).toBe(true);
   });
 
-  it("rejects a missing field", () => {
-    const withoutCountry: Partial<typeof valid> = { ...valid };
-    delete withoutCountry.country;
-    expect(signUpSchema.safeParse(withoutCountry).success).toBe(false);
+  it("rejects a missing required field", () => {
+    const withoutEmail: Partial<typeof valid> = { ...valid };
+    delete withoutEmail.email;
+    expect(signUpSchema.safeParse(withoutEmail).success).toBe(false);
+  });
+
+  it("accepts name, email and password only (FLOW-09)", () => {
+    const result = signUpSchema.safeParse({
+      fullName: "Ada",
+      email: "ada@example.com",
+      password: "correct horse",
+    });
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({
+      fullName: "Ada",
+      email: "ada@example.com",
+      password: "correct horse",
+      country: undefined,
+      investmentGoals: undefined,
+      riskTolerance: undefined,
+      preferredIndustry: undefined,
+    });
+  });
+
+  it("turns unselected preferences (empty strings) into undefined", () => {
+    const result = signUpSchema.safeParse({
+      ...valid,
+      country: "",
+      investmentGoals: "",
+      riskTolerance: "",
+      preferredIndustry: "",
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.country).toBeUndefined();
+    expect(result.data?.preferredIndustry).toBeUndefined();
+  });
+});
+
+describe("preferencesSchema", () => {
+  it("accepts a partial update", () => {
+    expect(preferencesSchema.parse({ riskTolerance: "High" })).toEqual({
+      country: undefined,
+      investmentGoals: undefined,
+      riskTolerance: "High",
+      preferredIndustry: undefined,
+    });
+  });
+
+  it("rejects a value that is not one of the options", () => {
+    expect(preferencesSchema.safeParse({ preferredIndustry: "Crypto" }).success).toBe(false);
+  });
+});
+
+describe("resetPasswordSchema", () => {
+  const reset = { token: "tok", password: "new password", confirmPassword: "new password" };
+
+  it("accepts matching passwords", () => {
+    expect(resetPasswordSchema.safeParse(reset).success).toBe(true);
+  });
+
+  it.each([
+    ["different passwords", { confirmPassword: "other password" }, "The passwords don't match."],
+    [
+      "a short password",
+      { password: "short", confirmPassword: "short" },
+      "Password must be at least 8 characters.",
+    ],
+    ["no token", { token: "" }, "This reset link is invalid."],
+  ])("rejects %s", (_label, override, message) => {
+    const result = resetPasswordSchema.safeParse({ ...reset, ...override });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe(message);
   });
 });
 

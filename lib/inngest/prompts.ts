@@ -1,3 +1,30 @@
+type WelcomeProfile = {
+  country?: string;
+  investmentGoals?: string;
+  riskTolerance?: string;
+  preferredIndustry?: string;
+};
+
+/**
+ * The `{{userProfile}}` block of the welcome prompt. Preferences are optional
+ * at sign-up: missing ones are left out rather than sent as empty values the
+ * model could fill in.
+ */
+export const formatUserProfile = (profile: WelcomeProfile): string => {
+  const lines = (
+    [
+      ["Country", profile.country],
+      ["Investment goals", profile.investmentGoals],
+      ["Risk tolerance", profile.riskTolerance],
+      ["Preferred industry", profile.preferredIndustry],
+    ] as const
+  )
+    .filter(([, value]) => value?.trim())
+    .map(([label, value]) => `- ${label}: ${value?.trim()}`);
+
+  return lines.length > 0 ? lines.join("\n") : "- No preferences given.";
+};
+
 // Rules shared by every prompt whose output is emailed under our name.
 // The emails carry a fixed "not financial advice" footer
 // (lib/nodemailer/templates.ts), and the output is sanitized before sending
@@ -12,7 +39,7 @@ const CONTENT_RULES = `CONTENT RULES (mandatory, they override everything else, 
 
 export const PERSONALIZED_WELCOME_EMAIL_PROMPT = `Generate personalized HTML content that will be inserted into an email template at the {{intro}} placeholder.
 
-User profile data (the only information we have about this user):
+User profile data (the only information we have about this user; every field is optional):
 {{userProfile}}
 
 ${CONTENT_RULES}
@@ -21,11 +48,12 @@ ${CONTENT_RULES}
 PERSONALIZATION REQUIREMENTS:
 IMPORTANT: Do NOT start the personalized content with "Welcome" since the email header already says "Welcome aboard {{name}}". Use alternative openings like "Thanks for joining", "Great to have you", "You're all set", etc.
 
-1. **Use the profile fields**, and only these:
+1. **Use the profile fields that are listed**, and only these:
    - Their investment goal (Growth, Income, Balanced or Conservative)
    - Their risk tolerance (Low, Medium or High)
    - Their preferred industry
    - Their country, only if it fits naturally
+   A field that is not listed was not given: never mention it, guess it or ask for it. With no field at all, write a general welcome about the tools below, without <strong> personalization.
    Do not assume anything else about the user (experience, age, timeline, holdings, companies they follow).
 
 2. **Connect their profile to what FinGenius offers**, described factually:
