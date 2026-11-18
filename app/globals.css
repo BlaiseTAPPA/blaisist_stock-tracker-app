@@ -3,143 +3,108 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =============================================================================
+   Design tokens: the only colour values of the app (dark theme only).
+   Every utility below, the shadcn primitives (components/ui), the TradingView
+   widgets and the emails read these values. lib/design-tokens.ts mirrors them
+   for code that can't read CSS variables (widget configs, emails); a unit test
+   keeps both in sync. Contrast ratios: see the design-tokens test.
+   ========================================================================== */
+:root {
+  /* Surfaces, darkest to lightest. */
+  --surface: #08090b; /* page */
+  --surface-raised: #1b1d22; /* cards, header, inputs, popovers: 1.18:1 on --surface */
+  --surface-hover: #262930; /* hovered and selected rows, table headers */
+  /* Decorative edges (1.58:1 on --surface-raised). */
+  --border: #3a3e48;
+  /* Form control boundary, WCAG 1.4.11: 3.81:1 on --surface-raised, 4.50:1 on --surface. */
+  --control-border: #737884;
+
+  /* Text: 14.5:1, 10.1:1 and 6.5:1 on --surface-raised. */
+  --text: #eceef1;
+  --text-secondary: #c4c8d0;
+  --text-muted: #9ca1ac;
+
+  /* Brand yellow: logo, primary action, focus ring. Never decoration. */
+  --accent: #e8ba40;
+  --accent-hover: #f2c94c;
+  --on-accent: #08090b; /* 10.9:1 on --accent */
+
+  /* Price moves only. Errors reuse the loss red through --danger. */
+  --gain: #0fedbe;
+  --loss: #ff5c6c;
+  --danger: var(--loss);
+
+  --radius: 0.625rem;
+}
+
+@theme {
+  /* No default palette shade can mix with the tokens: gray-300 or red-500
+     generate nothing, use the semantic names below. */
+  --color-gray-*: initial;
+  --color-slate-*: initial;
+  --color-zinc-*: initial;
+  --color-neutral-*: initial;
+  --color-stone-*: initial;
+  --color-yellow-*: initial;
+  --color-amber-*: initial;
+  --color-red-*: initial;
+  --color-rose-*: initial;
+  --color-green-*: initial;
+  --color-emerald-*: initial;
+  --color-teal-*: initial;
+  --color-blue-*: initial;
+  --color-orange-*: initial;
+  --color-purple-*: initial;
+}
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
+  /* Semantic utilities: bg-surface, text-fg-muted, border-control-border… */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
+  --color-control-border: var(--control-border);
+  --color-fg: var(--text);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
+  --color-brand: var(--accent);
+  --color-brand-hover: var(--accent-hover);
+  --color-on-brand: var(--on-accent);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --color-danger: var(--danger);
+
+  /* shadcn names, mapped on the tokens so components/ui follows unchanged.
+     shadcn's "accent" is a hover background, not the brand: it maps to
+     --surface-hover, and the brand yellow is `brand`. */
+  --color-background: var(--surface);
+  --color-foreground: var(--text);
+  --color-card: var(--surface-raised);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface-raised);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--on-accent);
+  --color-secondary: var(--surface-hover);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface-hover);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--surface-hover);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--danger);
+  --color-input: var(--control-border);
+  --color-ring: var(--accent);
+
+  /* next/font variables, set on <html> in app/layout.tsx. */
+  --font-sans: var(--font-plex-sans);
+  --font-heading: var(--font-bricolage);
+  --font-mono: var(--font-plex-mono);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-}
-
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
-}
-
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  /* Brand yellow (yellow-500): shadcn primitives draw their focus ring with it. */
-  --ring: #e8ba40;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
-}
-
-/* === CUSTOM COLOR THEME === */
-@theme {
-  /* Extended Gray Scale */
-  --color-gray-900: #050505;
-  --color-gray-800: #141414;
-  --color-gray-700: #212328;
-  --color-gray-600: #30333a;
-  --color-gray-500: #9095a1;
-  --color-gray-400: #ccdadc;
-
-  /* Boundary of form controls (inputs, selects, comboboxes): 3.20:1 on
-     gray-800 and 3.54:1 on gray-900, above the 3:1 of WCAG 1.4.11. gray-600
-     (1.46:1) stays for decorative card borders. */
-  --color-control-border: #62666f;
-
-  /* Vibrant Colors */
-  --color-blue-600: #5862ff;
-  --color-yellow-400: #fdd458;
-  --color-yellow-500: #e8ba40;
-  --color-teal-400: #0fedbe;
-  --color-red-500: #ff495b;
-  --color-orange-500: #ff8243;
-  --color-purple-500: #d13bff;
-
-  /* Price moves (PriceChange): `text-gain` / `text-loss`. Both pass WCAG AA on gray-800. */
-  --color-gain: #0fedbe;
-  --color-loss: #ff495b;
 }
 
 @layer base {
@@ -147,40 +112,77 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-gray-900 text-foreground;
+    @apply bg-surface text-fg-secondary;
   }
+}
+
+/* === Type scale ===========================================================
+   Headings use the heading face and --text; body copy and captions use the
+   sans. Registered in lib/utils.ts (tailwind-merge) as font sizes, so `cn()`
+   keeps them next to a colour class. */
+@utility text-display {
+  font-family: var(--font-heading);
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  @media (width >= 48rem) {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+@utility text-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+@utility text-section {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+@utility text-body {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+@utility text-caption {
+  font-size: 0.75rem;
+  line-height: 1.125rem;
 }
 
 /* Shared keyboard focus indicator: 2 px yellow ring, offset from the element
    by the page background, shown for keyboard focus only (:focus-visible). */
 @utility focus-ring {
-  @apply focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none;
+  @apply focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none;
 }
 
 @layer utilities {
   .container {
     @apply mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8;
   }
-  .yellow-btn {
-    @apply h-12 cursor-pointer rounded-lg bg-gradient-to-b from-yellow-400 to-yellow-500 text-base font-medium text-gray-950 shadow-lg focus-ring hover:from-yellow-500 hover:to-yellow-400 disabled:opacity-50;
-  }
-  .home-wrapper {
-    @apply flex-col items-center gap-4 text-gray-400 sm:items-start md:gap-10;
-  }
-  .home-section {
-    @apply w-full grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3;
+  /* Primary action: solid brand yellow, one per view. */
+  .btn-primary {
+    @apply h-12 cursor-pointer rounded-lg bg-brand text-base font-semibold text-on-brand focus-ring transition-colors hover:bg-brand-hover disabled:opacity-50 motion-reduce:transition-none;
   }
   .header {
-    @apply z-50 h-[70px] w-full bg-gray-800;
+    @apply z-50 h-[70px] w-full border-b border-border bg-surface-raised;
   }
+  /* Side gutters come from `.container` only, aligned with the page content. */
   .header-wrapper {
-    @apply flex items-center justify-between px-6 py-4 text-gray-500;
+    @apply flex items-center justify-between py-4 text-fg-muted;
   }
   /* Below lg the page itself scrolls (form first, features panel under it):
      no inner scroll area, which broke at 360 px and 200 % zoom (WCAG 1.4.10).
      From lg, two full-height columns, the form column scrolling on its own. */
   .auth-layout {
-    @apply relative flex min-h-screen flex-col bg-gray-900 lg:h-screen lg:flex-row lg:justify-between lg:overflow-hidden;
+    @apply relative flex min-h-screen flex-col bg-surface lg:h-screen lg:flex-row lg:justify-between lg:overflow-hidden;
   }
   .auth-logo {
     @apply mb-8 pt-6 lg:mb-12 lg:pt-8;
@@ -189,285 +191,100 @@
     @apply flex w-full flex-col px-6 lg:h-screen lg:w-[45%] lg:overflow-y-auto lg:px-16;
   }
   .auth-right-section {
-    @apply flex w-full flex-col justify-start bg-gray-800 px-6 py-4 max-lg:border-t max-lg:border-gray-600 md:p-6 lg:h-screen lg:w-[55%] lg:px-18 lg:py-12;
+    @apply flex w-full flex-col justify-start bg-surface-raised px-6 py-4 max-lg:border-t max-lg:border-border md:p-6 lg:h-screen lg:w-[55%] lg:px-18 lg:py-12;
   }
   .auth-tagline {
-    @apply mb-4 text-lg font-semibold text-gray-100 md:mb-6 md:text-2xl;
+    @apply mb-4 text-section md:mb-6 md:text-title;
   }
   .auth-features {
-    @apply mb-2 flex flex-col gap-3 text-sm text-gray-400 md:gap-4 md:text-base;
+    @apply mb-2 flex flex-col gap-3 text-sm text-fg-secondary md:gap-4 md:text-base;
   }
   .auth-dashboard-preview {
-    @apply left-0 hidden h-auto w-[1024px] max-w-none rounded-xl border-6 border-gray-800 shadow-2xl lg:block;
+    @apply left-0 hidden h-auto w-[1024px] max-w-none rounded-xl border-6 border-surface-hover shadow-2xl lg:block;
   }
   .form-title {
-    @apply mb-10 text-4xl font-bold text-gray-400;
+    @apply mb-10 text-display;
   }
   .form-label {
-    @apply text-sm font-medium text-gray-400;
+    @apply text-sm font-medium text-fg-secondary;
   }
   .form-input {
-    @apply h-12 rounded-lg border-control-border bg-gray-800 px-3 py-3 text-base text-white placeholder:text-gray-500 focus:!border-yellow-500 focus:ring-0;
+    @apply h-12 rounded-lg border-control-border bg-surface-raised px-3 py-3 text-base text-fg placeholder:text-fg-muted focus:!border-brand focus:ring-0;
   }
   .select-trigger {
-    @apply !h-12 w-full rounded-lg border-control-border bg-gray-800 px-3 py-3 text-base text-white focus:!border-yellow-500 focus:ring-0;
+    @apply !h-12 w-full rounded-lg border-control-border bg-surface-raised px-3 py-3 text-base text-fg focus:!border-brand focus:ring-0;
   }
   .country-select-trigger {
-    @apply h-12 w-full justify-between rounded-lg border-control-border bg-gray-800 px-3 py-3 text-base font-normal text-gray-400 focus:!border-yellow-500 focus:ring-0;
+    @apply h-12 w-full justify-between rounded-lg border-control-border bg-surface-raised px-3 py-3 text-base font-normal text-fg-secondary focus:!border-brand focus:ring-0;
   }
   .country-select-input {
-    @apply rounded-none border-0 border-b border-gray-600 !bg-gray-800 text-gray-400 placeholder:text-gray-500 focus:ring-0;
+    @apply rounded-none border-0 border-b border-border !bg-surface-raised text-fg-secondary placeholder:text-fg-muted focus:ring-0;
   }
   .country-select-empty {
-    @apply !bg-gray-800 py-6 text-center text-gray-500;
+    @apply !bg-surface-raised py-6 text-center text-fg-muted;
   }
   .country-select-item {
-    @apply cursor-pointer rounded-sm bg-gray-800 px-3 py-2 text-white hover:!bg-gray-600;
+    @apply cursor-pointer rounded-sm bg-surface-raised px-3 py-2 text-fg hover:!bg-surface-hover;
   }
   .footer-link {
-    @apply rounded-sm font-medium text-gray-400 focus-ring transition-colors hover:text-yellow-400 hover:underline;
+    @apply rounded-sm font-medium text-fg-secondary focus-ring transition-colors hover:text-brand-hover hover:underline;
   }
   .search-dialog {
-    @apply fixed top-10 left-1/2 -translate-x-1/2 translate-y-10 border-gray-600 !bg-gray-800 lg:min-w-[800px];
+    @apply fixed top-10 left-1/2 -translate-x-1/2 translate-y-10 border-border !bg-surface-raised lg:min-w-[800px];
   }
   .search-field {
-    @apply relative border-b border-gray-600 !bg-gray-800;
+    @apply relative border-b border-border !bg-surface-raised;
   }
   .search-list {
-    @apply max-h-[400px] !bg-gray-800;
+    @apply max-h-[400px] !bg-surface-raised;
   }
   .search-list-empty {
-    @apply !bg-transparent py-6 text-center text-gray-500;
+    @apply !bg-transparent py-6 text-center text-fg-muted;
   }
   .search-loader {
-    @apply absolute top-1/2 right-12 h-4 w-4 -translate-y-1/2 text-gray-500 motion-safe:animate-spin;
+    @apply absolute top-1/2 right-12 h-4 w-4 -translate-y-1/2 text-fg-muted motion-safe:animate-spin;
   }
   .search-item {
-    @apply my-3 w-full rounded-none px-1 data-[selected=true]:bg-gray-700;
+    @apply my-3 w-full rounded-none px-1 data-[selected=true]:bg-surface-hover;
   }
   .search-item-name {
-    @apply text-base font-medium text-gray-400;
+    @apply text-base font-medium text-fg;
   }
   /* 44 px mouse target, not focusable (see SearchCommand). */
   .search-item-star {
-    @apply inline-flex size-11 shrink-0 items-center justify-center rounded-md text-yellow-500 transition-colors hover:bg-gray-600/60;
+    @apply inline-flex size-11 shrink-0 items-center justify-center rounded-md text-brand transition-colors hover:bg-border/60;
   }
   .search-footer {
-    @apply flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-gray-600 px-3 py-2 text-xs text-gray-500;
+    @apply flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border px-3 py-2 text-xs text-fg-muted;
   }
   .search-footer kbd {
-    @apply mr-1 rounded border border-gray-600 px-1.5 py-0.5 font-sans text-[10px] leading-none;
+    @apply mr-1 rounded border border-border px-1.5 py-0.5 font-sans text-[10px] leading-none;
   }
-  .nav-list {
-    @apply flex flex-col gap-3 p-2 font-medium sm:flex-row sm:gap-10;
-  }
-  .stock-details-container {
-    @apply w-full grid-cols-1 gap-6 space-y-6 sm:space-y-8 xl:grid-cols-3;
-  }
+  /* Stock page toggle. Not followed: the primary action. Followed: an outline
+     "In watchlist" button, which shows "Remove from watchlist" on hover and
+     keyboard focus (see WatchlistButton). */
   .watchlist-btn {
-    @apply h-11 w-full cursor-pointer rounded bg-yellow-500 text-base font-semibold text-gray-900 focus-ring hover:bg-yellow-400;
+    @apply inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent bg-brand text-base font-semibold text-on-brand focus-ring transition-colors hover:bg-brand-hover disabled:cursor-wait motion-reduce:transition-none;
   }
-  .watchlist-remove {
-    @apply bg-red-500! text-gray-900! hover:bg-red-500!;
-  }
-  .watchlist-empty-container {
-    @apply container flex-col items-center gap-8 p-6 text-center md:mt-10;
-  }
-  .watchlist-empty {
-    @apply flex flex-col items-center justify-center text-center;
-  }
-  .watchlist-star {
-    @apply mb-4 h-16 w-16 text-gray-500;
+  .watchlist-btn[aria-pressed="true"] {
+    @apply border-control-border bg-transparent text-fg hover:border-danger hover:bg-transparent hover:text-danger focus-visible:border-danger focus-visible:text-danger;
   }
   .empty-title {
-    @apply mb-2 text-xl font-semibold text-gray-400;
+    @apply mb-2 text-title;
   }
   .empty-description {
-    @apply mb-6 max-w-md text-gray-500;
-  }
-  .watchlist-container {
-    @apply flex flex-col-reverse gap-8 lg:grid lg:grid-cols-3;
-  }
-  .watchlist {
-    @apply space-y-8 lg:col-span-2;
-  }
-  .watchlist-alerts {
-    @apply h-full w-full flex-col items-start gap-6 lg:col-span-1;
-  }
-  .watchlist-icon-btn {
-    @apply w-fit cursor-pointer text-gray-400 hover:bg-transparent! hover:text-yellow-500;
-  }
-  .watchlist-icon-added {
-    @apply !text-yellow-500 hover:!text-yellow-600;
-  }
-  .watchlist-icon {
-    @apply flex h-8 w-8 items-center justify-center rounded-full bg-gray-700/50;
-  }
-  .trash-icon {
-    @apply h-4 w-4 text-gray-400 hover:text-red-400;
-  }
-  .star-icon {
-    @apply h-4 w-4;
-  }
-  .watchlist-title {
-    @apply text-xl font-bold text-gray-100 md:text-2xl;
-  }
-  .watchlist-table {
-    @apply !relative !w-full overflow-hidden !rounded-lg border !border-gray-600 bg-gray-800;
+    @apply mb-6 max-w-md text-fg-muted;
   }
   .table-header-row {
-    @apply border-b border-gray-600 bg-gray-700 font-medium text-gray-400 hover:bg-gray-700;
-  }
-  .table-header:first-child {
-    @apply pl-4;
+    @apply border-b border-border bg-surface-hover font-medium text-fg-secondary hover:bg-surface-hover;
   }
   /* Clickable as a whole only through a link overlay (see PopularStocksSection). */
   .table-row {
-    @apply cursor-pointer border-b border-gray-600 text-gray-100 transition-colors hover:bg-gray-700/50;
-  }
-  .table-cell {
-    @apply text-base font-medium;
-  }
-  .add-alert {
-    @apply flex w-fit cursor-pointer items-center gap-1.5 rounded border border-yellow-600/20 bg-transparent px-3 py-2 text-sm font-medium whitespace-nowrap text-yellow-600 transition-colors hover:bg-transparent;
-  }
-  .watchlist-news {
-    @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3;
-  }
-  .news-item {
-    @apply w-full cursor-pointer rounded-lg border border-gray-600 bg-gray-800 p-4 duration-200 hover:border-gray-600;
-  }
-  .news-tag {
-    @apply mb-5 inline-block w-fit rounded bg-gray-600/60 px-2 py-1 font-mono text-sm font-medium text-green-500;
-  }
-  .news-title {
-    @apply mb-3 line-clamp-2 text-lg leading-tight font-semibold text-gray-100;
-  }
-  .news-meta {
-    @apply mb-1 flex items-center text-sm text-gray-500;
-  }
-  .news-summary {
-    @apply mb-3 line-clamp-3 flex-1 text-base leading-relaxed text-gray-400;
-  }
-  .news-cta {
-    @apply align-bottom text-sm text-yellow-500 hover:text-gray-400;
-  }
-  .alert-dialog {
-    @apply max-w-md border-gray-600 bg-gray-800 text-gray-400;
-  }
-  .alert-title {
-    @apply text-xl font-semibold text-gray-100;
-  }
-  .alert-list {
-    @apply flex max-h-[911px] w-full flex-1 flex-col gap-4 overflow-y-auto rounded-lg border border-gray-600 bg-gray-800 p-3;
-  }
-  .alert-empty {
-    @apply px-6 py-8 text-center text-gray-500/50;
-  }
-  .alert-item {
-    @apply rounded-lg border border-gray-600 bg-gray-700 p-4;
-  }
-  .alert-name {
-    @apply mb-2 text-lg font-semibold text-yellow-500;
-  }
-  .alert-details {
-    @apply mb-2 flex items-center justify-between gap-3 border-b pb-3;
-  }
-  .alert-company {
-    @apply text-base text-gray-400;
-  }
-  .alert-price {
-    @apply font-bold text-gray-100;
-  }
-  .alert-actions {
-    @apply flex items-end justify-between;
-  }
-  .alert-update-btn {
-    @apply cursor-pointer rounded-full bg-transparent text-gray-400 hover:bg-green-500/15;
-  }
-  .alert-delete-btn {
-    @apply cursor-pointer rounded-full bg-transparent text-gray-400 transition-colors hover:bg-red-600/15;
+    @apply cursor-pointer border-b border-border text-fg transition-colors hover:bg-surface-hover/60;
   }
 }
 
-/* Market News Component Styles */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* TradingView Advanced Chart Widget Styles */
-.tradingview-widget-container {
-  position: relative;
-  background-color: #141414 !important;
-  border-radius: 8px !important;
-  overflow: hidden !important;
-}
-
-.tv-embed-widget-wrapper__body {
-  background-color: #141414 !important;
-}
-
-.tradingview-widget-container__widget {
-  background-color: #141414 !important;
-  height: 100% !important;
-}
-
-.widget-stock-heatmap-container .screenerMapWrapper-BBVfGP0b {
-  overflow: hidden !important;
-  background: #141414 !important;
-  background-color: #141414 !important;
-}
-
-.canvasContainer-tyaAU8aH {
-  background: #141414 !important;
-  background-color: #141414 !important;
-}
-
-.tv-site-widget--bg_none {
-  background-color: transparent !important;
-}
-
-.tradingview-widget-copyright {
-  font-size: 11px;
-  color: #9ca3af;
-  text-align: center;
-  padding: 4px 0;
-  background-color: transparent;
-}
-
-.tradingview-widget-copyright a {
-  color: #60a5fa;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.tradingview-widget-copyright a:hover {
-  color: #93c5fd;
-  text-decoration: underline;
-}
-
-.tv-embed-widget-wrapper .tv-embed-widget-wrapper__body {
-  background: #141414 !important;
-  background-color: #141414 !important;
-}
-
-.tradingview-widget-container iframe {
-  background-color: #141414 !important;
-  width: 100% !important;
-}
-
-.custom-chart.tradingview-widget-container iframe {
-  border: 1px solid #30333a;
-  border-radius: 8px !important;
-  overflow: hidden !important;
-}
-
-/* Custom scrollbar that shows on hover */
+/* Thin scrollbar, shown on hover (auth form column). */
 .scrollbar-hide-default {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -488,13 +305,40 @@
 }
 
 .scrollbar-hide-default:hover {
-  scrollbar-color: #30333a transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 .scrollbar-hide-default:hover::-webkit-scrollbar-thumb {
-  background-color: #30333a;
+  background-color: var(--border);
 }
 
 .scrollbar-hide-default::-webkit-scrollbar-thumb:hover {
-  background-color: #9095a1;
+  background-color: var(--text-muted);
+}
+
+/* TradingView embeds. Only the host elements are styled: the widget itself
+   renders in a cross-origin iframe that page CSS can't reach. Its own
+   background comes from the widget config (lib/constants.ts). `!important`:
+   the embed script injects its own styles for these hosts. */
+.tradingview-widget-container {
+  position: relative;
+  background-color: var(--surface-raised) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.tradingview-widget-container__widget {
+  background-color: var(--surface-raised) !important;
+  height: 100% !important;
+}
+
+.tradingview-widget-container iframe {
+  background-color: var(--surface-raised) !important;
+  width: 100% !important;
+}
+
+.custom-chart.tradingview-widget-container iframe {
+  border: 1px solid var(--border);
+  border-radius: 8px !important;
+  overflow: hidden !important;
 }

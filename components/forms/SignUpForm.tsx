@@ -111,19 +111,19 @@ const SignUpForm = () => {
         />
 
         {/* Native disclosure: keyboard and screen reader support for free. */}
-        <details className="group rounded-lg border border-gray-700">
-          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-100 focus-ring [&::-webkit-details-marker]:hidden">
+        <details className="group rounded-lg border border-surface-hover">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm font-medium text-fg focus-ring [&::-webkit-details-marker]:hidden">
             <span>
               Personalize your welcome email{" "}
-              <span className="font-normal text-gray-500">(optional)</span>
+              <span className="font-normal text-fg-muted">(optional)</span>
             </span>
             <ChevronDown
               aria-hidden="true"
-              className="size-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180"
+              className="size-4 shrink-0 text-fg-muted transition-transform group-open:rotate-180"
             />
           </summary>
           <div className="space-y-5 px-4 pt-1 pb-4">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-fg-muted">
               Skip this if you like: you can add or change it later in Settings.
             </p>
             <PreferenceFields
@@ -135,7 +135,7 @@ const SignUpForm = () => {
         </details>
 
         <FormError message={formError} />
-        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
+        <Button type="submit" disabled={isSubmitting} className="btn-primary mt-5 w-full">
           {isSubmitting ? "Creating account…" : "Create account"}
         </Button>
         <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />

@@ -25,7 +25,7 @@ const LinkNotice = () => {
 
   if (code) {
     return (
-      <p role="alert" className="mb-5 text-sm text-red-500">
+      <p role="alert" className="mb-5 text-sm text-danger">
         {VERIFY_LINK_ERRORS[code] ?? "Your email couldn't be verified. Sign in to get a new link."}
       </p>
     );
@@ -34,7 +34,7 @@ const LinkNotice = () => {
     return (
       <p
         role="status"
-        className="mb-5 rounded-lg border border-gray-600 bg-gray-800 p-4 text-sm text-gray-100"
+        className="mb-5 rounded-lg border border-border bg-surface-raised p-4 text-sm text-fg"
       >
         Your password has been changed and you were signed out everywhere. Sign in with your new
         password.
@@ -127,14 +127,14 @@ const SignInForm = () => {
         <p className="-mt-2 text-right text-sm">
           <Link
             href="/forgot-password"
-            className="inline-flex min-h-11 items-center rounded-sm text-gray-400 underline-offset-4 focus-ring hover:text-yellow-500 hover:underline"
+            className="inline-flex min-h-11 items-center rounded-sm text-fg-secondary underline-offset-4 focus-ring hover:text-brand hover:underline"
           >
             Forgot password?
           </Link>
         </p>
 
         <FormError message={formError} />
-        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
+        <Button type="submit" disabled={isSubmitting} className="btn-primary mt-5 w-full">
           {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
         <FooterLink text="Don't have an account?" linkText="Create account" href="/sign-up" />

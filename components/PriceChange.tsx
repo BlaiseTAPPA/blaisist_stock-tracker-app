@@ -19,8 +19,8 @@ function getDirection(value: number | undefined): Direction {
 const COLOR: Record<Direction, string> = {
   up: "text-gain",
   down: "text-loss",
-  flat: "text-gray-500",
-  unknown: "text-gray-500",
+  flat: "text-fg-muted",
+  unknown: "text-fg-muted",
 };
 
 /**

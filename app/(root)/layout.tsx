@@ -31,10 +31,10 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SearchProvider initialStocks={initialStocks}>
-      <div className="flex min-h-screen flex-col text-gray-400">
+      <div className="flex min-h-screen flex-col text-fg-secondary">
         <a
           href="#main-content"
-          className="sr-only z-[60] rounded-md bg-yellow-500 px-4 py-2 font-semibold text-gray-900 focus-ring focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+          className="sr-only z-[60] rounded-md bg-brand px-4 py-2 font-semibold text-on-brand focus-ring focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
         >
           Skip to content
         </a>
@@ -43,7 +43,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         <main id="main-content" tabIndex={-1} className="container flex-1 py-10 outline-none">
           {children}
         </main>
-        <footer className="border-t border-gray-700">
+        <footer className="border-t border-surface-hover">
           <Disclaimer className="container py-6 text-center" />
         </footer>
       </div>

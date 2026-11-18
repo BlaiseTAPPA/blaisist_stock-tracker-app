@@ -73,14 +73,14 @@ export default function WatchlistSortableGrid({
     <div className="flex flex-col gap-4">
       {items.length > 1 && (
         <div className="flex items-center gap-2 self-end">
-          <label htmlFor={selectId} className="text-sm text-gray-400">
+          <label htmlFor={selectId} className="text-sm text-fg-secondary">
             Sort by
           </label>
           <select
             id={selectId}
             value={sort}
             onChange={(e) => updateSort(e.target.value)}
-            className="min-h-11 cursor-pointer rounded-md border border-control-border bg-gray-800 px-3 text-sm text-gray-100 focus-ring"
+            className="min-h-11 cursor-pointer rounded-md border border-control-border bg-surface-raised px-3 text-sm text-fg focus-ring"
           >
             {Object.entries(WATCHLIST_SORTS).map(([value, label]) => (
               <option key={value} value={value}>

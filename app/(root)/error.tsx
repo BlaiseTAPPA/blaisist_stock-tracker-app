@@ -12,7 +12,7 @@ export default function RootError({ error, retry }: { error: unknown; retry: () 
   return (
     <div
       role="alert"
-      className="flex flex-col items-center justify-center rounded-lg border border-gray-600 bg-gray-800 p-10 text-center"
+      className="flex flex-col items-center justify-center rounded-lg border border-border bg-surface-raised p-10 text-center"
     >
       {/* Neutral title: this boundary catches every error under (root),
           database and session failures included, not only market data. */}
@@ -21,7 +21,7 @@ export default function RootError({ error, retry }: { error: unknown; retry: () 
         Check your connection, then try again. If it keeps failing, market data may be briefly
         unavailable.
       </p>
-      <button type="button" onClick={() => retry()} className="yellow-btn px-6">
+      <button type="button" onClick={() => retry()} className="btn-primary px-6">
         Try again
       </button>
     </div>

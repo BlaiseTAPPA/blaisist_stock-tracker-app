@@ -44,8 +44,8 @@ const NewsTabs = ({ headlines }: { headlines: React.ReactNode }) => {
               className={cn(
                 "min-h-11 cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium focus-ring transition-colors",
                 selected
-                  ? "bg-yellow-500 text-gray-900"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700",
+                  ? "bg-fg text-surface"
+                  : "bg-surface-raised text-fg-secondary hover:bg-surface-hover",
               )}
             >
               {label}

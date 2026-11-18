@@ -30,19 +30,19 @@ export default function MobileNav() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         aria-label="Open menu"
-        className="-ml-2 inline-flex size-11 cursor-pointer items-center justify-center rounded-md text-gray-400 focus-ring transition-colors hover:text-yellow-500 sm:hidden"
+        className="-ml-2 inline-flex size-11 cursor-pointer items-center justify-center rounded-md text-fg-secondary focus-ring transition-colors hover:text-brand sm:hidden"
       >
         <Menu className="size-6" aria-hidden="true" />
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-72 border-gray-600 bg-gray-800 text-gray-400"
+        className="w-72 border-border bg-surface-raised text-fg-secondary"
         onCloseAutoFocus={(e) => {
           if (skipFocusReturn.current) e.preventDefault();
           skipFocusReturn.current = false;
         }}
       >
-        <SheetHeader className="border-b border-gray-600">
+        <SheetHeader className="border-b border-border">
           <SheetTitle>
             <Image
               src="/assets/icons/logo.svg"

@@ -38,11 +38,14 @@ const ForgotPasswordForm = () => {
     return (
       <>
         <h1 className="form-title">Check your inbox</h1>
-        <div role="status" className="space-y-3 rounded-lg border border-gray-600 bg-gray-800 p-4">
-          <p className="font-semibold text-gray-100">
+        <div
+          role="status"
+          className="space-y-3 rounded-lg border border-border bg-surface-raised p-4"
+        >
+          <p className="font-semibold text-fg">
             If an account exists for {sentTo}, we sent it a link to reset the password.
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-fg-secondary">
             The link expires in 1 hour and works once. It may take a minute to arrive; also check
             your spam folder.
           </p>
@@ -55,7 +58,7 @@ const ForgotPasswordForm = () => {
   return (
     <>
       <h1 className="form-title">Reset your password</h1>
-      <p className="-mt-6 mb-8 text-sm text-gray-400">
+      <p className="-mt-6 mb-8 text-sm text-fg-secondary">
         Enter the email address of your account and we&apos;ll send you a link to choose a new
         password.
       </p>
@@ -74,7 +77,7 @@ const ForgotPasswordForm = () => {
           }}
         />
         <FormError message={formError} />
-        <Button type="submit" disabled={isSubmitting} className="yellow-btn mt-5 w-full">
+        <Button type="submit" disabled={isSubmitting} className="btn-primary mt-5 w-full">
           {isSubmitting ? "Sending…" : "Send reset link"}
         </Button>
         <FooterLink text="Remembered it?" linkText="Sign in" href="/sign-in" />

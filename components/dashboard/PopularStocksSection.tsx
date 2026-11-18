@@ -19,7 +19,7 @@ export default async function PopularStocksSection() {
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-gray-600 bg-gray-800">
+      <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">
         <table className="w-full text-sm">
           <thead>
             <tr className="table-header-row text-xs tracking-wider uppercase">
@@ -37,10 +37,10 @@ export default async function PopularStocksSection() {
               // (as on `WatchlistCard`): one link per row, the focus ring is
               // drawn around the row, inset because the container clips.
               <tr key={stock.symbol} className="group relative table-row">
-                <td className="py-2.5 pl-4 font-medium text-gray-300">
+                <td className="py-2.5 pl-4 font-medium text-fg-secondary">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    className="transition-colors group-hover:text-yellow-500 after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-yellow-500"
+                    className="transition-colors group-hover:text-brand after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-brand"
                   >
                     <span
                       className="block max-w-[7.5rem] truncate sm:max-w-[14rem]"
@@ -50,17 +50,17 @@ export default async function PopularStocksSection() {
                     </span>
                   </Link>
                 </td>
-                <td className="px-3 py-2.5 font-mono text-xs text-gray-400">{stock.symbol}</td>
-                <td className="px-3 py-2.5 text-right font-medium text-gray-100 tabular-nums">
+                <td className="px-3 py-2.5 font-mono text-xs text-fg-secondary">{stock.symbol}</td>
+                <td className="px-3 py-2.5 text-right font-medium text-fg tabular-nums">
                   {formatPrice(stock.currentPrice, stock.currency)}
                 </td>
                 <td className="px-3 py-2.5 text-right font-medium">
                   <PriceChange value={stock.changePercent} />
                 </td>
-                <td className="hidden px-3 py-2.5 text-right text-gray-400 tabular-nums lg:table-cell">
+                <td className="hidden px-3 py-2.5 text-right text-fg-secondary tabular-nums lg:table-cell">
                   {formatMarketCap(stock.marketCapMillions, stock.currency)}
                 </td>
-                <td className="hidden py-2.5 pr-4 text-right text-gray-400 tabular-nums lg:table-cell">
+                <td className="hidden py-2.5 pr-4 text-right text-fg-secondary tabular-nums lg:table-cell">
                   {formatRatio(stock.peRatio)}
                 </td>
               </tr>

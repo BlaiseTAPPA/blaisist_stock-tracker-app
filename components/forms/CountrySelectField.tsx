@@ -74,12 +74,12 @@ const CountrySelect = ({ id, value, onChange, triggerRef, controlProps }: Countr
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full border-gray-600 !bg-gray-800 p-0" align="start">
-        <Command className="border-gray-600 bg-gray-800">
+      <PopoverContent className="w-full border-border !bg-surface-raised p-0" align="start">
+        <Command className="border-border bg-surface-raised">
           <CommandInput placeholder="Search countries…" className="country-select-input" />
           <CommandEmpty className="country-select-empty">No country found.</CommandEmpty>
-          <CommandList className="scrollbar-hide-default max-h-60 bg-gray-800">
-            <CommandGroup className="bg-gray-800">
+          <CommandList className="scrollbar-hide-default max-h-60 bg-surface-raised">
+            <CommandGroup className="bg-surface-raised">
               {countries.map((country) => (
                 <CommandItem
                   key={country.value}
@@ -88,11 +88,11 @@ const CountrySelect = ({ id, value, onChange, triggerRef, controlProps }: Countr
                     onChange(country.value);
                     setOpen(false);
                   }}
-                  className="country-select-item !bg-gray-800 aria-selected:!bg-gray-600 data-[selected=true]:!bg-gray-600"
+                  className="country-select-item !bg-surface-raised aria-selected:!bg-border data-[selected=true]:!bg-border"
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4 text-yellow-500",
+                      "mr-2 h-4 w-4 text-brand",
                       value === country.value ? "opacity-100" : "opacity-0",
                     )}
                   />
@@ -145,12 +145,12 @@ export const CountrySelectField = <TFieldValues extends FieldValues>({
         )}
       />
       {error && (
-        <p id={errorId} role="alert" className="text-sm text-red-500">
+        <p id={errorId} role="alert" className="text-sm text-danger">
           {error.message}
         </p>
       )}
       {hint && (
-        <p id={hintId} className="text-xs text-gray-500">
+        <p id={hintId} className="text-xs text-fg-muted">
           {hint}
         </p>
       )}

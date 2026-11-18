@@ -16,7 +16,7 @@ export default function RetryButton() {
       type="button"
       onClick={() => startTransition(() => router.refresh())}
       disabled={pending}
-      className="inline-flex min-h-11 cursor-pointer items-center rounded-sm font-medium text-yellow-500 underline-offset-4 focus-ring hover:underline disabled:cursor-wait disabled:opacity-60"
+      className="inline-flex min-h-11 cursor-pointer items-center rounded-sm font-medium text-brand underline-offset-4 focus-ring hover:underline disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? "Retrying…" : "Retry"}
     </button>

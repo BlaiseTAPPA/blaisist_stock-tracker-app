@@ -52,9 +52,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <ul className="auth-features">
             {FEATURES.map(({ icon: Icon, title, text }) => (
               <li key={title} className="flex gap-3">
-                <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-yellow-500" />
+                <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
                 <p>
-                  <span className="font-semibold text-gray-100">{title}.</span> {text}
+                  <span className="font-semibold text-fg">{title}.</span> {text}
                 </p>
               </li>
             ))}

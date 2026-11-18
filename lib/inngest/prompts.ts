@@ -1,3 +1,5 @@
+import { COLORS } from "@/lib/design-tokens";
+
 type WelcomeProfile = {
   country?: string;
   investmentGoals?: string;
@@ -65,17 +67,17 @@ IMPORTANT: Do NOT start the personalized content with "Welcome" since the email 
 
 FORMATTING REQUIREMENTS:
 - Return ONLY clean HTML content with NO markdown, NO code blocks, NO backticks
-- Use a SINGLE paragraph: <p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">content</p>
+- Use a SINGLE paragraph: <p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">content</p>
 - Write exactly TWO sentences, 35-50 words in total
 - Use <strong> for the personalized elements (their goal, industry, etc.)
 - DO NOT include "Here's what you can do right now:" as this is already in the template
 
 Example outputs (format and tone only):
-<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Thanks for joining FinGenius! You told us you are interested in <strong>technology</strong> with a <strong>growth</strong> goal, so you can add the technology companies you follow to your watchlist and see their charts, profiles and financials in one place. Your daily summary will cover news about those stocks.</p>
+<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">Thanks for joining FinGenius! You told us you are interested in <strong>technology</strong> with a <strong>growth</strong> goal, so you can add the technology companies you follow to your watchlist and see their charts, profiles and financials in one place. Your daily summary will cover news about those stocks.</p>
 
-<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Great to have you aboard! With an <strong>income</strong> goal and a <strong>low</strong> risk tolerance in mind, you can follow the <strong>energy</strong> companies you choose from your watchlist. The sector heatmap and the daily news summary show how the market moved, without the noise.</p>
+<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">Great to have you aboard! With an <strong>income</strong> goal and a <strong>low</strong> risk tolerance in mind, you can follow the <strong>energy</strong> companies you choose from your watchlist. The sector heatmap and the daily news summary show how the market moved, without the noise.</p>
 
-<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">You're all set! Your profile points to the <strong>healthcare</strong> sector and a <strong>balanced</strong> goal, so start by adding a few healthcare companies to your watchlist. Each stock page brings together its price chart, company profile and recent financials.</p>`;
+<p class="mobile-text" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">You're all set! Your profile points to the <strong>healthcare</strong> sector and a <strong>balanced</strong> goal, so start by adding a few healthcare companies to your watchlist. Each stock page brings together its price chart, company profile and recent financials.</p>`;
 
 export const NEWS_SUMMARY_EMAIL_PROMPT = `Generate HTML content for a market news summary email that will be inserted into the NEWS_SUMMARY_EMAIL_TEMPLATE at the {{newsContent}} placeholder.
 
@@ -94,11 +96,11 @@ SECTION HEADINGS (for categories like "Market Highlights", "Earnings Reports", e
 <h3 class="mobile-news-title dark-text" style="margin: 30px 0 15px 0; font-size: 18px; font-weight: 600; color: #f8f9fa; line-height: 1.3;">Section Title</h3>
 
 PARAGRAPHS (for news content):
-<p class="mobile-text dark-text-secondary" style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">Content goes here</p>
+<p class="mobile-text dark-text-secondary" style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">Content goes here</p>
 
 STOCK/COMPANY MENTIONS:
 <strong style="color: #FDD458;">Stock Symbol</strong> for ticker symbols
-<strong style="color: #CCDADC;">Company Name</strong> for company names
+<strong style="color: ${COLORS.textSecondary};">Company Name</strong> for company names
 
 PERFORMANCE INDICATORS:
 Use 📈 for reported gains, 📉 for reported losses, 📊 for neutral/mixed
@@ -114,7 +116,7 @@ For each individual news item within a section, use this structure:
 
 ARTICLE CONTAINER:
 Wrap each article in a clean, simple container:
-<div class="dark-info-box" style="background-color: #212328; padding: 24px; margin: 20px 0; border-radius: 8px;">
+<div class="dark-info-box" style="background-color: ${COLORS.surfaceHover}; padding: 24px; margin: 20px 0; border-radius: 8px;">
 
 ARTICLE TITLES:
 <h4 class="dark-text" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #FFFFFF; line-height: 1.4;">
@@ -124,20 +126,20 @@ Article Title Here
 BULLET POINTS (3 concise facts):
 Use this format with clear, concise sentences (no label needed):
 <ul style="margin: 16px 0 20px 0; padding-left: 0; margin-left: 0; list-style: none;">
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>A fact from the article, in plain words.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>A figure from the article, with what it measures.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>Background or context given in the article.
   </li>
 </ul>
 
 BOTTOM LINE:
-<div style="background-color: #141414; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
-<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: #CCDADC; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> One neutral sentence on why this story is in the news.</p>
+<div style="background-color: ${COLORS.surfaceRaised}; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
+<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: ${COLORS.textSecondary}; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> One neutral sentence on why this story is in the news.</p>
 </div>
 
 READ MORE LINK (ARTICLE_URL is the article's "url" from the news data, copied exactly):
@@ -168,25 +170,25 @@ Content guidelines:
 Example structure (format and tone only: these facts, figures and URLs are made up, never reuse them):
 <h3 class="mobile-news-title dark-text" style="margin: 30px 0 15px 0; font-size: 20px; font-weight: 600; color: #f8f9fa; line-height: 1.3;">📊 Market Overview</h3>
 
-<div class="dark-info-box" style="background-color: #212328; padding: 24px; margin: 20px 0; border-radius: 8px;">
+<div class="dark-info-box" style="background-color: ${COLORS.surfaceHover}; padding: 24px; margin: 20px 0; border-radius: 8px;">
 <h4 class="dark-text" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #FDD458; line-height: 1.4;">
 Stock Market Had Mixed Results Today
 </h4>
 
 <ul style="margin: 16px 0 20px 0; padding-left: 0; margin-left: 0; list-style: none;">
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>Technology shares rose during the session, with Apple up 1.2%.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>Industrial stocks fell 0.3% over the same period.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>About 12.4 billion shares changed hands, which the article describes as above average.
   </li>
 </ul>
 
-<div style="background-color: #141414; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
-<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: #CCDADC; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> Technology shares led the session while other sectors moved little, according to the article.</p>
+<div style="background-color: ${COLORS.surfaceRaised}; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
+<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: ${COLORS.textSecondary}; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> Technology shares led the session while other sectors moved little, according to the article.</p>
 </div>
 
 <div style="margin: 20px 0 0 0;">
@@ -198,25 +200,25 @@ Stock Market Had Mixed Results Today
 
 <h3 class="mobile-news-title dark-text" style="margin: 30px 0 15px 0; font-size: 20px; font-weight: 600; color: #f8f9fa; line-height: 1.3;">💼 Earnings Reports</h3>
 
-<div class="dark-info-box" style="background-color: #212328; padding: 24px; margin: 20px 0; border-radius: 8px;">
+<div class="dark-info-box" style="background-color: ${COLORS.surfaceHover}; padding: 24px; margin: 20px 0; border-radius: 8px;">
 <h4 class="dark-text" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #FDD458; line-height: 1.4;">
 Apple Shares Rise After Quarterly Earnings Report
 </h4>
 
 <ul style="margin: 16px 0 20px 0; padding-left: 0; margin-left: 0; list-style: none;">
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>Apple shares rose 5.2% after the company reported earnings above analysts' estimates.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>The company said it expects iPhone sales to grow 8% next quarter.
   </li>
-  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+  <li class="dark-text-secondary" style="margin: 0 0 16px 0; padding: 0; margin-left: 0; font-size: 16px; line-height: 1.6; color: ${COLORS.textSecondary};">
     <span style="color: #FDD458; font-weight: bold; font-size: 20px; margin-right: 8px;">•</span>Services revenue, which includes the App Store, reached $22.3 billion, up 14% from a year earlier.
   </li>
 </ul>
 
-<div style="background-color: #141414; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
-<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: #CCDADC; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> The report showed revenue growth in both iPhone sales and services, the two areas the company highlighted.</p>
+<div style="background-color: ${COLORS.surfaceRaised}; border: 1px solid #374151; padding: 15px; border-radius: 6px; margin: 16px 0;">
+<p class="dark-text-secondary" style="margin: 0; font-size: 14px; color: ${COLORS.textSecondary}; line-height: 1.4;">💡 <strong style="color: #FDD458;">Bottom Line:</strong> The report showed revenue growth in both iPhone sales and services, the two areas the company highlighted.</p>
 </div>
 
 <div style="margin: 20px 0 0 0;">

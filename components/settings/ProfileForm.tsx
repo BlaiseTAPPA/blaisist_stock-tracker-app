@@ -65,14 +65,14 @@ const ProfileForm = ({ name, email }: { name: string; email: string }) => {
           value={email}
           readOnly
           aria-describedby="account-email-hint"
-          className="form-input cursor-default text-gray-400"
+          className="form-input cursor-default text-fg-secondary"
         />
-        <p id="account-email-hint" className="text-xs text-gray-500">
+        <p id="account-email-hint" className="text-xs text-fg-muted">
           Your sign-in address. It can&apos;t be changed here.
         </p>
       </div>
       <FormError message={formError} />
-      <Button type="submit" disabled={isSubmitting || !isDirty} className="yellow-btn px-6">
+      <Button type="submit" disabled={isSubmitting || !isDirty} className="btn-primary px-6">
         {isSubmitting ? "Saving…" : "Save name"}
       </Button>
     </form>

@@ -23,8 +23,8 @@ const UnsubscribeConfirm = ({ token }: { token: string }) => {
   if (result === "unsubscribed") {
     return (
       <div role="status" className="space-y-4">
-        <h1 className="text-2xl font-bold text-gray-100">You&apos;re unsubscribed</h1>
-        <p className="text-gray-400">
+        <h1 className="text-title">You&apos;re unsubscribed</h1>
+        <p className="text-fg-secondary">
           You won&apos;t receive the daily news digest any more. You can turn it back on at any time
           in your settings.
         </p>
@@ -37,25 +37,25 @@ const UnsubscribeConfirm = ({ token }: { token: string }) => {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-gray-100">Unsubscribe from the daily digest?</h1>
-      <p className="text-gray-400">
+      <h1 className="text-title">Unsubscribe from the daily digest?</h1>
+      <p className="text-fg-secondary">
         You&apos;ll stop receiving the daily news summary for your watchlist. Account emails, like
         password resets, are not affected.
       </p>
       {result === "invalid" && (
-        <p role="alert" className="text-sm text-red-500">
+        <p role="alert" className="text-sm text-danger">
           This unsubscribe link is invalid. Turn the digest off in your settings instead.
         </p>
       )}
       {result === "error" && (
-        <p role="alert" className="text-sm text-red-500">
+        <p role="alert" className="text-sm text-danger">
           Something went wrong. Try again in a moment.
         </p>
       )}
-      <Button type="button" onClick={onConfirm} disabled={isPending} className="yellow-btn w-full">
+      <Button type="button" onClick={onConfirm} disabled={isPending} className="btn-primary w-full">
         {isPending ? "Unsubscribing…" : "Unsubscribe"}
       </Button>
-      <p className="text-center text-sm text-gray-500">Changed your mind? Just close this page.</p>
+      <p className="text-center text-sm text-fg-muted">Changed your mind? Just close this page.</p>
     </div>
   );
 };

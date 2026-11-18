@@ -35,9 +35,9 @@ const VerifyEmailNotice = ({ email, title, description }: VerifyEmailNoticeProps
   };
 
   return (
-    <div role="status" className="space-y-3 rounded-lg border border-gray-600 bg-gray-800 p-4">
-      <p className="font-semibold text-gray-100">{title}</p>
-      <p className="text-sm text-gray-400">{description}</p>
+    <div role="status" className="space-y-3 rounded-lg border border-border bg-surface-raised p-4">
+      <p className="font-semibold text-fg">{title}</p>
+      <p className="text-sm text-fg-secondary">{description}</p>
       <Button
         type="button"
         variant="outline"

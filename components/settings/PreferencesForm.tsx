@@ -38,7 +38,7 @@ const PreferencesForm = ({ defaults }: { defaults: PreferencesFormData }) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <PreferenceFields control={control} errors={errors} />
       <FormError message={formError} />
-      <Button type="submit" disabled={isSubmitting || !isDirty} className="yellow-btn px-6">
+      <Button type="submit" disabled={isSubmitting || !isDirty} className="btn-primary px-6">
         {isSubmitting ? "Saving…" : "Save preferences"}
       </Button>
     </form>

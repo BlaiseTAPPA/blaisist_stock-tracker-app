@@ -29,13 +29,13 @@ export default async function MarketStatusBadge({ className }: { className?: str
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium",
-        open ? "border-gain/40 text-gain" : "border-gray-600 text-gray-400",
+        open ? "border-gain/40 text-gain" : "border-border text-fg-secondary",
         className,
       )}
     >
       <span
         aria-hidden="true"
-        className={cn("size-1.5 rounded-full", open ? "bg-gain" : "bg-gray-500")}
+        className={cn("size-1.5 rounded-full", open ? "bg-gain" : "bg-fg-muted")}
       />
       {label}
     </span>
