@@ -54,7 +54,7 @@ export const sendSignUpEmail = inngest.createFunction(
     await step.run("send-welcome-email", async () => {
       const intro =
         firstText(response) ||
-        "Thanks for joining Signalist. You now have the tools to track markets and follow the stocks you care about.";
+        "Thanks for joining FinGenius. You now have the tools to track markets and follow the stocks you care about.";
 
       await sendWelcomeEmail({ email, name, intro });
     });

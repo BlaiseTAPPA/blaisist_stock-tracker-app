@@ -25,7 +25,7 @@ function getMetadataBase(): URL {
 
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
-  title: { default: "Signalist", template: "%s | Signalist" },
+  title: { default: "FinGenius", template: "%s | FinGenius" },
   description:
     "Follow stock prices and charts, keep a personal watchlist, explore company profiles and financials, and get a daily market news digest by email.",
 };

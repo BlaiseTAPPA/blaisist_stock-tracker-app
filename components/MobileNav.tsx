@@ -46,7 +46,7 @@ export default function MobileNav() {
           <SheetTitle>
             <Image
               src="/assets/icons/logo.svg"
-              alt="Signalist"
+              alt="FinGenius"
               width={140}
               height={32}
               className="h-8 w-auto"
